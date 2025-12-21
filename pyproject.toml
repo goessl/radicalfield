@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "radicalfield"
-version = "1.0"
+version = "2.0"
 description = "Library for linear combinations of radicals."
 readme = "README.md"
 requires-python = ">=3.12"

@@ -24,8 +24,8 @@ pip install git+https://github.com/goessl/radicalfield.git
 ## Roadmap
 
 - [x] Deploy
-- [ ] Production
-- [x] Ballin
+- [x] $\mathbb{Z}\left[\sqrt{2}\right]$
+- [x] $\mathbb{Q}\left(\sqrt{2}\right)$
 
 ## License (MIT)
 

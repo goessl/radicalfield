@@ -13,7 +13,7 @@ def test_init():
         QuadraticInt2(1, "2")
 
 
-def test_eQuadraticInt2():
+def test_eq():
     assert QuadraticInt2(1, 2) == QuadraticInt2(1, 2)
     assert QuadraticInt2(1, 2) != QuadraticInt2(1, 3)
     assert QuadraticInt2(5, 0) == 5
@@ -48,26 +48,6 @@ def test_norm():
     
     assert x.norm() == 1
     assert y.norm() == -1
-
-def test_inv():
-    u = QuadraticInt2(1, 1)
-    v = QuadraticInt2(3, 2)
-    
-    uinv = u.inv()
-    vinv = v.inv()
-    
-    assert u * uinv == 1
-    assert v * vinv == 1
-    
-    with pytest.raises(ValueError):
-        QuadraticInt2(2, 0).inv()
-    with pytest.raises(ValueError):
-        QuadraticInt2(2, 1).inv()
-    
-    
-    u2 = QuadraticInt2(3, 2)
-    u2.iinv()
-    assert u2 == QuadraticInt2(3, 2).inv()
 
 
 def test_add_sub_mul():
@@ -119,6 +99,27 @@ def test_iadd_isub_imul():
     x7 = QuadraticInt2(1, 2)
     x7 *= 3
     assert x7 == QuadraticInt2(3, 6)
+
+
+def test_inv():
+    u = QuadraticInt2(1, 1)
+    v = QuadraticInt2(3, 2)
+    
+    uinv = u.inv()
+    vinv = v.inv()
+    
+    assert u * uinv == 1
+    assert v * vinv == 1
+    
+    with pytest.raises(ValueError):
+        QuadraticInt2(2, 0).inv()
+    with pytest.raises(ValueError):
+        QuadraticInt2(2, 1).inv()
+    
+    
+    u2 = QuadraticInt2(3, 2)
+    u2.iinv()
+    assert u2 == QuadraticInt2(3, 2).inv()
 
 
 def test_sympy():

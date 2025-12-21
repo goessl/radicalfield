@@ -19,13 +19,14 @@ pip install git+https://github.com/goessl/radicalfield.git
 
 ## Usage
 
-- [`radicalfield.quadraticint2`](quadraticint2.md)
+- [`radicalfield.quadraticint2`](quadraticint2.md) $\mathbb{Z}\left[\sqrt{2}\right]$
+- [`radicalfield.quadraticrational2`](quadraticrational2.md) $\mathbb{Q}\left(\sqrt{2}\right)$
 
 ## Roadmap
 
 - [x] Deploy
-- [ ] Production
-- [x] Ballin
+- [x] $\mathbb{Z}\left[\sqrt{2}\right]$
+- [x] $\mathbb{Q}\left(\sqrt{2}\right)$
 
 ## License (MIT)
 
