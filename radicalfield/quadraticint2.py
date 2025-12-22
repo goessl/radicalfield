@@ -1,7 +1,9 @@
 from math import sqrt
-import sympy as sp
+from dataclasses import dataclass
 from typing import Any, Self
 from types import NotImplementedType
+from ._util import fold, unfold, cantor_pair, cantor_depair
+import sympy as sp
 
 
 
@@ -9,6 +11,7 @@ __all__ = ('QuadraticInt2', )
 
 
 
+@dataclass(eq=False, frozen=True, slots=True) #make slots, immutability & repr
 class QuadraticInt2:
     r"""Element of the quadratic integer ring $\mathbb{Z}\left[\sqrt{2}\right]$.
     
@@ -18,10 +21,9 @@ class QuadraticInt2:
         a+b\sqrt{2} \qquad a, b\in\mathbb{Z}.
     $$
     
-    The class supports exact arithmetic (`+`, `-`, `*`;
+    The immutable class supports exact arithmetic (`+`, `-`, `*`;
     with `QuadraticInt2`s, `int`, `sympy.Expr`), conjugation,
-    norm computation, and unit inversion. In-place arithmetic operations
-    are provided for performance.
+    norm computation, and unit inversion.
    
     Parameters
     ----------
@@ -34,7 +36,8 @@ class QuadraticInt2:
     ----------
     - [Wikipedia - Quadratic integers](https://en.wikipedia.org/wiki/Quadratic_integer)
     """
-    __slots__ = ('a', 'b')
+    a:int = 0
+    b:int = 0
     
     
     @staticmethod
@@ -60,10 +63,10 @@ class QuadraticInt2:
             raise TypeError('e must be a sympy.Expr')
         
         SQRT2 = sp.sqrt(2)
-        e = sp.nsimplify(e, [SQRT2])
+        e:sp.Expr = sp.nsimplify(e, [SQRT2])
         
-        a = sp.simplify(e.subs(SQRT2, 0))
-        b = sp.simplify((e - a) / SQRT2)
+        a:sp.Expr = sp.simplify(e.subs(SQRT2, 0))
+        b:sp.Expr = sp.simplify((e - a) / SQRT2)
         
         if sp.simplify(a + b*SQRT2 - e) != 0:
             raise ValueError("Expression not exactly representable in Z[sqrt(2)]")
@@ -73,18 +76,38 @@ class QuadraticInt2:
         
         return QuadraticInt2(int(a), int(b))
     
-    def __init__(self, a:int=0, b:int=0):
-        if not (isinstance(a, int) and isinstance(b, int)):
-            raise TypeError('a and b must be integers')
-        self.a, self.b = a, b
+    @staticmethod
+    def from_hash(h:int) -> 'QuadraticInt2':
+        r"""Construct a `QuadraticInt2` from a hash.
+        
+        Parameters
+        ----------
+        h
+            Hash to convert.
+        
+        Returns
+        -------
+        QuadraticInt2
+        """
+        a:int
+        b:int
+        a, b = cantor_depair(fold(h))
+        return QuadraticInt2(unfold(a), unfold(b))
+    
+    def __post_init__(self):
+        if not (isinstance(self.a, int) and isinstance(self.b, int)):
+            raise TypeError('a and b must be `int`s')
+    
     
     
     #conversion
-    def __eq__(self, other:Any) -> bool|NotImplementedType:
+    def __eq__(self, other:Any) -> bool|NotImplementedType: #other:QuadraticInt2|int|sp.Expr
         if isinstance(other, QuadraticInt2):
             return self.a==other.a and self.b==other.b
         elif isinstance(other, int):
             return self.a==other and self.b==0
+        elif isinstance(other, sp.Expr):
+            return self == QuadraticInt2.from_expr(other)
         return NotImplemented
     
     def is_integer(self) -> bool:
@@ -150,45 +173,9 @@ class QuadraticInt2:
         """
         return QuadraticInt2(self.a, -self.b)
     
-    def iconj(self) -> Self:
-        """Conjugate in-place.
-        
-        Alias for [`iconjugate`][radicalfield.QuadraticInt2.iconjugate].
-        
-        See also
-        --------
-        [`iconjugate`][radicalfield.QuadraticInt2.iconjugate].
-        """
-        return self.iconjugate()
-    
-    def iconjugate(self) -> Self:
-        r"""Conjugate in-place.
-        
-        $$
-            a+b\sqrt{2} \mapsto \overline{a+b\sqrt{2}}=a-b\sqrt{2}
-        $$
-        
-        References
-        ----------
-        [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)
-        """
-        self.b = -self.b
-        return self
-    
-    
-    def __pos__(self) -> Self:
-        return QuadraticInt2(+self.a, +self.b)
-    
-    def ipos(self) -> Self:
-        self.a, self.b = +self.a, +self.b
-        return self
     
     def __neg__(self) -> Self:
         return QuadraticInt2(-self.a, -self.b)
-    
-    def ineg(self) -> Self:
-        self.a, self.b = -self.a, -self.b
-        return self
     
     
     def __add__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticInt2|int|sp.Expr
@@ -198,19 +185,6 @@ class QuadraticInt2:
             return QuadraticInt2(self.a+other, self.b)
         elif isinstance(other, sp.Expr):
             return self + QuadraticInt2.from_expr(other)
-        return NotImplemented
-    
-    def __iadd__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticInt2|int|sp.Expr
-        if isinstance(other, QuadraticInt2):
-            self.a += other.a
-            self.b += other.b
-            return self
-        elif isinstance(other, int):
-            self.a += other
-            return self
-        elif isinstance(other, sp.Expr):
-            self += QuadraticInt2.from_expr(other)
-            return self
         return NotImplemented
     
     def __radd__(self, other:Any) -> Self|NotImplementedType: #other:int|sp.Expr
@@ -228,19 +202,6 @@ class QuadraticInt2:
             return QuadraticInt2(self.a-other, self.b)
         elif isinstance(other, sp.Expr):
             return self - QuadraticInt2.from_expr(other)
-        return NotImplemented
-    
-    def __isub__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticInt2|int|sp.Expr
-        if isinstance(other, QuadraticInt2):
-            self.a -= other.a
-            self.b -= other.b
-            return self
-        elif isinstance(other, int):
-            self.a -= other
-            return self
-        elif isinstance(other, sp.Expr):
-            self -= QuadraticInt2.from_expr(other)
-            return self
         return NotImplemented
     
     def __rsub__(self, other:Any) -> Self|NotImplementedType: #other:int|sp.Expr
@@ -261,18 +222,6 @@ class QuadraticInt2:
             return QuadraticInt2(self.a*other, self.b*other)
         elif isinstance(other, sp.Expr):
             return self * QuadraticInt2.from_expr(other)
-        return NotImplemented
-    
-    def __imul__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticInt2|int
-        if isinstance(other, QuadraticInt2):
-            a = self.a*other.a + 2*self.b*other.b
-            b = self.a*other.b + self.b*other.a
-            self.a, self.b = a, b
-            return self
-        elif isinstance(other, int):
-            self.a *= other
-            self.b *= other
-            return self
         return NotImplemented
     
     def __rmul__(self, other:Any) -> Self|NotImplementedType: #other:int|sp.Expr
@@ -314,37 +263,15 @@ class QuadraticInt2:
             return QuadraticInt2(-self.a, self.b)
         raise ValueError("Element is not invertible in Z[sqrt(2)]")
     
-    def iinv(self) -> Self:
-        r"""Invert multiplicatively in-place.
-        
-        Raises
-        ------
-        ValueError
-            If the element is not invertible in
-            $\mathbb{Z}\left[\sqrt{2}\right]$.
-        
-        See also
-        --------
-        [`QuadraticInt2.inv`][radicalfield.QuadraticInt2.inv]
-        """
-        n = self.norm()
-        if n not in {-1, +1}:
-            raise ValueError("Element is not invertible in Z[sqrt(2)]")
-        if n == +1:
-            self.b = -self.b
-        else: #n == -1
-            self.a = -self.a
-        return self
     
+    def __hash__(self) -> int:
+        return unfold(cantor_pair(fold(self.a), fold(self.b)))
     
     def _sympy_(self) -> sp.Expr:
         return self.a + sp.sqrt(2)*self.b
     
     def __str__(self) -> str:
         return f'{self.a}{self.b:+}√2'
-    
-    def __repr__(self) -> str:
-        return f'QuadraticInt2(a={self.a}, b={self.b})'
     
     def _repr_latex_(self) -> str:
         return f'{self.a}{self.b:+}\\sqrt{{2}}'

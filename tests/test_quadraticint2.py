@@ -11,6 +11,9 @@ def test_init():
         QuadraticInt2(1.0, 2)
     with pytest.raises(TypeError):
         QuadraticInt2(1, "2")
+    
+    x = QuadraticInt2(84, -72)
+    assert QuadraticInt2.from_hash(hash(x)) == x
 
 
 def test_eq():
@@ -36,11 +39,6 @@ def test_conj():
     x = QuadraticInt2(3, 4)
     c = x.conj()
     assert c == QuadraticInt2(3, -4)
-    
-    x = QuadraticInt2(3, 4)
-    y = x.iconj()
-    assert y is x
-    assert x == QuadraticInt2(3, -4)
  
 def test_norm():
     x = QuadraticInt2(3, 2)
@@ -72,34 +70,6 @@ def test_add_sub_mul():
     assert (3+4*sp.sqrt(2)) - x == QuadraticInt2(2, 2)
     assert x * (3+4*sp.sqrt(2)) == QuadraticInt2(19, 10)
 
-def test_iadd_isub_imul():
-    x = QuadraticInt2(1, 2)
-    y = QuadraticInt2(3, 4)
-    
-    x2 = QuadraticInt2(1, 2)
-    x2 += y
-    assert x2 == QuadraticInt2(4, 6)
-    
-    x3 = QuadraticInt2(1, 2)
-    x3 -= y
-    assert x3 == QuadraticInt2(-2, -2)
-    
-    x4 = QuadraticInt2(1, 2)
-    x4 *= y
-    assert x4 == x * y
-    
-    x5 = QuadraticInt2(1, 2)
-    x5 += 3
-    assert x5 == QuadraticInt2(4, 2)
-    
-    x6 = QuadraticInt2(1, 2)
-    x6 -= 3
-    assert x6 == QuadraticInt2(-2, 2)
-    
-    x7 = QuadraticInt2(1, 2)
-    x7 *= 3
-    assert x7 == QuadraticInt2(3, 6)
-
 
 def test_inv():
     u = QuadraticInt2(1, 1)
@@ -115,11 +85,6 @@ def test_inv():
         QuadraticInt2(2, 0).inv()
     with pytest.raises(ValueError):
         QuadraticInt2(2, 1).inv()
-    
-    
-    u2 = QuadraticInt2(3, 2)
-    u2.iinv()
-    assert u2 == QuadraticInt2(3, 2).inv()
 
 
 def test_sympy():

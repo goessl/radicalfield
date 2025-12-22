@@ -43,11 +43,6 @@ def test_conj():
     x = QuadraticRational2(Fraction(3), Fraction(4))
     c = x.conj()
     assert c == QuadraticRational2(Fraction(3), Fraction(-4))
-    
-    x = QuadraticRational2(Fraction(3), Fraction(4))
-    y = x.iconj()
-    assert y is x
-    assert x == QuadraticRational2(Fraction(3), Fraction(-4))
 
 
 def test_norm():
@@ -98,39 +93,6 @@ def test_add_sub_mul_div():
     assert (Fraction(3) + Fraction(4) * SQRT2) - x == QuadraticRational2(Fraction(2), Fraction(2))
     assert x * (Fraction(3) + Fraction(4) * SQRT2) == QuadraticRational2(Fraction(19), Fraction(10))
     assert x / (Fraction(3) + Fraction(4) * SQRT2) == x / QuadraticRational2.from_expr(Fraction(3) + Fraction(4) * SQRT2)
-
-
-def test_iadd_isub_imul_itruediv():
-    x = QuadraticRational2(Fraction(1), Fraction(2))
-    y = QuadraticRational2(Fraction(3), Fraction(4))
-    
-    x2 = QuadraticRational2(Fraction(1), Fraction(2))
-    x2 += y
-    assert x2 == QuadraticRational2(Fraction(4), Fraction(6))
-    
-    x3 = QuadraticRational2(Fraction(1), Fraction(2))
-    x3 -= y
-    assert x3 == QuadraticRational2(Fraction(-2), Fraction(-2))
-    
-    x4 = QuadraticRational2(Fraction(1), Fraction(2))
-    x4 *= y
-    assert x4 == x * y
-    
-    x5 = QuadraticRational2(Fraction(1), Fraction(2))
-    x5 += Fraction(3)
-    assert x5 == QuadraticRational2(Fraction(4), Fraction(2))
-    
-    x6 = QuadraticRational2(Fraction(1), Fraction(2))
-    x6 -= Fraction(3)
-    assert x6 == QuadraticRational2(Fraction(-2), Fraction(2))
-    
-    x7 = QuadraticRational2(Fraction(1), Fraction(2))
-    x7 *= Fraction(3)
-    assert x7 == QuadraticRational2(Fraction(3), Fraction(6))
-    
-    x8 = QuadraticRational2(Fraction(1), Fraction(2))
-    x8 /= Fraction(3)
-    assert x8 == QuadraticRational2(Fraction(1, 3), Fraction(2, 3))
 
 
 def test_sympy():
