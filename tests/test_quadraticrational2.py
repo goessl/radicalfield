@@ -85,14 +85,6 @@ def test_add_sub_mul_div():
     assert Fraction(3) * x == QuadraticRational2(Fraction(3), Fraction(6))
     assert x / Fraction(3) == QuadraticRational2(Fraction(1, 3), Fraction(2, 3))
     assert Fraction(3) / x == QuadraticRational2(Fraction(3), Fraction(0)) / x
-    #sympy.Expr
-    SQRT2 = sp.sqrt(2)
-    assert x + (Fraction(3) + Fraction(4) * SQRT2) == QuadraticRational2(Fraction(4), Fraction(6))
-    assert (Fraction(3) + Fraction(4) * SQRT2) + x == QuadraticRational2(Fraction(4), Fraction(6))
-    assert x - (Fraction(3) + Fraction(4) * SQRT2) == QuadraticRational2(Fraction(-2), Fraction(-2))
-    assert (Fraction(3) + Fraction(4) * SQRT2) - x == QuadraticRational2(Fraction(2), Fraction(2))
-    assert x * (Fraction(3) + Fraction(4) * SQRT2) == QuadraticRational2(Fraction(19), Fraction(10))
-    assert x / (Fraction(3) + Fraction(4) * SQRT2) == x / QuadraticRational2.from_expr(Fraction(3) + Fraction(4) * SQRT2)
 
 
 def test_sympy():

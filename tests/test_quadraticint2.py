@@ -63,12 +63,6 @@ def test_add_sub_mul():
     assert 5 - x == QuadraticInt2(4, -2)
     assert x * 3 == QuadraticInt2(3, 6)
     assert 3 * x == QuadraticInt2(3, 6)
-    #sympy.Expr
-    assert x + (3+4*sp.sqrt(2)) == QuadraticInt2(4, 6)
-    assert (3+4*sp.sqrt(2)) + x == QuadraticInt2(4, 6)
-    assert x - (3+4*sp.sqrt(2)) == QuadraticInt2(-2, -2)
-    assert (3+4*sp.sqrt(2)) - x == QuadraticInt2(2, 2)
-    assert x * (3+4*sp.sqrt(2)) == QuadraticInt2(19, 10)
 
 
 def test_inv():

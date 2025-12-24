@@ -1,6 +1,6 @@
 from math import sqrt
 from dataclasses import dataclass
-from typing import Any, Self
+from typing import Any, Self, ClassVar
 from types import NotImplementedType
 from ._util import fold, unfold, cantor_pair, cantor_depair
 import sympy as sp
@@ -21,9 +21,30 @@ class QuadraticInt2:
         a+b\sqrt{2} \qquad a, b\in\mathbb{Z}.
     $$
     
-    The immutable class supports exact arithmetic (`+`, `-`, `*`;
-    with `QuadraticInt2`s, `int`, `sympy.Expr`), conjugation,
-    norm computation, and unit inversion.
+    The immutable class supports exact comparison and arithmetic
+    
+    - `eq`
+        - `QuadraticInt2 == int`
+        - `QuadraticInt2 == QuadraticInt2`
+    - `neg`
+        - `-QuadraticInt2`
+    - `pos`
+        - `          int + QuadraticInt2`
+        - `QuadraticInt2 + int`
+        - `QuadraticInt2 + QuadraticInt2`
+    - `sub`
+        - `          int - QuadraticInt2`
+        - `QuadraticInt2 - int`
+        - `QuadraticInt2 - QuadraticInt2`
+    - `mul`
+        - `          int * QuadraticInt2`
+        - `QuadraticInt2 * int`
+        - `QuadraticInt2 * QuadraticInt2`
+    - `truediv`
+        - `          int / QuadraticInt2`
+        - `QuadraticInt2 / QuadraticInt2`
+    
+    , algebraic conjugation, norm computation, and unit inversion.
    
     Parameters
     ----------
@@ -38,6 +59,7 @@ class QuadraticInt2:
     """
     a:int = 0
     b:int = 0
+    SQRT2:ClassVar[float] = sqrt(2)
     
     
     @staticmethod
@@ -62,17 +84,17 @@ class QuadraticInt2:
         if not isinstance(e, sp.Expr):
             raise TypeError('e must be a sympy.Expr')
         
-        SQRT2 = sp.sqrt(2)
-        e:sp.Expr = sp.nsimplify(e, [SQRT2])
+        SPSQRT2 = sp.sqrt(2)
+        e:sp.Expr = sp.nsimplify(e, [SPSQRT2])
         
-        a:sp.Expr = sp.simplify(e.subs(SQRT2, 0))
-        b:sp.Expr = sp.simplify((e - a) / SQRT2)
+        a:sp.Expr = sp.simplify(e.subs(SPSQRT2, 0))
+        b:sp.Expr = sp.simplify((e - a) / SPSQRT2)
         
-        if sp.simplify(a + b*SQRT2 - e) != 0:
-            raise ValueError("Expression not exactly representable in Z[sqrt(2)]")
+        if sp.simplify(a + b*SPSQRT2 - e) != 0:
+            raise ValueError('Expression not exactly representable in ℤ[√2]')
         
         if not (a.is_Integer and b.is_Integer):
-            raise ValueError(f'Not in Z[sqrt(2)]: {e} (a={a}, b={b})')
+            raise ValueError(f'Not in ℤ[√2]: {e} (a={a}, b={b})')
         
         return QuadraticInt2(int(a), int(b))
     
@@ -101,13 +123,11 @@ class QuadraticInt2:
     
     
     #conversion
-    def __eq__(self, other:Any) -> bool|NotImplementedType: #other:QuadraticInt2|int|sp.Expr
+    def __eq__(self, other:Any) -> bool|NotImplementedType: #other:QuadraticInt2|int
         if isinstance(other, QuadraticInt2):
             return self.a==other.a and self.b==other.b
         elif isinstance(other, int):
             return self.a==other and self.b==0
-        elif isinstance(other, sp.Expr):
-            return self == QuadraticInt2.from_expr(other)
         return NotImplemented
     
     def is_integer(self) -> bool:
@@ -116,11 +136,11 @@ class QuadraticInt2:
     
     def __int__(self) -> int:
         if self.b != 0:
-            raise ValueError("Not an integer (b != 0)")
+            raise ValueError('Not an integer (b != 0)')
         return self.a
     
     def __float__(self) -> float:
-        return self.a + sqrt(2)*self.b
+        return self.a + QuadraticInt2.SQRT2*self.b
     
     def norm(self) -> int:
         r"""Return the algebraic norm.
@@ -178,41 +198,33 @@ class QuadraticInt2:
         return QuadraticInt2(-self.a, -self.b)
     
     
-    def __add__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticInt2|int|sp.Expr
+    def __add__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticInt2|int
         if isinstance(other, QuadraticInt2):
             return QuadraticInt2(self.a+other.a, self.b+other.b)
         elif isinstance(other, int):
             return QuadraticInt2(self.a+other, self.b)
-        elif isinstance(other, sp.Expr):
-            return self + QuadraticInt2.from_expr(other)
         return NotImplemented
     
-    def __radd__(self, other:Any) -> Self|NotImplementedType: #other:int|sp.Expr
+    def __radd__(self, other:Any) -> Self|NotImplementedType: #other:int
         if isinstance(other, int):
             return QuadraticInt2(other+self.a, self.b)
-        elif isinstance(other, sp.Expr):
-            return QuadraticInt2.from_expr(other) + self
         return NotImplemented
     
     
-    def __sub__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticInt2|int|sp.Expr
+    def __sub__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticInt2|int
         if isinstance(other, QuadraticInt2):
             return QuadraticInt2(self.a-other.a, self.b-other.b)
         elif isinstance(other, int):
             return QuadraticInt2(self.a-other, self.b)
-        elif isinstance(other, sp.Expr):
-            return self - QuadraticInt2.from_expr(other)
         return NotImplemented
     
-    def __rsub__(self, other:Any) -> Self|NotImplementedType: #other:int|sp.Expr
+    def __rsub__(self, other:Any) -> Self|NotImplementedType: #other:int
         if isinstance(other, int):
             return QuadraticInt2(other-self.a, -self.b)
-        elif isinstance(other, sp.Expr):
-            return QuadraticInt2.from_expr(other) - self
         return NotImplemented
     
     
-    def __mul__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticInt2|int|sp.Expr
+    def __mul__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticInt2|int
         if isinstance(other, QuadraticInt2):
             return QuadraticInt2(
                     self.a*other.a + 2*self.b*other.b,
@@ -220,12 +232,12 @@ class QuadraticInt2:
             )
         elif isinstance(other, int):
             return QuadraticInt2(self.a*other, self.b*other)
-        elif isinstance(other, sp.Expr):
-            return self * QuadraticInt2.from_expr(other)
         return NotImplemented
     
-    def __rmul__(self, other:Any) -> Self|NotImplementedType: #other:int|sp.Expr
-        return self * other
+    def __rmul__(self, other:Any) -> Self|NotImplementedType: #other:int
+        if isinstance(other, int):
+            return QuadraticInt2(other*self.a, other*self.b)
+        return NotImplemented
     
     
     def inv(self) -> Self:
@@ -256,12 +268,43 @@ class QuadraticInt2:
         --------
         [`QuadraticInt2.norm`][radicalfield.QuadraticInt2.norm]
         """
-        n = self.norm()
+        n:int = self.norm()
         if n == +1:
             return QuadraticInt2(self.a, -self.b)
         elif n == -1:
             return QuadraticInt2(-self.a, self.b)
-        raise ValueError("Element is not invertible in Z[sqrt(2)]")
+        raise ValueError('Element is not invertible in ℤ[√2]')
+    
+    def __truediv__(self, other:Any): #other:QuadraticInt2
+        r"""
+        $$
+            \frac{a+b\sqrt{2}}{c+d\sqrt{2}}
+            = \frac{\left(a+b\sqrt{2}\right)\left(c-d\sqrt{2}\right)}{\left(c+d\sqrt{2}\right)\left(c-d\sqrt{2}\right)}
+            = \frac{\left(a+b\sqrt{2}\right)\left(c-d\sqrt{2}\right)}{c^2-2d^2}
+        $$
+        """
+        if isinstance(other, QuadraticInt2):
+            d:int = other.norm() #denominator
+            if d == 0:
+                raise ZeroDivisionError('division by zero in ℤ[√2]')
+            n:QuadraticInt2 = self * other.conjugate() #numerator
+            if n.a%d == n.b%d == 0:
+                return QuadraticInt2(n.a//d, n.b//d)
+            else:
+                raise ValueError('Elements are not divisible in ℤ[√2]')
+        return NotImplemented
+    
+    def __rtruediv__(self, other:Any): #other:int
+        if isinstance(other, int):
+            d:int = self.norm() #denominator
+            if d == 0:
+                raise ZeroDivisionError('division by zero in ℤ[√2]')
+            n:QuadraticInt2 = other * self.conjugate() #numerator
+            if n.a%d == n.b%d == 0:
+                return QuadraticInt2(n.a//d, n.b//d)
+            else:
+                raise ValueError('Elements are not divisible in ℤ[√2]')
+        return NotImplemented
     
     
     def __hash__(self) -> int:

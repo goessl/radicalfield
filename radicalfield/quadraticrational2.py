@@ -1,7 +1,7 @@
 from math import sqrt
 from fractions import Fraction
 from dataclasses import dataclass
-from typing import Any, Self
+from typing import Any, Self, ClassVar
 from types import NotImplementedType
 import sympy as sp
 
@@ -21,9 +21,38 @@ class QuadraticRational2:
         a+b\sqrt{2} \qquad a, b\in\mathbb{Q}.
     $$
     
-    The immutable class supports exact arithmetic (`+`, `-`, `*`, `/`;
-    with `QuadraticRational2`s, `Fraction`s, `sympy.Expr`), conjugation and
-    norm computation.
+    The immutable class supports exact comparison and arithmetic
+    
+    - `eq`
+        - `QuadraticRational2 == int`
+        - `QuadraticRational2 == Fraction`
+        - `QuadraticRational2 == QuadraticRational2`
+    - `neg`
+        - `-QuadraticRational2`
+    - `pos`
+        - `               int + QuadraticRational2`
+        - `          Fraction + QuadraticRational2`
+        - `QuadraticRational2 + int`
+        - `QuadraticRational2 + Fraction`
+        - `QuadraticRational2 + QuadraticRational2`
+    - `sub`
+        - `                int - QuadraticRational2`
+        - `          Fraction - QuadraticRational2`
+        - `QuadraticRational2 - int`
+        - `QuadraticRational2 - Fraction`
+        - `QuadraticRational2 - QuadraticRational2`
+    - `mul`
+        - `               int * QuadraticRational2`
+        - `          Fraction * QuadraticRational2`
+        - `QuadraticRational2 * int`
+        - `QuadraticRational2 * Fraction`
+        - `QuadraticRational2 * QuadraticRational2`
+    - `truediv`
+        - `               int / QuadraticRational2`
+        - `          Fraction / QuadraticRational2`
+        - `QuadraticRational2 / QuadraticRational2`
+    
+    , algebraic conjugation & norm computation.
    
     Parameters
     ----------
@@ -38,6 +67,7 @@ class QuadraticRational2:
     """
     a:Fraction = Fraction()
     b:Fraction = Fraction()
+    SQRT2:ClassVar[float] = sqrt(2)
     
     
     @staticmethod
@@ -62,17 +92,17 @@ class QuadraticRational2:
         if not isinstance(e, sp.Expr):
             raise TypeError('e must be a sympy.Expr')
         
-        SQRT2 = sp.sqrt(2)
-        e:sp.Expr = sp.nsimplify(e, [SQRT2])
+        SPSQRT2 = sp.sqrt(2)
+        e:sp.Expr = sp.nsimplify(e, [SPSQRT2])
         
-        a:sp.Expr = sp.simplify(e.subs(SQRT2, 0))
-        b:sp.Expr = sp.simplify((e - a) / SQRT2)
+        a:sp.Expr = sp.simplify(e.subs(SPSQRT2, 0))
+        b:sp.Expr = sp.simplify((e - a) / SPSQRT2)
         
-        if sp.simplify(a + b*SQRT2 - e) != 0:
-            raise ValueError("Expression not exactly representable in Q(sqrt(2))")
+        if sp.simplify(a + b*SPSQRT2 - e) != 0:
+            raise ValueError('Expression not exactly representable in ℚ(√2)')
         
         if not (isinstance(a, sp.Rational) and isinstance(b, sp.Rational)):
-            raise ValueError(f'Not in Q(sqrt(2)): {e} (a={a}, b={b})')
+            raise ValueError(f'Not in ℚ(√2): {e} (a={a}, b={b})')
         
         def rat_to_frac(r:sp.Rational) -> Fraction:
             return Fraction(int(r.p), int(r.q))
@@ -85,26 +115,33 @@ class QuadraticRational2:
     
     
     #conversion
-    def __eq__(self, other:Any) -> bool|NotImplementedType: #other:QuadraticRational2|Fraction|sp.Expr
+    def __eq__(self, other:Any) -> bool|NotImplementedType: #other:QuadraticRational2|Fraction|int
         if isinstance(other, QuadraticRational2):
             return self.a==other.a and self.b==other.b
-        elif isinstance(other, Fraction):
+        elif isinstance(other, (Fraction, int)):
             return self.a==other and self.b==0
-        elif isinstance(other, sp.Expr):
-            return self == QuadraticRational2.from_expr(other)
         return NotImplemented
     
     def is_fraction(self) -> bool:
-        """Return if this element is an `Fraction`"""
+        """Return if this element is a `Fraction`."""
         return self.b == 0
     
     def as_fraction(self) -> Fraction:
         if self.b != 0:
-            raise ValueError("Not a fraction (b != 0)")
+            raise ValueError('Not a fraction (b != 0)')
         return self.a
     
+    def is_integer(self) -> bool:
+        """Return if this element is an integer."""
+        return self.a.is_integer() and self.b==0
+    
+    def __int__(self) -> int:
+        if not self.a.is_integer() or self.b!=0:
+            raise ValueError('Not an integer')
+        return int(self.a)
+    
     def __float__(self) -> float:
-        return float(self.a) + sqrt(2)*float(self.b)
+        return float(self.a) + QuadraticRational2.SQRT2*float(self.b)
     
     def norm(self) -> Fraction:
         r"""Return the algebraic norm.
@@ -162,88 +199,79 @@ class QuadraticRational2:
         return QuadraticRational2(-self.a, -self.b)
     
     
-    def __add__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticRational2|Fraction|sp.Expr
+    def __add__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticRational2|Fraction|int
         if isinstance(other, QuadraticRational2):
             return QuadraticRational2(self.a+other.a, self.b+other.b)
-        elif isinstance(other, Fraction):
+        elif isinstance(other, (Fraction, int)):
             return QuadraticRational2(self.a+other, self.b)
-        elif isinstance(other, sp.Expr):
-            return self + QuadraticRational2.from_expr(other)
         return NotImplemented
     
-    def __radd__(self, other:Any) -> Self|NotImplementedType: #other:Fraction|sp.Expr
-        if isinstance(other, Fraction):
+    def __radd__(self, other:Any) -> Self|NotImplementedType: #other:Fraction|int
+        if isinstance(other, (Fraction, int)):
             return QuadraticRational2(other+self.a, self.b)
-        elif isinstance(other, sp.Expr):
-            return QuadraticRational2.from_expr(other) + self
         return NotImplemented
     
     
-    def __sub__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticRational2|Fraction|sp.Expr
+    def __sub__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticRational2|Fraction|int
         if isinstance(other, QuadraticRational2):
             return QuadraticRational2(self.a-other.a, self.b-other.b)
-        elif isinstance(other, Fraction):
+        elif isinstance(other, (Fraction, int)):
             return QuadraticRational2(self.a-other, self.b)
-        elif isinstance(other, sp.Expr):
-            return self - QuadraticRational2.from_expr(other)
         return NotImplemented
     
-    def __rsub__(self, other:Any) -> Self|NotImplementedType: #other:Fraction|sp.Expr
-        if isinstance(other, Fraction):
+    def __rsub__(self, other:Any) -> Self|NotImplementedType: #other:Fraction|int
+        if isinstance(other, (Fraction, int)):
             return QuadraticRational2(other-self.a, -self.b)
-        elif isinstance(other, sp.Expr):
-            return QuadraticRational2.from_expr(other) - self
         return NotImplemented
     
     
-    def __mul__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticRational2|Fraction|sp.Expr
+    def __mul__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticRational2|Fraction|int
         if isinstance(other, QuadraticRational2):
             return QuadraticRational2(
                     self.a*other.a + 2*self.b*other.b,
                     self.a*other.b + self.b*other.a
             )
-        elif isinstance(other, Fraction):
+        elif isinstance(other, (Fraction, int)):
             return QuadraticRational2(self.a*other, self.b*other)
-        elif isinstance(other, sp.Expr):
-            return self * QuadraticRational2.from_expr(other)
         return NotImplemented
     
-    def __rmul__(self, other:Any) -> Self|NotImplementedType: #other:Fraction|sp.Expr
-        return self * other
+    def __rmul__(self, other:Any) -> Self|NotImplementedType: #other:Fraction|int
+        if isinstance(other, (Fraction, int)):
+            return QuadraticRational2(other*self.a, other*self.b)
+        return NotImplemented
     
     
     def inv(self) -> Self:
-        r"""Return the multiplicative inverse.
-        
-        $$
-            \frac{1}{a+b\sqrt{2}}
-            = \frac{a-b\sqrt{2}}{a^2-2b^2}
-            = \frac{a-b\sqrt{2}}{N\left(a+b\sqrt{2}\right)}
-        $$
-        
-        Returns
-        -------
-        QuadraticRational2
-            The multiplicative inverse element.
-        """
-        n = self.norm()
+        n:Fraction = self.norm()
+        if n == 0:
+            raise ZeroDivisionError('division by zero in ℚ(√2)')
         return QuadraticRational2(self.a/n, -self.b/n)
     
-    
-    def __truediv__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticRational2|Fraction|sp.Expr
+    def __truediv__(self, other:Any) -> Self|NotImplementedType: #other:QuadraticRational2|Fraction|int
+        r"""
+        $$
+            \frac{a+b\sqrt{2}}{c+d\sqrt{2}}
+            = \frac{\left(a+b\sqrt{2}\right)\left(c-d\sqrt{2}\right)}{\left(c+d\sqrt{2}\right)\left(c-d\sqrt{2}\right)}
+            = \frac{\left(a+b\sqrt{2}\right)\left(c-d\sqrt{2}\right)}{c^2-2d^2}
+        $$
+        """
         if isinstance(other, QuadraticRational2):
-            return self * other.inv()
-        elif isinstance(other, Fraction):
+            d:Fraction = other.norm() #denominator
+            if d == 0:
+                raise ZeroDivisionError('division by zero in ℚ(√2)')
+            n:QuadraticRational2 = self * other.conjugate()
+            return QuadraticRational2(n.a/d, n.b/d)
+        elif isinstance(other, (Fraction, int)):
             return QuadraticRational2(self.a/other, self.b/other)
-        elif isinstance(other, sp.Expr):
-            return self / QuadraticRational2.from_expr(other)
         return NotImplemented
     
-    def __rtruediv__(self, other:Any) -> Self|NotImplementedType: #other:Fraction|sp.Expr
-        if isinstance(other, Fraction):
-            return QuadraticRational2(other, Fraction()) / self
-        elif isinstance(other, sp.Expr):
-            return QuadraticRational2.from_expr(other) / self
+    def __rtruediv__(self, other:Any) -> Self|NotImplementedType: #other:Fraction|int
+        if isinstance(other, (Fraction, int)):
+            d:Fraction = self.norm() #denominator
+            if d == 0:
+                raise ZeroDivisionError('division by zero in ℚ(√2)')
+            n:QuadraticRational2 = other * self.conjugate()
+            return QuadraticRational2(n.a/d, n.b/d)
         return NotImplemented
     
     
