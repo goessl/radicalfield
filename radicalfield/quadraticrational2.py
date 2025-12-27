@@ -93,7 +93,7 @@ class QuadraticRational2:
     @overload
     def __eq__(self, other:int) -> bool: ...
     def __eq__(self, other:Any) -> bool|NotImplementedType:
-        r"""Return if both operands have the same numeric value.
+        r"""Return if both operands are equivalent.
         
         $$
             \left(a+b\sqrt{2}\right) \overset{?}{=} \left(c+d\sqrt{2}\right)
@@ -107,7 +107,7 @@ class QuadraticRational2:
         Returns
         -------
         bool
-            True when equivalent.
+            If both operands are equivalent.
         """
         if isinstance(other, QuadraticRational2):
             return self.a==other.a and self.b==other.b
@@ -115,13 +115,23 @@ class QuadraticRational2:
             return self.a==other and self.b==0
         return NotImplemented
     
+    def __bool__(self) -> bool:
+        """Return if this element is unequal zero.
+        
+        Returns
+        -------
+        bool
+            If this element is unequal zero.
+        """
+        return bool(self.a) or bool(self.b)
+    
     def is_fraction(self) -> bool:
         """Return if this element is a fraction.
         
         Returns
         -------
         bool
-            `True` if this element is a fraction.
+            If this element is a fraction.
         """
         return self.b == 0
     
@@ -148,7 +158,7 @@ class QuadraticRational2:
         Returns
         -------
         bool
-            `True` if this element is a fraction.
+            If this element is a fraction.
         """
         return self.a.is_integer() and self.b==0
     
@@ -201,6 +211,8 @@ class QuadraticRational2:
     
     
     #arithmetic
+    #make all following methods non-recursive/leaves,
+    #except inversion as it is otherwise to complicated
     def conj(self) -> Self:
         """Return the algebraic conjugate.
         

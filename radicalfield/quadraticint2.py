@@ -108,7 +108,7 @@ class QuadraticInt2:
     @overload
     def __eq__(self, other:int) -> bool: ...
     def __eq__(self, other:Any) -> bool|NotImplementedType:
-        r"""Return if both operands have the same numeric value.
+        r"""Return if both operands are equivalent.
         
         $$
             \left(a+b\sqrt{2}\right) \overset{?}{=} \left(c+d\sqrt{2}\right)
@@ -122,7 +122,7 @@ class QuadraticInt2:
         Returns
         -------
         bool
-            True when equivalent.
+            If both operands are equivalent.
         """
         if isinstance(other, QuadraticInt2):
             return self.a==other.a and self.b==other.b
@@ -130,13 +130,23 @@ class QuadraticInt2:
             return self.a==other and self.b==0
         return NotImplemented
     
+    def __bool__(self) -> bool:
+        """Return if this element is unequal zero.
+        
+        Returns
+        -------
+        bool
+            If this element is unequal zero.
+        """
+        return bool(self.a) or bool(self.b)
+    
     def is_integer(self) -> bool:
         """Return if this element is an integer.
         
         Returns
         -------
         bool
-            `True` if this element is an integer.
+            If this element is an integer.
         """
         return self.b == 0
     
@@ -189,6 +199,8 @@ class QuadraticInt2:
     
     
     #arithmetic
+    #make all following methods non-recursive/leaves,
+    #except inversion as it is otherwise to complicated
     def conj(self) -> Self:
         """Return the algebraic conjugate.
         
