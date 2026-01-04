@@ -1,5 +1,6 @@
 import pytest
 import sympy as sp
+from random import randint
 
 from radicalfield import QuadraticInt2
 
@@ -21,6 +22,14 @@ def test_eq():
     assert QuadraticInt2(1, 2) != QuadraticInt2(1, 3)
     assert QuadraticInt2(5, 0) == 5
     assert QuadraticInt2(5, 1) != 5
+
+def test_lt():
+    for _ in range(10000):
+        a = QuadraticInt2.random(-100, +100)
+        b = QuadraticInt2.random(-100, +100)
+        c = randint(-100, +100)
+        assert (a<b) == (float(a)<float(b))
+        assert (a<c) == (float(a)<float(c))
 
 def test_int():
     assert QuadraticInt2(7, 0).is_integer() is True

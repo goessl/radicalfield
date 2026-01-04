@@ -1,5 +1,6 @@
 from math import sqrt
 from fractions import Fraction
+from functools import total_ordering
 from dataclasses import dataclass
 from typing import Any, ClassVar, Final, overload, Self
 from types import NotImplementedType
@@ -11,6 +12,7 @@ __all__ = ('QuadraticRational2', )
 
 
 
+@total_ordering
 @dataclass(eq=False, unsafe_hash=True, frozen=True, slots=True) #make slots, immutability, hash & repr
 class QuadraticRational2:
     r"""Element of the quadratic rational field $\mathbb{Q}\left(\sqrt{2}\right)$.
@@ -21,7 +23,7 @@ class QuadraticRational2:
         a+b\sqrt{2} \qquad a, b\in\mathbb{Q}.
     $$
     
-    The immutable class supports exact conversion, comparison, arithmetic,
+    The immutable class supports exact conversion, ordering, arithmetic,
     algebraic conjugation, norm computation and inversion.
    
     Parameters
@@ -113,6 +115,42 @@ class QuadraticRational2:
             return self.a==other.a and self.b==other.b
         elif isinstance(other, (Fraction, int)):
             return self.a==other and self.b==0
+        return NotImplemented
+    
+    @overload
+    def __lt__(self, other:Self) -> bool: ...
+    @overload
+    def __lt__(self, other:Fraction) -> bool: ...
+    @overload
+    def __lt__(self, other:int) -> bool: ...
+    def __lt__(self, other:Any) -> bool|NotImplementedType:
+        r"""Return if this element is less than the other.
+        
+        $$
+            \begin{aligned}
+                a+b\sqrt{2} \overset{?}{<} c+d\sqrt{2} &&\mid -c-b\sqrt{2} \\
+                a-c \overset{?}{<} (d-b)\sqrt{2} &&\mid \cdot^2 \\
+                (a-b)|a-c| \overset{?}{<} 2(d-b)|d-b|
+            \end{aligned}
+        $$
+        
+        Parameters
+        ----------
+        other: QuadraticRational2 or Fraction or int
+            Operand to compare to.
+        
+        Returns
+        -------
+        bool
+            If this element is less than the other.
+        """
+        if isinstance(other, QuadraticRational2):
+            a = self.a - other.a
+            b = other.b - self.b
+            return a*abs(a) < 2*b*abs(b)
+        elif isinstance(other, (Fraction, int)):
+            a = other - self.a
+            return 2*self.b*abs(self.b) < a*abs(a)
         return NotImplemented
     
     def __bool__(self) -> bool:

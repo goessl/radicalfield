@@ -1,4 +1,5 @@
 import pytest
+from random import randint
 import sympy as sp
 from fractions import Fraction
 
@@ -23,6 +24,18 @@ def test_eq():
     assert QuadraticRational2(Fraction(1), Fraction(2)) != QuadraticRational2(Fraction(1), Fraction(3))
     assert QuadraticRational2(Fraction(5), Fraction(0)) == Fraction(5)
     assert QuadraticRational2(Fraction(5), Fraction(1)) != Fraction(5)
+
+def test_lt():
+    for _ in range(10000):
+        a = QuadraticRational2(Fraction(randint(-100, +100), randint(1, +100)),
+                               Fraction(randint(-100, +100), randint(1, +100)))
+        b = QuadraticRational2(Fraction(randint(-100, +100), randint(1, +100)),
+                               Fraction(randint(-100, +100), randint(1, +100)))
+        c = Fraction(randint(-100, +100), randint(1, +100))
+        d = randint(-100, +100)
+        assert (a<b) == (float(a)<float(b))
+        assert (a<c) == (float(a)<float(c))
+        assert (a<d) == (float(a)<float(d))
 
 
 def test_fraction():
