@@ -52,7 +52,6 @@ extra:
       link: https://instagram.com/lordgoessl/
       name: lordgoessl on Instagram
 
-
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences

@@ -1,6 +1,6 @@
 # radicalfield
 
-Library for linear combinations of radicals.
+Python package for linear combinations of radicals.
 ```python
 >>> from radicalfield import QuadraticInt2
 >>> a = QuadraticInt2(1, 2)
@@ -29,7 +29,7 @@ pip install git+https://github.com/goessl/radicalfield.git
 
 ## License (MIT)
 
-Copyright (c) 2025 Sebastian Gössl
+Copyright (c) 2025-2026 Sebastian Gössl
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

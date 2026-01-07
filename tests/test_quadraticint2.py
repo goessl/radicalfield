@@ -12,9 +12,6 @@ def test_init():
         QuadraticInt2(1.0, 2)
     with pytest.raises(TypeError):
         QuadraticInt2(1, "2")
-    
-    x = QuadraticInt2(84, -72)
-    assert QuadraticInt2.from_hash(hash(x)) == x
 
 
 def test_eq():
@@ -72,6 +69,13 @@ def test_add_sub_mul():
     assert 5 - x == QuadraticInt2(4, -2)
     assert x * 3 == QuadraticInt2(3, 6)
     assert 3 * x == QuadraticInt2(3, 6)
+    
+    for _ in range(1000):
+        a = QuadraticInt2.random(-1000, +1000)
+        b = QuadraticInt2.random(-1000, +1000)
+        c = randint(-1000, +1000)
+        assert float(a+b) == pytest.approx(float(a)+float(b))
+        assert float(a+c) == pytest.approx(float(a)+float(c))
 
 
 def test_inv():

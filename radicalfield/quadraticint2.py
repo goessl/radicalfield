@@ -4,7 +4,6 @@ from functools import total_ordering
 from dataclasses import dataclass
 from typing import Any, Final, ClassVar, overload, Self
 from types import NotImplementedType
-from ._util import fold, unfold, cantor_pair, cantor_depair
 import sympy as sp
 
 
@@ -99,25 +98,6 @@ class QuadraticInt2:
             raise ValueError(f'not in ℤ[√2]: {e} (a={a}, b={b})')
         
         return QuadraticInt2(int(a), int(b))
-    
-    @staticmethod
-    def from_hash(h:int) -> 'QuadraticInt2':
-        r"""Construct a `QuadraticInt2` from a hash.
-        
-        Parameters
-        ----------
-        h
-            Hash to convert.
-        
-        Returns
-        -------
-        QuadraticInt2
-            `QuadraticInt2` with the given hash.
-        """
-        a:int
-        b:int
-        a, b = cantor_depair(fold(h))
-        return QuadraticInt2(unfold(a), unfold(b))
     
     def __post_init__(self):
         if not (isinstance(self.a, int) and isinstance(self.b, int)):
@@ -503,7 +483,11 @@ class QuadraticInt2:
     
     
     def __hash__(self) -> int:
-        return unfold(cantor_pair(fold(self.a), fold(self.b)))
+        #https://docs.python.org/3/library/numbers.html#notes-for-type-implementers
+        if self.is_integer():
+            return hash(self.a)
+        else:
+            return hash((self.a, self.b))
     
     def _sympy_(self) -> sp.Expr:
         return self.a + sp.sqrt(2)*self.b
