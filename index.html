@@ -16,7 +16,7 @@
       
       
       
-        <link rel="next" href="quadraticint2/">
+        <link rel="next" href="quadraticelement2/">
       
       
       <link rel="icon" href="assets/images/favicon.png">
@@ -370,34 +370,12 @@
   
   
     <li class="md-nav__item">
-      <a href="quadraticint2/" class="md-nav__link">
+      <a href="quadraticelement2/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    quadraticint2
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="quadraticrational2/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    quadraticrational2
+    quadraticelement2
     
   </span>
   
@@ -490,27 +468,27 @@
 
 <h1 id="radicalfield">radicalfield</h1>
 <p>Python package for linear combinations of radicals.
-<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">radicalfield</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuadraticInt2</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="n">QuadraticInt2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span> <span class="o">=</span> <span class="n">QuadraticInt2</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">radicalfield</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuadraticElement2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="n">QuadraticElement2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span> <span class="o">=</span> <span class="n">QuadraticElement2</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-<span class="n">QuadraticInt2</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">QuadraticElement2</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
-<span class="n">QuadraticInt2</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">19</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">QuadraticElement2</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">19</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </code></pre></div></p>
 <h2 id="installation">Installation</h2>
 <div class="highlight"><pre><span></span><code><span class="go">pip install git+https://github.com/goessl/radicalfield.git</span>
 </code></pre></div>
 <h2 id="usage">Usage</h2>
 <ul>
-<li><a href="quadraticint2/"><code>radicalfield.quadraticint2</code></a> <span class="arithmatex">\(\mathbb{Z}\left[\sqrt{2}\right]\)</span></li>
-<li><a href="quadraticrational2/"><code>radicalfield.quadraticrational2</code></a> <span class="arithmatex">\(\mathbb{Q}\left(\sqrt{2}\right)\)</span></li>
+<li><a href="quadraticelement2/"><code>radicalfield.quadraticelement2</code></a> <span class="arithmatex">\(\mathbb{K}\left(\sqrt{2}\right)\)</span></li>
 </ul>
 <h2 id="roadmap">Roadmap</h2>
 <ul class="task-list">
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Deploy</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <span class="arithmatex">\(\mathbb{Z}\left[\sqrt{2}\right]\)</span></li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <span class="arithmatex">\(\mathbb{Q}\left(\sqrt{2}\right)\)</span></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <span class="arithmatex">\(\mathbb{K}\left(\sqrt{2}\right)\)</span></li>
 </ul>
 <h2 id="license-mit">License (MIT)</h2>
 <p>Copyright (c) 2025-2026 Sebastian Gössl</p>
@@ -559,13 +537,13 @@ SOFTWARE.</p>
         
         
           
-          <a href="quadraticint2/" class="md-footer__link md-footer__link--next" aria-label="Next: quadraticint2">
+          <a href="quadraticelement2/" class="md-footer__link md-footer__link--next" aria-label="Next: quadraticelement2">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                quadraticint2
+                quadraticelement2
               </div>
             </div>
             <div class="md-footer__button md-icon">
