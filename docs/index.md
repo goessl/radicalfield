@@ -2,13 +2,13 @@
 
 Python package for linear combinations of radicals.
 ```python
->>> from radicalfield import QuadraticInt2
->>> a = QuadraticInt2(1, 2)
->>> b = QuadraticInt2(3, 4)
+>>> from radicalfield import QuadraticElement2
+>>> a = QuadraticElement2(1, 2)
+>>> b = QuadraticElement2(3, 4)
 >>> a + b
-QuadraticInt2(a=4, b=6)
+QuadraticElement2(a=4, b=6)
 >>> a * b
-QuadraticInt2(a=19, b=10)
+QuadraticElement2(a=19, b=10)
 ```
 
 ## Installation
@@ -19,14 +19,14 @@ pip install git+https://github.com/goessl/radicalfield.git
 
 ## Usage
 
-- [`radicalfield.quadraticint2`](quadraticint2.md) $\mathbb{Z}\left[\sqrt{2}\right]$
-- [`radicalfield.quadraticrational2`](quadraticrational2.md) $\mathbb{Q}\left(\sqrt{2}\right)$
+- [`radicalfield.quadraticelement2`](quadraticelement2.md) $\mathbb{K}\left(\sqrt{2}\right)$
 
 ## Roadmap
 
 - [x] Deploy
 - [x] $\mathbb{Z}\left[\sqrt{2}\right]$
 - [x] $\mathbb{Q}\left(\sqrt{2}\right)$
+- [x] $\mathbb{K}\left(\sqrt{2}\right)$
 
 ## License (MIT)
 
