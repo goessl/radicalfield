@@ -67,3 +67,4 @@ extra_javascript:
 nav:
   - Home: index.md
   - quadraticelement2.md
+  - sumofsqrts.md

@@ -1,0 +1,3 @@
+# sumofsqrts
+
+::: radicalfield.sumofsqrts
