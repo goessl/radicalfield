@@ -26,6 +26,7 @@ pip install git+https://github.com/goessl/radicalfield.git
 - [x] Deploy
 - [x] $\mathbb{Z}\left[\sqrt{2}\right]$
 - [x] $\mathbb{Q}\left(\sqrt{2}\right)$
+- [x] $\mathbb{K}\left(\sqrt{2},\sqrt{3},\sqrt{5},\dots\right)$
 
 ## License (MIT)
 

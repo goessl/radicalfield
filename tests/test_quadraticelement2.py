@@ -39,8 +39,8 @@ def test_lt():
 
 
 def test_fraction():
-    assert QuadraticElement2(7, 0).is_fraction is True
-    assert QuadraticElement2(7, 1).is_fraction is False
+    assert QuadraticElement2(7, 0).is_rational() is True
+    assert QuadraticElement2(7, 1).is_rational() is False
     
     assert QuadraticElement2(7, 0).as_fraction() == 7
     with pytest.raises(ValueError):

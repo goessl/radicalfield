@@ -20,6 +20,7 @@ pip install git+https://github.com/goessl/radicalfield.git
 ## Usage
 
 - [`radicalfield.quadraticelement2`](quadraticelement2.md) $\mathbb{K}\left(\sqrt{2}\right)$
+- [`radicalfield.sumofsqrts`](sumofsqrts.md) $\mathbb{K}\left(\sqrt{2},\sqrt{3},\sqrt{5},\dots\right)$
 
 ## Roadmap
 
@@ -27,6 +28,7 @@ pip install git+https://github.com/goessl/radicalfield.git
 - [x] $\mathbb{Z}\left[\sqrt{2}\right]$
 - [x] $\mathbb{Q}\left(\sqrt{2}\right)$
 - [x] $\mathbb{K}\left(\sqrt{2}\right)$
+- [x] $\mathbb{K}\left(\sqrt{2},\sqrt{3},\sqrt{5},\dots\right)$
 
 ## License (MIT)
 
