@@ -39,12 +39,17 @@ quadraticelement2_new(PyTypeObject* type, PyObject* args, PyObject* kwds)
         if(!a) {
             return NULL;
         }
+    } else {
+        Py_INCREF(a);
     }
     if(!b) {
         b = PyLong_FromLong(0);
         if(!b) {
+            Py_DECREF(a);
             return NULL;
         }
+    } else {
+        Py_INCREF(b);
     }
     
     qe = (quadraticelement2object*)type->tp_alloc(type, 0);
@@ -56,7 +61,6 @@ quadraticelement2_new(PyTypeObject* type, PyObject* args, PyObject* kwds)
     
     qe->a = a;
     qe->b = b;
-    PyObject_GC_Track(qe);
     return (PyObject*)qe;
 }
 
