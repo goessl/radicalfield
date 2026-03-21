@@ -34,6 +34,8 @@ class QuadraticElement2:
     Inversion is closed for integers for a norm of $\pm1$,
     otherwise it is promoted to rationals.
     Division is more often than necessary promoted to rationals.
+    
+    Python implementation.
    
     Parameters
     ----------
