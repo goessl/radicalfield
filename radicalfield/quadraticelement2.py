@@ -119,7 +119,7 @@ class QuadraticElement2:
         
         Notes
         -----
-        Not a property to be consistent with `fractions.Fraction`.
+        Not a property to be consistent with `fractions.Fraction.is_integer()`.
         
         Returns
         -------
@@ -150,7 +150,7 @@ class QuadraticElement2:
         
         Notes
         -----
-        Not a property to be consistent with `fractions.Fraction`.
+        Not a property to be consistent with `fractions.Fraction.is_integer()`.
         
         Returns
         -------
@@ -177,13 +177,6 @@ class QuadraticElement2:
         return int(self.a)
     
     def __float__(self) -> float:
-        """Return this element as a float.
-        
-        Returns
-        -------
-        float
-            This element as a float.
-        """
         return float(self.a) + QuadraticElement2.SQRT2*float(self.b)
     
     def _sympy_(self) -> sp.Expr:
@@ -287,7 +280,7 @@ class QuadraticElement2:
         return self.conjugate()
     
     def conjugate(self) -> Self:
-        r"""Return the algebraic conjugation.
+        r"""Return the algebraic conjugate.
         
         $$
             \overline{a+b\sqrt{2}} = a-b\sqrt{2}
@@ -296,7 +289,7 @@ class QuadraticElement2:
         Returns
         -------
         QuadraticElement2
-            The algebraic conjugation.
+            The algebraic conjugate.
         
         References
         ----------
