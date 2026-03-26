@@ -119,7 +119,7 @@ class QuadraticElement2:
         
         Notes
         -----
-        Not a property to be consistent with `fractions.Fraction`.
+        Not a property to be consistent with `fractions.Fraction.is_integer()`.
         
         Returns
         -------
@@ -150,7 +150,7 @@ class QuadraticElement2:
         
         Notes
         -----
-        Not a property to be consistent with `fractions.Fraction`.
+        Not a property to be consistent with `fractions.Fraction.is_integer()`.
         
         Returns
         -------
