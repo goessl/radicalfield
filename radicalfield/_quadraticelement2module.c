@@ -1,6 +1,5 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
-#include <structmember.h>
 
 
 
@@ -49,8 +48,6 @@ Inversion is closed for integers for a norm of $\\pm1$,\n\
 otherwise it is promoted to rationals.\n\
 Division is more often than necessary promoted to rationals.\n\
 \n\
-C implementation.\n\
-\n\
 Parameters\n\
 ----------\n\
 a : int or Fraction, default 0\n\
@@ -61,12 +58,13 @@ b : int or Fraction, default 0\n\
 References\n\
 ----------\n\
 - [Wikipedia - Quadratic integers](https://en.wikipedia.org/wiki/Quadratic_integer)\n\
+\n\
+C implementation.\n\
 ");
 
 static PyObject*
 quadraticelement2_new(PyTypeObject* subtype, PyObject* args, PyObject* kwds)
 {
-    module_state* state = get_module_state_by_type(subtype);
     quadraticelement2object* qe;
     PyObject* a = NULL;
     PyObject* b = NULL;
@@ -119,6 +117,7 @@ quadraticelement2_new(PyTypeObject* subtype, PyObject* args, PyObject* kwds)
 
 
 
+//garbage collection
 static int
 quadraticelement2_traverse(PyObject* self, visitproc visit, void* arg)
 {
@@ -129,7 +128,6 @@ quadraticelement2_traverse(PyObject* self, visitproc visit, void* arg)
     return 0;
 }
 
-
 static int
 quadraticelement2_clear(PyObject* self)
 {
@@ -138,7 +136,6 @@ quadraticelement2_clear(PyObject* self)
     Py_CLEAR(qe->b);
     return 0;
 }
-
 
 static void
 quadraticelement2_dealloc(PyObject* self)
@@ -151,6 +148,8 @@ quadraticelement2_dealloc(PyObject* self)
 }
 
 
+
+//__bool__
 
 PyDoc_STRVAR(quadraticelement2_is_rational_doc,
 "Return whether this element has no sqrt(2) component.")
@@ -169,6 +168,37 @@ quadraticelement2_is_rational(PyObject* self, PyObject* Py_UNUSED(args))
     Py_RETURN_FALSE;
 }
 
+//as_fraction
+//is_integer
+//__int__
+//__float__
+//_sympy_
+
+static Py_hash_t
+quadraticelement2_hash(PyObject* self)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    
+    int b_zero = PyObject_Not(qe->b);
+    if(b_zero < 0) {
+        return -1;
+    }
+    if(b_zero) {
+        return PyObject_Hash(qe->a);
+    }
+    
+    PyObject* tup = PyTuple_Pack(2, qe->a, qe->b);
+    if(!tup) {
+        return -1;
+    }
+    Py_hash_t h = PyObject_Hash(tup);
+    Py_DECREF(tup);
+    return h;
+}
+
+//__eq__
+//__lt__
+//__abs__
 
 PyDoc_STRVAR(quadraticelement2_norm_doc,
 "Return the algebraic norm.")
@@ -177,10 +207,10 @@ static PyObject*
 quadraticelement2_norm(PyObject* self, PyObject* Py_UNUSED(args))
 {
     quadraticelement2object *qe = quadraticelement2object_CAST(self);
-    PyObject* aa = NULL;
-    PyObject* bb = NULL;
-    PyObject* two_bb = NULL;
-    PyObject* result = NULL;
+    PyObject* aa;
+    PyObject* bb;
+    PyObject* two_bb;
+    PyObject* result;
     
     aa = PyNumber_Multiply(qe->a, qe->a);
     if(aa == NULL) {
@@ -194,20 +224,41 @@ quadraticelement2_norm(PyObject* self, PyObject* Py_UNUSED(args))
     }
     
     two_bb = PyNumber_Add(bb, bb);
+    Py_DECREF(bb);
     if(two_bb == NULL) {
         Py_DECREF(aa);
-        Py_DECREF(bb);
         return NULL;
     }
     
     result = PyNumber_Subtract(aa, two_bb);
     Py_DECREF(aa);
-    Py_DECREF(bb);
     Py_DECREF(two_bb);
     return result;
 }
 
+//conj
+//conjugate
+//__pos__
+//__neg__
+//__add__
+//__radd__
+//__sub__
+//__rsub__
+//__mul__
+//__rmul__
+//inv
+//__truediv__
+//__rtruediv__
+//__str__
 
+static PyObject*
+quadraticelement2_repr(PyObject* self)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    return PyUnicode_FromFormat("QuadraticElement2(a=%R, b=%R)", qe->a, qe->b);
+}
+
+//_repr_latex_
 
 static PyMemberDef quadraticelement2_members[] = {
     {"a", Py_T_OBJECT_EX, offsetof(quadraticelement2object, a), Py_READONLY, NULL},
@@ -225,8 +276,8 @@ static PyType_Slot quadraticelement2_slots[] = {
     {Py_tp_dealloc, quadraticelement2_dealloc},
     //Py_tp_getattr
     //Py_tp_setattr
-    //Py_tp_repr
-    //Py_tp_hash
+    {Py_tp_repr, quadraticelement2_repr},
+    {Py_tp_hash, quadraticelement2_hash},
     //Py_tp_call
     //Py_tp_str
     //Py_tp_getattro
