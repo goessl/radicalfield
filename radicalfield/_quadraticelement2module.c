@@ -27,13 +27,34 @@ typedef struct {
 #define quadraticelement2object_CAST(op) ((quadraticelement2object*)(op))
 
 
+/* Internal constructor: create a QuadraticElement2 with BORROWED refs to
+   a and b (both ref-counts are incremented internally).
+   Returns a new strong reference, or NULL on error. */
+static PyObject*
+qe2_make(PyTypeObject* type, PyObject* a, PyObject* b)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(type->tp_alloc(type, 0));
+    if(!qe) {
+        return NULL;
+    }
+    qe->a = Py_NewRef(a);
+    qe->b = Py_NewRef(b);
+    //PyObject_GC_Track(qe);
+    return (PyObject*)qe;
+}
+
+/* Convenience wrapper: same type as self (safe since IMMUTABLETYPE). */
+#define QE2_MAKE(self, a, b) qe2_make(Py_TYPE(self), (a), (b))
+
+
+
 PyDoc_STRVAR(quadraticelement2_doc,
 "Element of the quadratic rationals $\\mathbb{K}\\left(\\sqrt{2}\\right)$.\n\
 \n\
 An instance represents an exact rational of the form\n\
 \n\
 $$\n\
-    a+b\\sqrt{2} \\qquad a, b\\in\mathbb{K}\n\
+    a+b\\sqrt{2} \\qquad a, b\\in\\mathbb{K}\n\
 $$\n\
 \n\
 where currently $\\mathbb{K}$ is $\\mathbb{Z}$ (`int`)\n\
@@ -65,11 +86,12 @@ C implementation.\n\
 static PyObject*
 quadraticelement2_new(PyTypeObject* subtype, PyObject* args, PyObject* kwds)
 {
+    module_state* state = get_module_state_by_type(subtype);
     quadraticelement2object* qe;
     PyObject* a = NULL;
     PyObject* b = NULL;
     
-    static char* const* kwlist[] = {"a", "b", NULL};
+    static const char* kwlist[] = {"a", "b", NULL};
     if(!PyArg_ParseTupleAndKeywords(args, kwds, "|OO:QuadraticElement2", kwlist, &a, &b)) {
         return NULL;
     }
@@ -111,7 +133,7 @@ quadraticelement2_new(PyTypeObject* subtype, PyObject* args, PyObject* kwds)
     
     qe->a = a;
     qe->b = b;
-    PyObject_GC_Track(qe);
+    //PyObject_GC_Track(qe);
     return (PyObject*)qe;
 }
 
@@ -152,24 +174,71 @@ quadraticelement2_dealloc(PyObject* self)
 //__bool__
 
 PyDoc_STRVAR(quadraticelement2_is_rational_doc,
-"Return whether this element has no sqrt(2) component.")
+"Return whether this element has no sqrt(2) component.");
 
 static PyObject*
 quadraticelement2_is_rational(PyObject* self, PyObject* Py_UNUSED(args))
 {
     quadraticelement2object* qe = quadraticelement2object_CAST(self);
-    int is_zero = PyObject_Not(qe->b);
-    if(is_zero < 0) {
+    int b_false = PyObject_Not(qe->b);
+    if(b_false < 0) {
         return NULL;
     }
-    if(is_zero) {
+    if(b_false) {
         Py_RETURN_TRUE;
     }
     Py_RETURN_FALSE;
 }
 
-//as_fraction
-//is_integer
+PyDoc_STRVAR(quadraticelement2_as_fraction_doc,
+"Return this element as a fraction.");
+
+static PyObject*
+quadraticelement2_as_fraction(PyObject* self, PyObject* Py_UNUSED(args))
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    module_state* state = get_module_state_by_type(Py_TYPE(self));
+    
+    int b_false = PyObject_Not(qe->b);
+    if(b_false < 0) {
+        return NULL;
+    }
+    if(!b_false) {
+        PyErr_SetString(PyExc_ValueError, "not a fraction (b != 0)");
+        return NULL;
+    }
+    return PyObject_CallOneArg((PyObject*)state->Fraction_Type, qe->a);
+}
+
+PyDoc_STRVAR(quadraticelement2_is_integer_doc,
+"Return whether this element is an integer.");
+
+static PyObject*
+quadraticelement2_is_integer(PyObject* self, PyObject* Py_UNUSED(args))
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    
+    int b_false = PyObject_Not(qe->b);
+    if(b_false < 0) {
+        return NULL;
+    }
+    if(!b_false) {
+        Py_RETURN_FALSE;
+    }
+    
+    if(PyLong_Check(qe->a)) {
+        Py_RETURN_TRUE;
+    }
+    static PyObject* name = NULL;
+    if(!name) {
+        name = PyUnicode_InternFromString("is_integer");
+        if(!name) {
+            return NULL;
+        }
+    }
+    return PyObject_CallMethodNoArgs(qe->a, name);
+}
+
 //__int__
 //__float__
 //_sympy_
@@ -201,7 +270,7 @@ quadraticelement2_hash(PyObject* self)
 //__abs__
 
 PyDoc_STRVAR(quadraticelement2_norm_doc,
-"Return the algebraic norm.")
+"Return the algebraic norm.");
 
 static PyObject*
 quadraticelement2_norm(PyObject* self, PyObject* Py_UNUSED(args))
@@ -210,7 +279,7 @@ quadraticelement2_norm(PyObject* self, PyObject* Py_UNUSED(args))
     PyObject* aa;
     PyObject* bb;
     PyObject* two_bb;
-    PyObject* result;
+    PyObject* r;
     
     aa = PyNumber_Multiply(qe->a, qe->a);
     if(aa == NULL) {
@@ -230,14 +299,39 @@ quadraticelement2_norm(PyObject* self, PyObject* Py_UNUSED(args))
         return NULL;
     }
     
-    result = PyNumber_Subtract(aa, two_bb);
+    r = PyNumber_Subtract(aa, two_bb);
     Py_DECREF(aa);
     Py_DECREF(two_bb);
-    return result;
+    return r;
 }
 
-//conj
-//conjugate
+PyDoc_STRVAR(quadraticelement2_conjugate_doc,
+"Return the algebraic conjugate.");
+
+static PyObject*
+quadraticelement2_conjugate(PyObject* self, PyObject* Py_UNUSED(args))
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    PyObject* neg_b = PyNumber_Negative(qe->b);
+    if(!neg_b) {
+        return NULL;
+    }
+    
+    PyObject* r = QE2_MAKE(self, qe->a, neg_b);
+    Py_DECREF(neg_b);
+    return r;
+}
+
+
+PyDoc_STRVAR(quadraticelement2_conj_doc,
+"Return the algebraic conjugate.");
+
+static PyObject*
+quadraticelement2_conj(PyObject* self, PyObject* Py_UNUSED(args))
+{
+    return quadraticelement2_conjugate(self, NULL);
+}
+
 //__pos__
 //__neg__
 //__add__
@@ -249,7 +343,36 @@ quadraticelement2_norm(PyObject* self, PyObject* Py_UNUSED(args))
 //inv
 //__truediv__
 //__rtruediv__
-//__str__
+
+static PyObject*
+quadraticelement2_str(PyObject* self)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    
+    PyObject* a_str = PyObject_Str(qe->a);
+    if(!a_str) {
+        return NULL;
+    }
+    
+    static PyObject* str_plus = NULL;
+    if(!str_plus) {
+        str_plus = PyUnicode_InternFromString("is_integer");
+        if(!str_plus) {
+            Py_DECREF(a_str);
+            return NULL;
+        }
+    }
+    PyObject* b_fmt = PyObject_Format(qe->b, str_plus);
+    if(!b_fmt) {
+        Py_DECREF(a_str);
+        return NULL;
+    }
+    
+    PyObject* r = PyUnicode_FromFormat("%U%U\xe2\x88\x9a" "2", a_str, b_fmt);
+    Py_DECREF(a_str);
+    Py_DECREF(b_fmt);
+    return r;
+}
 
 static PyObject*
 quadraticelement2_repr(PyObject* self)
@@ -258,7 +381,33 @@ quadraticelement2_repr(PyObject* self)
     return PyUnicode_FromFormat("QuadraticElement2(a=%R, b=%R)", qe->a, qe->b);
 }
 
-//_repr_latex_
+static PyObject*
+quadraticelement2_repr_latex(PyObject* self, PyObject* Py_UNUSED(args))
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    
+    PyObject* a_str = PyObject_Str(qe->a);
+    if(!a_str) {
+        return NULL;
+    }
+    
+    PyObject* str_plus = PyUnicode_InternFromString("+");
+    if(!str_plus) {
+        Py_DECREF(a_str);
+        return NULL;
+    }
+    PyObject* b_fmt = PyObject_Format(qe->b, str_plus);
+    Py_DECREF(str_plus);
+    if(!b_fmt) {
+        Py_DECREF(a_str);
+        return NULL;
+    }
+    
+    PyObject* r = PyUnicode_FromFormat("%U%U\\sqrt{2}", a_str, b_fmt);
+    Py_DECREF(a_str);
+    Py_DECREF(b_fmt);
+    return r;
+}
 
 static PyMemberDef quadraticelement2_members[] = {
     {"a", Py_T_OBJECT_EX, offsetof(quadraticelement2object, a), Py_READONLY, NULL},
@@ -267,8 +416,13 @@ static PyMemberDef quadraticelement2_members[] = {
 };
 
 static PyMethodDef quadraticelement2_methods[] = {
-    {"is_rational", quadraticelement2_is_rational, METH_NOARGS, quadraticelement2_is_rational_doc},
-    {"norm",        quadraticelement2_norm,        METH_NOARGS, quadraticelement2_norm_doc},
+    {"is_rational",  quadraticelement2_is_rational, METH_NOARGS, quadraticelement2_is_rational_doc},
+    {"as_fraction",  quadraticelement2_as_fraction, METH_NOARGS, quadraticelement2_as_fraction_doc},
+    {"is_integer",   quadraticelement2_is_integer,  METH_NOARGS, quadraticelement2_is_integer_doc},
+    {"norm",         quadraticelement2_norm,        METH_NOARGS, quadraticelement2_norm_doc},
+    {"conjugate",    quadraticelement2_conjugate,   METH_NOARGS, quadraticelement2_conjugate_doc},
+    {"conj",         quadraticelement2_conj,        METH_NOARGS, quadraticelement2_conj_doc},
+    {"_repr_latex_", quadraticelement2_repr_latex,  METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL}
 };
 
@@ -279,7 +433,7 @@ static PyType_Slot quadraticelement2_slots[] = {
     {Py_tp_repr, quadraticelement2_repr},
     {Py_tp_hash, quadraticelement2_hash},
     //Py_tp_call
-    //Py_tp_str
+    {Py_tp_str, quadraticelement2_str},
     //Py_tp_getattro
     //Py_tp_setattro
     //{Py_tp_doc, quadraticelement2_doc},

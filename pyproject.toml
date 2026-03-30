@@ -1,6 +1,6 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "radicalfield"
@@ -39,10 +39,7 @@ Repository = "https://github.com/goessl/radicalfield.git"
 [project.optional-dependencies]
 test = ["pytest"]
 
-[tool.hatch.build.targets.wheel]
-include = ["radicalfield", "LICENSE", "README.md"]
-
-[tool.hatch.build.targets.sdist]
-include = ["radicalfield", "tests",
-  "mkdocs.yml", "docs",
-  "pyproject.toml", "README.md", "LICENSE"]
+[[tool.setuptools.ext-modules]]
+name = "radicalfield._quadraticelement2"
+sources = ["radicalfield/_quadraticelement2module.c"]
+py-limited-api = true
