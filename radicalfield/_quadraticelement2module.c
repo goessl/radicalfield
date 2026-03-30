@@ -331,8 +331,145 @@ quadraticelement2_hash(PyObject* self)
 
 
 
-//__eq__
-//__lt__
+/* Return x*|x| as a new reference. */
+static PyObject*
+_x_abs_x(PyObject *x)
+{
+    PyObject* abs_x = PyNumber_Absolute(x);
+    if(!abs_x) {
+        return NULL;
+    }
+    PyObject* x_abs_x = PyNumber_Multiply(x, abs_x);
+    Py_DECREF(abs_x);
+    return x_abs_x;
+}
+
+/* Return 2*x*|x| as a new reference. */
+static PyObject*
+_two_x_abs_x(PyObject* x)
+{
+    PyObject* x_abs_x = _x_abs_x(x);
+    if(!_x_abs_x) {
+        return NULL;
+    }
+    PyObject* two_x_abs_x = PyNumber_Add(x_abs_x, x_abs_x);
+    Py_DECREF(x_abs_x);
+    return two_x_abs_x;
+}
+
+
+static PyObject*
+_quadraticelement2_eq(PyObject* self, PyObject* other)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    module_state* state = get_module_state_by_type(Py_TYPE(self));
+    
+    if(PyObject_TypeCheck(other, state->QuadraticElement2_Type)) {
+        quadraticelement2object* oqe = quadraticelement2object_CAST(other);
+        int a_eq = PyObject_RichCompareBool(qe->a, oqe->a, Py_EQ);
+        if(a_eq < 0) {
+            return NULL;
+        }
+        if(!a_eq) {
+            Py_RETURN_FALSE;
+        } else {
+            int b_eq = PyObject_RichCompareBool(qe->b, oqe->b, Py_EQ);
+            if(b_eq < 0) {
+                return NULL;
+            }
+            if(!b_eq) {
+                Py_RETURN_FALSE;
+            }
+            Py_RETURN_TRUE;
+        }
+    }
+    
+    if(PyLong_Check(other) || PyObject_TypeCheck(other, state->Fraction_Type) {
+        int a_eq = PyObject_RichCompareBool(qe->a, other, Py_EQ);
+        if(a_eq < 0) {
+            return NULL;
+        }
+        if(!a_eq) {
+            Py_RETURN_FALSE;
+        } else {
+            int b_false = PyObject_Not(qe->b);
+            if(b_false < 0) {
+                return NULL;
+            }
+            if(!b_false) {
+                Py_RETURN_FALSE;
+            }
+            Py_RETURN_TRUE;
+        }
+    }
+    
+    Py_RETURN_NOTIMPLEMENTED;
+}
+
+
+static PyObject*
+_quadraticelement2_lt(PyObject* self, PyObject* other)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    module_state* state = get_module_state_by_type(Py_TYPE(self));
+    
+    if(PyObject_TypeCheck(other, state->QuadraticElement2_Type)) {
+        quadraticelement2object* oqe = quadraticelement2object_CAST(other);
+        PyObject* l = PyNumber_Subtract(qe->b, oqe->b);
+        if(!l) {
+            return NULL;
+        }
+        PyObject* r = PyNumber_Subtract(oqe->a, qe->a);
+        if(!r) {
+            Py_DECREF(l);
+            return NULL;
+        }
+        
+        PyObject* lhs = _two_x_abs_x(l);
+        Py_DECREF(l);
+        if(!lhs) {
+            Py_DECREF(r);
+            return NULL;
+        }
+        PyObject* rhs = _x_abs_x(r);
+        Py_DECREF(r);
+        if(!lhs) {
+            Py_DECREF(lhs);
+            return NULL;
+        }
+        
+        PyObject* r = PyObject_RichCompare(lhs, rhs, Py_LT);
+        Py_DECREF(lhs);
+        Py_DECREF(rhs);
+        return r;
+    
+    if(PyLong_Check(other) || PyObject_TypeCheck(other, state->Fraction_Type) {
+        PyObject* r = PyNumber_Subtract(other, qe->a);
+        if(!r) {
+            return NULL;
+        }
+        
+        PyObject* lhs = _two_x_abs_x(qe->b);
+        if(!lhs) {
+            Py_DECREF(r);
+            return NULL;
+        }
+        PyObject* rhs = _x_abs_x(r);
+        Py_DECREF(r);
+        if(!rhs) {
+            Py_DECREF(lhs);
+            return NULL;
+        }
+        
+        PyObject* r = PyObject_RichCompare(lhs, rhs, Py_LT);
+        Py_DECREF(lhs);
+        Py_DECREF(rhs);
+        return r;
+    }
+    
+    Py_RETURN_NOTIMPLEMENTED;
+}
+
 
 static PyObject* quadraticelement2_pos(PyObject* self);
 static PyObject* quadraticelement2_neg(PyObject* self);
@@ -454,10 +591,148 @@ quadraticelement2_neg(PyObject* self)
     return r;
 }
 
-//__add__
-//__radd__
-//__sub__
-//__rsub__
+
+
+static module_state*
+get_state_from_args(PyObject* left, PyObject* right)
+{
+    PyObject* mod = PyType_GetModuleByDef(Py_TYPE(left), &module);
+    if(mod) {
+        return (module_state*)PyModule_GetState(mod);
+    }
+    PyErr_Clear();
+    
+    mod = PyType_GetModuleByDef(Py_TYPE(right), &module);
+    if(mod) {
+        return (module_state*)PyModule_GetState(mod);
+    }
+    PyErr_Clear();
+    
+    return NULL;
+}
+
+
+static PyObject*
+_quadraticelement2_add(PyObject* left, PyObject* right)
+{
+    quadraticelement2object* L = quadraticelement2object_CAST(left);
+    PyType* type = Py_TYPE(left);
+    module_state* state = get_module_state_by_type(type);
+    
+    if(PyObject_TypeCheck(right, state->QuadraticElement2_Type)) {
+        quadraticelement2object* R = quadraticelement2object_CAST(right);
+        PyObject* ra = PyNumber_Add(L->a, R->a);
+        if(!na) {
+            return NULL;
+        }
+        PyObject* rb = PyNumber_Add(L->b, R->b);
+        if(!rb) {
+            Py_DECREF(ra);
+            return NULL;
+        }
+        PyObject* r = qe2_make(type, ra, rb);
+        Py_DECREF(ra);
+        Py_DECREF(rb);
+        return r;
+    
+    } else if(PyLong_Check(right) || PyObject_TypeCheck(right, state->Fraction_Type)) {
+        PyObject* ra = PyNumber_Add(L->a, right);
+        if(!ra) {
+            return NULL;
+        }
+        PyObject* r = qe2_make(type, ra, L->b);
+        Py_DECREF(ra);
+        return r;
+    }
+    
+    Py_RETURN_NOTIMPLEMENTED;
+}
+
+static PyObject*
+_quadraticelement2_radd(PyObject* left, PyObject* right)
+{
+    quadraticelement2object* R = quadraticelement2object_CAST(right);
+    PyType* type = Py_TYPE(right);
+    module_state* state = get_module_state_by_type(type);
+    
+    if(PyLong_Check(left) || PyObject_TypeCheck(left, state->Fraction_Type)) {
+        PyObject* ra = PyNumber_Add(left, R->a);
+        if(!ra) {
+            return NULL;
+        }
+        PyObject* r = QE2_MAKE(type, ra, R->b);
+        Py_DECREF(ra);
+        return r;
+    }
+    
+    Py_RETURN_NOTIMPLEMENTED;
+}
+
+
+static PyObject*
+_quadraticelement2_sub(PyObject* left, PyObject* right)
+{
+    quadraticelement2object* L = quadraticelement2object_CAST(left);
+    PyType* type = Py_TYPE(left);
+    module_state* state = get_module_state_by_type(type);
+    
+    if(PyObject_TypeCheck(right, state->QuadraticElement2_Type)) {
+        quadraticelement2object* R = quadraticelement2object_CAST(right);
+        PyObject* ra = PyNumber_Subtract(L->a, R->a);
+        if(!na) {
+            return NULL;
+        }
+        PyObject* rb = PyNumber_Subtract(L->b, R->b);
+        if(!rb) {
+            Py_DECREF(ra);
+            return NULL;
+        }
+        PyObject* r = qe2_make(type, ra, rb);
+        Py_DECREF(ra);
+        Py_DECREF(rb);
+        return r;
+    
+    } else if(PyLong_Check(right) || PyObject_TypeCheck(right, state->Fraction_Type)) {
+        PyObject* ra = PyNumber_Subtract(L->a, right);
+        if(!ra) {
+            return NULL;
+        }
+        PyObject* r = qe2_make(type, ra, L->b);
+        Py_DECREF(ra);
+        return r;
+    }
+    
+    Py_RETURN_NOTIMPLEMENTED;
+}
+
+static PyObject*
+_quadraticelement2_rsub(PyObject* left, PyObject* right)
+{
+    quadraticelement2object* R = quadraticelement2object_CAST(right);
+    PyType* type = Py_TYPE(right);
+    module_state* state = get_module_state_by_type(type);
+    
+    if(PyLong_Check(left) || PyObject_TypeCheck(left, state->Fraction_Type)) {
+        PyObject* ra = PyNumber_Subtract(left, R->a);
+        if(!ra) {
+            return NULL;
+        }
+        PyObject* rb = PyNumber_Negative(R->b);
+        if(!rb) {
+            Py_DECREF(ra);
+            return NULL;
+        }
+        PyObject* r = QE2_MAKE(type, ra, rb);
+        Py_DECREF(ra);
+        Py_DECREF(rb);
+        return r;
+    }
+    
+    Py_RETURN_NOTIMPLEMENTED;
+}
+
+
+
 //__mul__
 //__rmul__
 //inv
