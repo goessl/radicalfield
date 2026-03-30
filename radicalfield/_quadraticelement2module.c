@@ -40,7 +40,7 @@ qe2_make(PyTypeObject* type, PyObject* a, PyObject* b)
     }
     qe->a = Py_NewRef(a);
     qe->b = Py_NewRef(b);
-    //PyObject_GC_Track(qe);
+    PyObject_GC_Track(qe);
     return (PyObject*)qe;
 }
 
@@ -134,7 +134,7 @@ quadraticelement2_new(PyTypeObject* subtype, PyObject* args, PyObject* kwds)
     
     qe->a = a;
     qe->b = b;
-    //PyObject_GC_Track(qe);
+    PyObject_GC_Track(qe);
     return (PyObject*)qe;
 }
 
@@ -511,13 +511,15 @@ quadraticelement2_repr_latex(PyObject* self, PyObject* Py_UNUSED(args))
         return NULL;
     }
     
-    PyObject* str_plus = PyUnicode_InternFromString("+");
+    static PyObject* str_plus = NULL;
     if(!str_plus) {
-        Py_DECREF(a_str);
-        return NULL;
+        str_plus = PyUnicode_InternFromString("+");
+        if(!str_plus) {
+            Py_DECREF(a_str);
+            return NULL;
+        }
     }
     PyObject* b_fmt = PyObject_Format(qe->b, str_plus);
-    Py_DECREF(str_plus);
     if(!b_fmt) {
         Py_DECREF(a_str);
         return NULL;
@@ -608,6 +610,7 @@ module_exec(PyObject* mod)
 {
     module_state* state = PyModule_GetState(mod);
     
+    //fractions.Fraction
     PyObject* fractions = PyImport_ImportModule("fractions");
     if(fractions == NULL) {
         return -1;
@@ -618,14 +621,38 @@ module_exec(PyObject* mod)
         return -1;
     }
     
+    //QuadraticElement2
     state->QuadraticElement2_Type = (PyTypeObject*)PyType_FromModuleAndSpec(mod, &quadraticelement2_spec, NULL);
     if(state->QuadraticElement2_Type == NULL) {
         Py_DECREF(state->Fraction_Type);
+        state->Fraction_Type = NULL; //avoid double DECREF in module clear
         return -1;
     }
+    //QuadraticElement2.SQRT2
+    PyObject* sqrt2_obj = PyFloat_FromDouble(sqrt(2.0));
+    if(!sqrt2_obj) {
+        Py_DECREF(state->Fraction_Type);
+        Py_DECREF(state->QuadraticElement2_Type);
+        state->Fraction_Type = NULL;
+        state->QuadraticElement2_Type = NULL;
+        return -1;
+    }
+    int rc = PyDict_SetItemString(state->QuadraticElement2_Type->tp_dict, "SQRT2", sqrt2_obj);
+    Py_DECREF(sqrt2_obj);
+    if(rc < 0) {
+        Py_DECREF(state->Fraction_Type);
+        Py_DECREF(state->QuadraticElement2_Type);
+        state->Fraction_Type = NULL;
+        state->QuadraticElement2_Type = NULL;
+        return -1;
+    }
+    PyType_Modified(state->QuadraticElement2_Type);
+    
     if(PyModule_AddType(mod, state->QuadraticElement2_Type) < 0) {
         Py_DECREF(state->Fraction_Type);
         Py_DECREF(state->QuadraticElement2_Type);
+        state->Fraction_Type = NULL;
+        state->QuadraticElement2_Type = NULL;
         return -1;
     }
     
@@ -634,6 +661,8 @@ module_exec(PyObject* mod)
 
 static struct PyModuleDef_Slot module_slots[] = {
     {Py_mod_exec, module_exec},
+    {Py_mod_multiple_interpreters, Py_MOD_MULTIPLE_INTERPRETERS_NOT_SUPPORTED},
+    {Py_mod_gil, Py_MOD_GIL_NOT_USED},
     {0, NULL}
 };
 
