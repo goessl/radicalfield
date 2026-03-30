@@ -1,5 +1,6 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <math.h> //sqrt
 
 
 
@@ -91,7 +92,7 @@ quadraticelement2_new(PyTypeObject* subtype, PyObject* args, PyObject* kwds)
     PyObject* a = NULL;
     PyObject* b = NULL;
     
-    static const char* kwlist[] = {"a", "b", NULL};
+    static char* kwlist[] = {"a", "b", NULL};
     if(!PyArg_ParseTupleAndKeywords(args, kwds, "|OO:QuadraticElement2", kwlist, &a, &b)) {
         return NULL;
     }
@@ -171,7 +172,16 @@ quadraticelement2_dealloc(PyObject* self)
 
 
 
-//__bool__
+static int
+quadraticelement2_bool(PyObject* self)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    int a_true = PyObject_IsTrue(qe->a);
+    if(a_true) { //true or error
+        return a_true;
+    }
+    return PyObject_IsTrue(qe->b);
+}
 
 PyDoc_STRVAR(quadraticelement2_is_rational_doc,
 "Return whether this element has no sqrt(2) component.");
@@ -239,8 +249,62 @@ quadraticelement2_is_integer(PyObject* self, PyObject* Py_UNUSED(args))
     return PyObject_CallMethodNoArgs(qe->a, name);
 }
 
-//__int__
-//__float__
+static PyObject*
+quadraticelement2_int(PyObject* self)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    
+    int b_false = PyObject_Not(qe->b);
+    if(b_false < 0) {
+        return NULL;
+    }
+    if(!b_false) {
+        PyErr_SetString(PyExc_ValueError, "not an integer");
+        return NULL;
+    }
+    
+    if(PyLong_Check(qe->a)) {
+        return Py_NewRef(qe->a);
+    }
+    
+    static PyObject* name_is_integer = NULL;
+    if(!name_is_integer) {
+        name_is_integer = PyUnicode_InternFromString("is_integer");
+        if(!name_is_integer) {
+            return NULL;
+        }
+    }
+    PyObject* a_is_integer = PyObject_CallMethodNoArgs(qe->a, name_is_integer);
+    if(!a_is_integer) {
+        return NULL;
+    }
+    int ok = PyObject_IsTrue(a_is_integer);
+    Py_DECREF(a_is_integer);
+    if(ok < 0) {
+        return NULL;
+    }
+    if(!ok) {
+        PyErr_SetString(PyExc_ValueError, "not an integer");
+        return NULL;
+    }
+    return PyNumber_Long(qe->a);
+}
+
+static PyObject*
+quadraticelement2_float(PyObject* self)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    double fa = PyFloat_AsDouble(qe->a);
+    if(fa==-1.0 && PyErr_Occurred()) {
+        return NULL;
+    }
+    double fb = PyFloat_AsDouble(qe->b);
+    if(fb==-1.0 && PyErr_Occurred()) {
+        return NULL;
+    }
+    return PyFloat_FromDouble(fa + sqrt(2.0) * fb);
+}
+
 //_sympy_
 
 static Py_hash_t
@@ -265,9 +329,29 @@ quadraticelement2_hash(PyObject* self)
     return h;
 }
 
+
+
 //__eq__
 //__lt__
-//__abs__
+
+static PyObject* quadraticelement2_pos(PyObject* self);
+static PyObject* quadraticelement2_neg(PyObject* self);
+static PyObject*
+quadraticelement2_abs(PyObject* self)
+{
+    PyObject* zero = PyLong_FromLong(0);
+    if(!zero) {
+        return NULL;
+    }
+    int lt = PyObject_RichCompareBool(self, zero, Py_LT);
+    Py_DECREF(zero);
+    if(lt < 0) {
+        return NULL;
+    }
+    return lt ? quadraticelement2_neg(self) : quadraticelement2_pos(self);
+}
+
+
 
 PyDoc_STRVAR(quadraticelement2_norm_doc,
 "Return the algebraic norm.");
@@ -332,8 +416,44 @@ quadraticelement2_conj(PyObject* self, PyObject* Py_UNUSED(args))
     return quadraticelement2_conjugate(self, NULL);
 }
 
-//__pos__
-//__neg__
+static PyObject*
+quadraticelement2_pos(PyObject* self)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    PyObject* pos_a = PyNumber_Positive(qe->a);
+    if(!pos_a){
+        return NULL;
+    }
+    PyObject* pos_b = PyNumber_Positive(qe->b);
+    if(!pos_b) {
+        Py_DECREF(pos_a);
+        return NULL;
+    }
+    PyObject* r = QE2_MAKE(self, pos_a, pos_b);
+    Py_DECREF(pos_a);
+    Py_DECREF(pos_b);
+    return r;
+}
+
+static PyObject*
+quadraticelement2_neg(PyObject* self)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    PyObject* neg_a = PyNumber_Negative(qe->a);
+    if(!neg_a){
+        return NULL;
+    }
+    PyObject* neg_b = PyNumber_Negative(qe->b);
+    if(!neg_b) {
+        Py_DECREF(neg_a);
+        return NULL;
+    }
+    PyObject* r = QE2_MAKE(self, neg_a, neg_b);
+    Py_DECREF(neg_a);
+    Py_DECREF(neg_b);
+    return r;
+}
+
 //__add__
 //__radd__
 //__sub__
@@ -356,7 +476,7 @@ quadraticelement2_str(PyObject* self)
     
     static PyObject* str_plus = NULL;
     if(!str_plus) {
-        str_plus = PyUnicode_InternFromString("is_integer");
+        str_plus = PyUnicode_InternFromString("+");
         if(!str_plus) {
             Py_DECREF(a_str);
             return NULL;
@@ -436,7 +556,7 @@ static PyType_Slot quadraticelement2_slots[] = {
     {Py_tp_str, quadraticelement2_str},
     //Py_tp_getattro
     //Py_tp_setattro
-    //{Py_tp_doc, quadraticelement2_doc},
+    {Py_tp_doc, quadraticelement2_doc},
     {Py_tp_traverse, quadraticelement2_traverse},
     {Py_tp_clear, quadraticelement2_clear},
     //{Py_tp_richcompare, quadraticelement2_richcompare},
@@ -458,7 +578,16 @@ static PyType_Slot quadraticelement2_slots[] = {
     //Py_tp_finalize
     //Py_tp_vectorcall
     
-    //number, ...
+    //{Py_nb_add,         quadraticelement2_add},
+    //{Py_nb_subtract,    quadraticelement2_sub},
+    //{Py_nb_multiply,    quadraticelement2_multiply},
+    {Py_nb_negative,    quadraticelement2_neg},
+    {Py_nb_positive,    quadraticelement2_pos},
+    {Py_nb_absolute,    quadraticelement2_abs},
+    {Py_nb_bool,        quadraticelement2_bool},
+    {Py_nb_int,         quadraticelement2_int},
+    {Py_nb_float,       quadraticelement2_float},
+    //{Py_nb_true_divide, quadraticelement2_true_divide},
     
     {0, 0} /* sentinel */
 };
