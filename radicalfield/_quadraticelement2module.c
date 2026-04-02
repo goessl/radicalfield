@@ -1005,10 +1005,197 @@ _quadraticelement2_rmul(PyObject* left, PyObject* right)
 }
 
 
+static PyObject*
+quadraticelement2_inv(PyObject* self, PyObject* Py_UNUSED(args))
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    module_state* state = get_module_state_by_type(Py_TYPE(self));
+    
+    PyObject* norm = quadraticelement2_norm(self, NULL);
+    if(!norm) {
+        return NULL;
+    }
+    PyObject* n = PyObject_CallOneArg((PyObject*)state->Fraction_Type, norm);
+    Py_DECREF(norm);
+    if(!n) {
+        return NULL;
+    }
+    
+    /* n == 0 → ZeroDivisionError */
+    PyObject* zero = PyLong_FromLong(0);
+    if(!zero) {
+        Py_DECREF(n);
+        return NULL;
+    }
+    int is_zero = PyObject_RichCompareBool(n, zero, Py_EQ);
+    Py_DECREF(zero);
+    if(is_zero < 0) {
+        Py_DECREF(n);
+        return NULL;
+    }
+    if(is_zero) {
+        Py_DECREF(n);
+        PyErr_SetString(PyExc_ZeroDivisionError,
+                        "division by zero in \xf0\x9d\x95\x82(\xe2\x88\x9a" "2)");
+        return NULL;
+    }
+    
+    /* n == +1 → conjugate: QE2(a, -b) */
+    PyObject* one = PyLong_FromLong(1);
+    if(!one) {
+        Py_DECREF(n);
+        return NULL;
+    }
+    int is_one = PyObject_RichCompareBool(n, one, Py_EQ);
+    Py_DECREF(one);
+    if(is_one < 0) {
+        Py_DECREF(n);
+        return NULL;
+    }
+    if(is_one) {
+        Py_DECREF(n);
+        PyObject* neg_b = PyNumber_Negative(qe->b);
+        if(!neg_b) {
+            return NULL;
+        }
+        PyObject* r = QE2_MAKE(self, qe->a, neg_b);
+        Py_DECREF(neg_b);
+        return r;
+    }
+    
+    /* n == -1 → QE2(-a, b) */
+    PyObject* neg_one = PyLong_FromLong(-1);
+    if(!neg_one) {
+        Py_DECREF(n);
+        return NULL;
+    }
+    int is_neg_one = PyObject_RichCompareBool(n, neg_one, Py_EQ);
+    Py_DECREF(neg_one);
+    if(is_neg_one < 0) {
+        Py_DECREF(n);
+        return NULL;
+    }
+    if(is_neg_one) {
+        Py_DECREF(n);
+        PyObject* neg_a = PyNumber_Negative(qe->a);
+        if(!neg_a) {
+            return NULL;
+        }
+        PyObject* res = QE2_MAKE(self, neg_a, qe->b);
+        Py_DECREF(neg_a);
+        return res;
+    }
+    
+    /* General: QE2(a/n, -b/n) — result is rational */
+    PyObject* ra = PyNumber_TrueDivide(qe->a, n);
+    if(!ra) {
+        Py_DECREF(n);
+        return NULL;
+    }
+    PyObject* neg_b = PyNumber_Negative(qe->b);
+    if(!neg_b) {
+        Py_DECREF(n);
+        Py_DECREF(ra);
+        return NULL;
+    }
+    PyObject* rb = PyNumber_TrueDivide(neg_b, n);
+    Py_DECREF(neg_b);
+    Py_DECREF(n);
+    if(!rb) {
+        Py_DECREF(ra);
+        return NULL;
+    }
+    PyObject* r = QE2_MAKE(self, ra, rb);
+    Py_DECREF(ra);
+    Py_DECREF(rb);
+    return r;
+}
 
-//inv
-//__truediv__
-//__rtruediv__
+
+static PyObject*
+_quadraticelement2_truediv(PyObject* self, PyObject* other);
+static PyObject*
+_quadraticelement2_rtruediv(PyObject* self, PyObject* other);
+static PyObject*
+quadraticelement2_truediv(PyObject* left, PyObject* right)
+{
+    PyObject* mod = PyType_GetModuleByDef(Py_TYPE(left), &module);
+    if(mod) { //left is QuadraticElement2
+        return _quadraticelement2_truediv(left, right);
+    }
+    PyErr_Clear();
+    
+    mod = PyType_GetModuleByDef(Py_TYPE(right), &module);
+    if(mod) { //right is QuadraticElement2
+        return _quadraticelement2_rtruediv(left, right);
+    }
+    PyErr_Clear();
+    
+    Py_RETURN_NOTIMPLEMENTED;
+}
+
+static PyObject*
+_quadraticelement2_truediv(PyObject* self, PyObject* other)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    PyTypeObject* type = Py_TYPE(self);
+    module_state* state = get_module_state_by_type(type);
+    
+    if(PyObject_TypeCheck(other, state->QuadraticElement2_Type)) {
+        PyObject* oinv = quadraticelement2_inv(other, NULL);
+        if(!oinv) {
+            return NULL;
+        }
+        PyObject* r = PyNumber_Multiply((PyObject*)qe, oinv);
+        Py_DECREF(oinv);
+        return r;
+    }
+    
+    if(PyLong_Check(other) || PyObject_TypeCheck(other, state->Fraction_Type)) {
+        PyObject* ofrac = PyObject_CallOneArg((PyObject*)state->Fraction_Type, other);
+        if(!ofrac) {
+            return NULL;
+        }
+        PyObject* ra = PyNumber_TrueDivide(qe->a, ofrac);
+        if(!ra) {
+            Py_DECREF(ofrac);
+            return NULL;
+        }
+        PyObject* rb = PyNumber_TrueDivide(qe->b, ofrac);
+        Py_DECREF(ofrac);
+        if(!rb) {
+            Py_DECREF(ra);
+            return NULL;
+        }
+        PyObject* r = qe2_make(type, ra, rb);
+        Py_DECREF(ra);
+        Py_DECREF(rb);
+        return r;
+    }
+    
+    Py_RETURN_NOTIMPLEMENTED;
+}
+
+static PyObject*
+_quadraticelement2_rtruediv(PyObject* self, PyObject* other)
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    PyTypeObject* type = Py_TYPE(self);
+    module_state* state = get_module_state_by_type(type);
+    
+    if(PyLong_Check(other) || PyObject_TypeCheck(other, state->Fraction_Type)) {
+        PyObject* inv = quadraticelement2_inv(self, NULL);
+        if(!inv) {
+            return NULL;
+        }
+        PyObject* r = PyNumber_Multiply(self, inv);
+        Py_DECREF(inv);
+        return r;
+    }
+    
+    Py_RETURN_NOTIMPLEMENTED;
+}
+
 
 static PyObject*
 quadraticelement2_str(PyObject* self)
@@ -1090,6 +1277,7 @@ static PyMethodDef quadraticelement2_methods[] = {
     {"norm",         quadraticelement2_norm,        METH_NOARGS, quadraticelement2_norm_doc},
     {"conjugate",    quadraticelement2_conjugate,   METH_NOARGS, quadraticelement2_conjugate_doc},
     {"conj",         quadraticelement2_conj,        METH_NOARGS, quadraticelement2_conj_doc},
+    {"inv",          quadraticelement2_inv,         METH_NOARGS, NULL},
     {"_repr_latex_", quadraticelement2_repr_latex,  METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL}
 };
@@ -1135,7 +1323,7 @@ static PyType_Slot quadraticelement2_slots[] = {
     {Py_nb_bool,        quadraticelement2_bool},
     {Py_nb_int,         quadraticelement2_int},
     {Py_nb_float,       quadraticelement2_float},
-    //{Py_nb_true_divide, quadraticelement2_true_divide},
+    {Py_nb_true_divide, quadraticelement2_truediv},
     
     {0, 0} /* sentinel */
 };
