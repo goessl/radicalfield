@@ -351,7 +351,7 @@ static PyObject*
 _two_x_abs_x(PyObject* x)
 {
     PyObject* x_abs_x = _x_abs_x(x);
-    if(!_x_abs_x) {
+    if(!x_abs_x) {
         return NULL;
     }
     PyObject* two_x_abs_x = PyNumber_Add(x_abs_x, x_abs_x);
@@ -546,7 +546,7 @@ _quadraticelement2_lt(PyObject* self, PyObject* other)
         }
         PyObject* rhs = _x_abs_x(r);
         Py_DECREF(r);
-        if(!lhs) {
+        if(!rhs) {
             Py_DECREF(lhs);
             return NULL;
         }
@@ -782,7 +782,7 @@ _quadraticelement2_radd(PyObject* left, PyObject* right)
         if(!ra) {
             return NULL;
         }
-        PyObject* r = QE2_MAKE(type, ra, R->b);
+        PyObject* r = qe2_make(type, ra, R->b);
         Py_DECREF(ra);
         return r;
     }
@@ -868,7 +868,7 @@ _quadraticelement2_rsub(PyObject* left, PyObject* right)
             Py_DECREF(ra);
             return NULL;
         }
-        PyObject* r = QE2_MAKE(type, ra, rb);
+        PyObject* r = qe2_make(type, ra, rb);
         Py_DECREF(ra);
         Py_DECREF(rb);
         return r;
@@ -964,7 +964,7 @@ _quadraticelement2_mul(PyObject* left, PyObject* right)
         if(!ra) {
             return NULL;
         }
-        PyObject* rb = PyNumber_Add(L->b, right);
+        PyObject* rb = PyNumber_Multiply(L->b, right);
         if(!rb) {
             Py_DECREF(ra);
             return NULL;
@@ -995,7 +995,7 @@ _quadraticelement2_rmul(PyObject* left, PyObject* right)
             Py_DECREF(ra);
             return NULL;
         }
-        PyObject* r = QE2_MAKE(type, ra, rb);
+        PyObject* r = qe2_make(type, ra, rb);
         Py_DECREF(ra);
         Py_DECREF(rb);
         return r;
@@ -1127,7 +1127,7 @@ quadraticelement2_truediv(PyObject* left, PyObject* right)
     
     mod = PyType_GetModuleByDef(Py_TYPE(right), &module);
     if(mod) { //right is QuadraticElement2
-        return _quadraticelement2_rtruediv(left, right);
+        return _quadraticelement2_rtruediv(right, left);
     }
     PyErr_Clear();
     
@@ -1188,7 +1188,7 @@ _quadraticelement2_rtruediv(PyObject* self, PyObject* other)
         if(!inv) {
             return NULL;
         }
-        PyObject* r = PyNumber_Multiply(self, inv);
+        PyObject* r = PyNumber_Multiply(other, inv);
         Py_DECREF(inv);
         return r;
     }
