@@ -7,6 +7,7 @@
 typedef struct {
     PyTypeObject* QuadraticElement2_Type;
     PyTypeObject* Fraction_Type;
+    PyObject*     sympy;
 } module_state;
 
 static module_state*
@@ -172,6 +173,303 @@ quadraticelement2_dealloc(PyObject* self)
 
 
 
+
+static PyObject*
+sympy_rat_to_coeff(PyObject* r, module_state* state)
+{
+    PyObject* Integer_Type = PyObject_GetAttrString(state->sympy, "Integer");
+    if(!Integer_Type) {
+        return NULL;
+    }
+    int is_int = PyObject_TypeCheck(r, (PyTypeObject*)Integer_Type);
+    Py_DECREF(Integer_Type);
+    if(is_int) {
+        return PyNumber_Long(r);
+    }
+    /* r is a non-integer sympy.Rational — extract .p and .q */
+    static PyObject* p_name = NULL;
+    static PyObject* q_name = NULL;
+    if(!p_name) {
+        p_name = PyUnicode_InternFromString("p");
+        if(!p_name) {
+            return NULL;
+        }
+    }
+    if(!q_name) {
+        q_name = PyUnicode_InternFromString("q");
+        if(!q_name) {
+            return NULL;
+        }
+    }
+    
+    PyObject* p_obj = PyObject_GetAttr(r, p_name);
+    if(!p_obj) {
+        return NULL;
+    }
+    PyObject* p_int = PyNumber_Long(p_obj);
+    Py_DECREF(p_obj);
+    if(!p_int) {
+        return NULL;
+    }
+    
+    PyObject* q_obj = PyObject_GetAttr(r, q_name);
+    if(!q_obj) {
+        Py_DECREF(p_int);
+        return NULL;
+    }
+    PyObject* q_int = PyNumber_Long(q_obj);
+    Py_DECREF(q_obj);
+    if(!q_int) {
+        Py_DECREF(p_int);
+        return NULL;
+    }
+    
+    PyObject* frac = PyObject_CallFunctionObjArgs(
+            (PyObject*)state->Fraction_Type, p_int, q_int, NULL);
+    Py_DECREF(p_int);
+    Py_DECREF(q_int);
+    return frac;
+}
+
+/* from_expr(cls, e) – classmethod factory from a sympy.Expr.
+   Mirrors the @staticmethod from_expr in the pure-Python implementation,
+   but uses METH_CLASS so we can construct via the correct type. */
+static PyObject*
+quadraticelement2_from_expr(PyObject* cls, PyObject* e)
+{
+    PyTypeObject* type = (PyTypeObject*)cls;
+    module_state* state = get_module_state_by_type(type);
+    
+    PyObject* sp = state->sympy;
+    
+    //if not isinstance(e, sp.Expr):
+    //    raise TypeError('e must be a sympy.Expr')
+    PyObject* Expr_Type = PyObject_GetAttrString(sp, "Expr");
+    if(!Expr_Type) {
+        return NULL;
+    }
+    int is_expr = PyObject_TypeCheck(e, (PyTypeObject*)Expr_Type);
+    Py_DECREF(Expr_Type);
+    if(!is_expr) {
+        PyErr_SetString(PyExc_TypeError, "e must be a sympy.Expr");
+        return NULL;
+    }
+    
+    //SPSQRT2 = sp.sqrt(2)
+    PyObject* sqrt_fn = PyObject_GetAttrString(sp, "sqrt");
+    if(!sqrt_fn) {
+        return NULL;
+    }
+    PyObject* two = PyLong_FromLong(2);
+    if(!two) {
+        Py_DECREF(sqrt_fn);
+        return NULL;
+    }
+    PyObject* SPSQRT2 = PyObject_CallOneArg(sqrt_fn, two);
+    Py_DECREF(sqrt_fn);
+    Py_DECREF(two);
+    if(!SPSQRT2) {
+        return NULL;
+    }
+    
+    //e = sp.nsimplify(e, [SPSQRT2])
+    PyObject* sqrt2_list = PyList_New(1);
+    if(!sqrt2_list) {
+        Py_DECREF(SPSQRT2);
+        return NULL;
+    }
+    PyList_SET_ITEM(sqrt2_list, 0, Py_NewRef(SPSQRT2));
+    PyObject* nsimplify_fn = PyObject_GetAttrString(sp, "nsimplify");
+    if(!nsimplify_fn) {
+        Py_DECREF(sqrt2_list);
+        Py_DECREF(SPSQRT2);
+        return NULL;
+    }
+    e = PyObject_CallFunctionObjArgs(nsimplify_fn, e, sqrt2_list, NULL);
+    Py_DECREF(nsimplify_fn);
+    Py_DECREF(sqrt2_list);
+    if(!e) {
+        Py_DECREF(SPSQRT2);
+        return NULL;
+    }
+    
+    //a = sp.simplify(e.subs(SPSQRT2, 0))
+    PyObject* simplify_fn = PyObject_GetAttrString(sp, "simplify");
+    if(!simplify_fn) {
+        Py_DECREF(e);
+        Py_DECREF(SPSQRT2);
+        return NULL;
+    }
+    PyObject* zero = PyLong_FromLong(0);
+    if(!zero) {
+        Py_DECREF(simplify_fn);
+        Py_DECREF(e);
+        Py_DECREF(SPSQRT2);
+        return NULL;
+    }
+    static PyObject* subs_name = NULL;
+    if(!subs_name) {
+        subs_name = PyUnicode_InternFromString("subs");
+        if(!subs_name) {
+            Py_DECREF(zero);
+            Py_DECREF(simplify_fn);
+            Py_DECREF(e);
+            Py_DECREF(SPSQRT2);
+            return NULL;
+        }
+    }
+    PyObject* a_raw = PyObject_CallMethodObjArgs(e, subs_name, SPSQRT2, zero, NULL);
+    Py_DECREF(zero);
+    if(!a_raw) {
+        Py_DECREF(simplify_fn);
+        Py_DECREF(e);
+        Py_DECREF(SPSQRT2);
+        return NULL;
+    }
+    PyObject* a = PyObject_CallOneArg(simplify_fn, a_raw);
+    Py_DECREF(a_raw);
+    if(!a) {
+        Py_DECREF(simplify_fn);
+        Py_DECREF(e);
+        Py_DECREF(SPSQRT2);
+        return NULL;
+    }
+    
+    //b = sp.simplify((e - a) / SPSQRT2)
+    PyObject* e_minus_a = PyNumber_Subtract(e, a);
+    if(!e_minus_a) {
+        Py_DECREF(a);
+        Py_DECREF(simplify_fn);
+        Py_DECREF(e);
+        Py_DECREF(SPSQRT2);
+        return NULL;
+    }
+    PyObject* b_raw = PyNumber_TrueDivide(e_minus_a, SPSQRT2);
+    Py_DECREF(e_minus_a);
+    if(!b_raw) {
+        Py_DECREF(a);
+        Py_DECREF(simplify_fn);
+        Py_DECREF(e);
+        Py_DECREF(SPSQRT2);
+        return NULL;
+    }
+    PyObject* b = PyObject_CallOneArg(simplify_fn, b_raw);
+    Py_DECREF(b_raw);
+    if(!b) {
+        Py_DECREF(a);
+        Py_DECREF(simplify_fn);
+        Py_DECREF(e);
+        Py_DECREF(SPSQRT2);
+        return NULL;
+    }
+    
+    //if sp.simplify(a + b*SPSQRT2 - e) != 0:
+    //    raise ValueError('expression not exactly representable in 𝕂(√2)')
+    PyObject* b_sqrt2 = PyNumber_Multiply(b, SPSQRT2);
+    Py_DECREF(SPSQRT2);
+    if(!b_sqrt2) {
+        Py_DECREF(b);
+        Py_DECREF(a);
+        Py_DECREF(simplify_fn);
+        Py_DECREF(e);
+        return NULL;
+    }
+    PyObject* recon = PyNumber_Add(a, b_sqrt2);
+    Py_DECREF(b_sqrt2);
+    if(!recon) {
+        Py_DECREF(b);
+        Py_DECREF(a);
+        Py_DECREF(simplify_fn);
+        Py_DECREF(e);
+        return NULL;
+    }
+    PyObject* diff = PyNumber_Subtract(recon, e);
+    Py_DECREF(recon);
+    if(!diff) {
+        Py_DECREF(b);
+        Py_DECREF(a);
+        Py_DECREF(simplify_fn);
+        Py_DECREF(e);
+        return NULL;
+    }
+    PyObject* diff_s = PyObject_CallOneArg(simplify_fn, diff);
+    Py_DECREF(simplify_fn);
+    Py_DECREF(diff);
+    if(!diff_s) {
+        Py_DECREF(b);
+        Py_DECREF(a);
+        Py_DECREF(e);
+        return NULL;
+    }
+    PyObject* zero2 = PyLong_FromLong(0);
+    if(!zero2) {
+        Py_DECREF(diff_s);
+        Py_DECREF(b);
+        Py_DECREF(a);
+        Py_DECREF(e);
+        return NULL;
+    }
+    int diff_is_zero = PyObject_RichCompareBool(diff_s, zero2, Py_EQ);
+    Py_DECREF(zero2);
+    Py_DECREF(diff_s);
+    if(diff_is_zero < 0) {
+        Py_DECREF(b);
+        Py_DECREF(a);
+        Py_DECREF(e);
+        return NULL;
+    }
+    if(!diff_is_zero) {
+        Py_DECREF(b);
+        Py_DECREF(a);
+        Py_DECREF(e);
+        PyErr_SetString(PyExc_ValueError,
+                        "expression not exactly representable in "
+                        "\xf0\x9d\x95\x82(\xe2\x88\x9a" "2)");
+        return NULL;
+    }
+    
+    //if not (isinstance(a, sp.Rational) and isinstance(b, sp.Rational)):
+    //    raise ValueError(f'not in 𝕂(√2): {e} (a={a}, b={b})')
+    PyObject* Rational_Type = PyObject_GetAttrString(sp, "Rational");
+    if(!Rational_Type) {
+        Py_DECREF(b);
+        Py_DECREF(a);
+        Py_DECREF(e);
+        return NULL;
+    }
+    int a_rat = PyObject_TypeCheck(a, (PyTypeObject*)Rational_Type);
+    int b_rat = PyObject_TypeCheck(b, (PyTypeObject*)Rational_Type);
+    Py_DECREF(Rational_Type);
+    if(!a_rat || !b_rat) {
+        PyErr_Format(PyExc_ValueError,
+                     "not in \xf0\x9d\x95\x82(\xe2\x88\x9a" "2): %S (a=%S, b=%S)", e, a, b);
+        Py_DECREF(b); Py_DECREF(a); Py_DECREF(e);
+        return NULL;
+    }
+    Py_DECREF(e);
+    
+    //def rat_to_int_or_frac(r): ...
+    //    return QuadraticElement2(rat_to_int_or_frac(a), rat_to_int_or_frac(b))
+    PyObject* a_coeff = sympy_rat_to_coeff(a, state);
+    Py_DECREF(a);
+    if(!a_coeff) {
+        Py_DECREF(b);
+        return NULL;
+    }
+    PyObject* b_coeff = sympy_rat_to_coeff(b, state);
+    Py_DECREF(b);
+    if(!b_coeff) {
+        Py_DECREF(a_coeff);
+        return NULL;
+    }
+    PyObject* result = qe2_make(type, a_coeff, b_coeff);
+    Py_DECREF(a_coeff);
+    Py_DECREF(b_coeff);
+    return result;
+}
+
+
+
 //conversion
 static int
 quadraticelement2_bool(PyObject* self)
@@ -306,7 +604,42 @@ quadraticelement2_float(PyObject* self)
     return PyFloat_FromDouble(fa + sqrt(2.0) * fb);
 }
 
-//_sympy_
+static PyObject*
+quadraticelement2_sympy(PyObject* self, PyObject* Py_UNUSED(args))
+{
+    quadraticelement2object* qe = quadraticelement2object_CAST(self);
+    module_state* state = get_module_state_by_type(Py_TYPE(self));
+    
+    //sp.sqrt(2)
+    PyObject* sqrt_fn = PyObject_GetAttrString(state->sympy, "sqrt");
+    if(!sqrt_fn) {
+        return NULL;
+    }
+    PyObject* two = PyLong_FromLong(2);
+    if(!two) {
+        Py_DECREF(sqrt_fn);
+        return NULL;
+    }
+    PyObject* sqrt2 = PyObject_CallOneArg(sqrt_fn, two);
+    Py_DECREF(sqrt_fn);
+    Py_DECREF(two);
+    if(!sqrt2) {
+        return NULL;
+    }
+    
+    //sqrt(2) * b
+    PyObject* sqrt2_b = PyNumber_Multiply(sqrt2, qe->b);
+    Py_DECREF(sqrt2);
+    if(!sqrt2_b) {
+        return NULL;
+    }
+    
+    //a + sqrt(2) * b
+    PyObject* result = PyNumber_Add(qe->a, sqrt2_b);
+    Py_DECREF(sqrt2_b);
+    return result;
+}
+
 
 static Py_hash_t
 quadraticelement2_hash(PyObject* self)
@@ -1271,14 +1604,16 @@ static PyMemberDef quadraticelement2_members[] = {
 };
 
 static PyMethodDef quadraticelement2_methods[] = {
-    {"is_rational",  quadraticelement2_is_rational, METH_NOARGS, quadraticelement2_is_rational_doc},
-    {"as_fraction",  quadraticelement2_as_fraction, METH_NOARGS, quadraticelement2_as_fraction_doc},
-    {"is_integer",   quadraticelement2_is_integer,  METH_NOARGS, quadraticelement2_is_integer_doc},
-    {"norm",         quadraticelement2_norm,        METH_NOARGS, quadraticelement2_norm_doc},
-    {"conjugate",    quadraticelement2_conjugate,   METH_NOARGS, quadraticelement2_conjugate_doc},
-    {"conj",         quadraticelement2_conj,        METH_NOARGS, quadraticelement2_conj_doc},
-    {"inv",          quadraticelement2_inv,         METH_NOARGS, NULL},
-    {"_repr_latex_", quadraticelement2_repr_latex,  METH_NOARGS, NULL},
+    {"from_expr",    quadraticelement2_from_expr,   METH_CLASS | METH_O,   NULL},
+    {"is_rational",  quadraticelement2_is_rational, METH_NOARGS,           quadraticelement2_is_rational_doc},
+    {"as_fraction",  quadraticelement2_as_fraction, METH_NOARGS,           quadraticelement2_as_fraction_doc},
+    {"is_integer",   quadraticelement2_is_integer,  METH_NOARGS,           quadraticelement2_is_integer_doc},
+    {"_sympy_",      quadraticelement2_sympy,       METH_NOARGS,           NULL},
+    {"norm",         quadraticelement2_norm,        METH_NOARGS,           quadraticelement2_norm_doc},
+    {"conjugate",    quadraticelement2_conjugate,   METH_NOARGS,           quadraticelement2_conjugate_doc},
+    {"conj",         quadraticelement2_conj,        METH_NOARGS,           quadraticelement2_conj_doc},
+    {"inv",          quadraticelement2_inv,         METH_NOARGS,           NULL},
+    {"_repr_latex_", quadraticelement2_repr_latex,  METH_NOARGS,           NULL},
     {NULL, NULL, 0, NULL}
 };
 
@@ -1390,6 +1725,16 @@ module_exec(PyObject* mod)
         return -1;
     }
     
+    //sympy
+    state->sympy = PyImport_ImportModule("sympy");
+    if(!state->sympy) {
+        Py_DECREF(state->Fraction_Type);
+        Py_DECREF(state->QuadraticElement2_Type);
+        state->Fraction_Type = NULL;
+        state->QuadraticElement2_Type = NULL;
+        return -1;
+    }
+    
     return 0;
 }
 
@@ -1406,6 +1751,7 @@ module_traverse(PyObject* mod, visitproc visit, void* arg)
     module_state* state = PyModule_GetState(mod);
     Py_VISIT(state->Fraction_Type);
     Py_VISIT(state->QuadraticElement2_Type);
+    Py_VISIT(state->sympy);
     return 0;
 }
 
@@ -1415,6 +1761,7 @@ module_clear(PyObject* mod)
     module_state* state = PyModule_GetState(mod);
     Py_CLEAR(state->Fraction_Type);
     Py_CLEAR(state->QuadraticElement2_Type);
+    Py_CLEAR(state->sympy);
     return 0;
 }
 
