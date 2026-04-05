@@ -483,7 +483,17 @@ quadraticelement2_bool(PyObject* self)
 }
 
 PyDoc_STRVAR(quadraticelement2_is_rational_doc,
-"Return whether this element has no sqrt(2) component.");
+"Return whether this element has no $\\sqrt{2}$ component.\n\
+\n\
+Notes\n\
+-----\n\
+Not a property to be consistent with `fractions.Fraction`.\n\
+\n\
+Returns\n\
+-------\n\
+bool\n\
+    Whether this element has no $\\sqrt{2}$ component.\n\
+");
 
 static PyObject*
 quadraticelement2_is_rational(PyObject* self, PyObject* Py_UNUSED(args))
@@ -500,7 +510,18 @@ quadraticelement2_is_rational(PyObject* self, PyObject* Py_UNUSED(args))
 }
 
 PyDoc_STRVAR(quadraticelement2_as_fraction_doc,
-"Return this element as a fraction.");
+"Return this element as a fraction.\n\
+\n\
+Returns\n\
+-------\n\
+Fraction\n\
+    This element as a fraction.\n\
+\n\
+Raises\n\
+------\n\
+ValueError\n\
+    If this element is not a fraction.\n\
+");
 
 static PyObject*
 quadraticelement2_as_fraction(PyObject* self, PyObject* Py_UNUSED(args))
@@ -520,7 +541,17 @@ quadraticelement2_as_fraction(PyObject* self, PyObject* Py_UNUSED(args))
 }
 
 PyDoc_STRVAR(quadraticelement2_is_integer_doc,
-"Return whether this element is an integer.");
+"Return whether this element is an integer.\n\
+\n\
+Notes\n\
+-----\n\
+Not a property to be consistent with `fractions.Fraction`.\n\
+\n\
+Returns\n\
+-------\n\
+bool\n\
+    Whether this element is an integer.\n\
+");
 
 static PyObject*
 quadraticelement2_is_integer(PyObject* self, PyObject* Py_UNUSED(args))
@@ -692,7 +723,6 @@ _two_x_abs_x(PyObject* x)
     return two_x_abs_x;
 }
 
-
 static PyObject*
 quadraticelement2_richcompare(PyObject* self, PyObject* other, int op)
 {
@@ -805,119 +835,6 @@ quadraticelement2_richcompare(PyObject* self, PyObject* other, int op)
     return PyBool_FromLong(result);
 }
 
-static PyObject*
-_quadraticelement2_eq(PyObject* self, PyObject* other)
-{
-    quadraticelement2object* qe = quadraticelement2object_CAST(self);
-    module_state* state = get_module_state_by_type(Py_TYPE(self));
-    
-    if(PyObject_TypeCheck(other, state->QuadraticElement2_Type)) {
-        quadraticelement2object* oqe = quadraticelement2object_CAST(other);
-        int a_eq = PyObject_RichCompareBool(qe->a, oqe->a, Py_EQ);
-        if(a_eq < 0) {
-            return NULL;
-        }
-        if(!a_eq) {
-            Py_RETURN_FALSE;
-        } else {
-            int b_eq = PyObject_RichCompareBool(qe->b, oqe->b, Py_EQ);
-            if(b_eq < 0) {
-                return NULL;
-            }
-            if(!b_eq) {
-                Py_RETURN_FALSE;
-            }
-            Py_RETURN_TRUE;
-        }
-    }
-    
-    if(PyLong_Check(other) || PyObject_TypeCheck(other, state->Fraction_Type)) {
-        int a_eq = PyObject_RichCompareBool(qe->a, other, Py_EQ);
-        if(a_eq < 0) {
-            return NULL;
-        }
-        if(!a_eq) {
-            Py_RETURN_FALSE;
-        } else {
-            int b_false = PyObject_Not(qe->b);
-            if(b_false < 0) {
-                return NULL;
-            }
-            if(!b_false) {
-                Py_RETURN_FALSE;
-            }
-            Py_RETURN_TRUE;
-        }
-    }
-    
-    Py_RETURN_NOTIMPLEMENTED;
-}
-
-static PyObject*
-_quadraticelement2_lt(PyObject* self, PyObject* other)
-{
-    quadraticelement2object* qe = quadraticelement2object_CAST(self);
-    module_state* state = get_module_state_by_type(Py_TYPE(self));
-    
-    if(PyObject_TypeCheck(other, state->QuadraticElement2_Type)) {
-        quadraticelement2object* oqe = quadraticelement2object_CAST(other);
-        PyObject* l = PyNumber_Subtract(qe->b, oqe->b);
-        if(!l) {
-            return NULL;
-        }
-        PyObject* r = PyNumber_Subtract(oqe->a, qe->a);
-        if(!r) {
-            Py_DECREF(l);
-            return NULL;
-        }
-        
-        PyObject* lhs = _two_x_abs_x(l);
-        Py_DECREF(l);
-        if(!lhs) {
-            Py_DECREF(r);
-            return NULL;
-        }
-        PyObject* rhs = _x_abs_x(r);
-        Py_DECREF(r);
-        if(!rhs) {
-            Py_DECREF(lhs);
-            return NULL;
-        }
-        
-        PyObject* result = PyObject_RichCompare(lhs, rhs, Py_LT);
-        Py_DECREF(lhs);
-        Py_DECREF(rhs);
-        return result;
-    }
-    
-    if(PyLong_Check(other) || PyObject_TypeCheck(other, state->Fraction_Type)) {
-        PyObject* r = PyNumber_Subtract(other, qe->a);
-        if(!r) {
-            return NULL;
-        }
-        
-        PyObject* lhs = _two_x_abs_x(qe->b);
-        if(!lhs) {
-            Py_DECREF(r);
-            return NULL;
-        }
-        PyObject* rhs = _x_abs_x(r);
-        Py_DECREF(r);
-        if(!rhs) {
-            Py_DECREF(lhs);
-            return NULL;
-        }
-        
-        PyObject* result = PyObject_RichCompare(lhs, rhs, Py_LT);
-        Py_DECREF(lhs);
-        Py_DECREF(rhs);
-        return result;
-    }
-    
-    Py_RETURN_NOTIMPLEMENTED;
-}
-
-
 
 //arithmetic
 static PyObject* quadraticelement2_pos(PyObject* self);
@@ -940,7 +857,23 @@ quadraticelement2_abs(PyObject* self)
 
 
 PyDoc_STRVAR(quadraticelement2_norm_doc,
-"Return the algebraic norm.");
+"Return the algebraic norm.\n\
+\n\
+$$\n\
+    N\left(a+b\sqrt{2}\right)\n\
+    = \left(\overline{a+b\sqrt{2}}\right)\left(a+b\sqrt{2}\right)\n\
+    = a^2-2b^2\n\
+$$\n\
+\n\
+Returns\n\
+-------\n\
+int or Fraction\n\
+    The algebraic norm.\n\
+\n\
+References\n\
+----------\n\
+[Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)\n\
+");
 
 static PyObject*
 quadraticelement2_norm(PyObject* self, PyObject* Py_UNUSED(args))
@@ -977,7 +910,21 @@ quadraticelement2_norm(PyObject* self, PyObject* Py_UNUSED(args))
 
 
 PyDoc_STRVAR(quadraticelement2_conjugate_doc,
-"Return the algebraic conjugate.");
+"Return the algebraic conjugation.\n\
+\n\
+$$\n\
+    \overline{a+b\sqrt{2}} = a-b\sqrt{2}\n\
+$$\n\
+\n\
+Returns\n\
+-------\n\
+QuadraticElement2\n\
+    The algebraic conjugation.\n\
+\n\
+References\n\
+----------\n\
+[Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)\n\
+");
 
 static PyObject*
 quadraticelement2_conjugate(PyObject* self, PyObject* Py_UNUSED(args))
@@ -994,7 +941,12 @@ quadraticelement2_conjugate(PyObject* self, PyObject* Py_UNUSED(args))
 }
 
 PyDoc_STRVAR(quadraticelement2_conj_doc,
-"Return the algebraic conjugate.");
+"Return the algebraic conjugate.\n\
+\n\
+See also\n\
+--------\n\
+Alias for [`conjugate`][radicalfield.quadraticelement2.QuadraticElement2.conjugate].\n\
+");
 
 static PyObject*
 quadraticelement2_conj(PyObject* self, PyObject* Py_UNUSED(args))
@@ -1211,7 +1163,6 @@ _quadraticelement2_rsub(PyObject* left, PyObject* right)
 }
 
 
-
 static PyObject*
 _quadraticelement2_mul(PyObject* left, PyObject* right);
 static PyObject*
@@ -1337,6 +1288,33 @@ _quadraticelement2_rmul(PyObject* left, PyObject* right)
     Py_RETURN_NOTIMPLEMENTED;
 }
 
+
+PyDoc_STRVAR(quadraticelement2_inv_doc,
+"Return the multiplicative inverse in $\\mathbb{K}\\left(\\sqrt{2}\\right)$.\n\
+\n\
+$$\n\
+    \\frac{1}{a+b\\sqrt{2}}\n\
+    = \\frac{a-b\\sqrt{2}}{\\left(a+b\\sqrt{2}\\right)\\left(a-b\\sqrt{2}\\right)}\n\
+    = \\frac{a-b\\sqrt{2}}{a^2-2b^2}\n\
+    = \\frac{a-b\\sqrt{2}}{N\\left(a+b\\sqrt{2}\\right)}\n\
+$$\n\
+\n\
+`QuadraticElement2` with integer coefficients and norm \x00\xb11 stays integer,\n\
+otherwise promoted to rational.\n\
+\n\
+Returns\n\
+-------\n\
+QuadraticElement2\n\
+    The multiplicative inverse element.\n\
+\n\
+Raises\n\
+------\n\
+ZeroDivisionError\n\
+    If the norm is zero.\n\
+\n\
+See also\n\
+--------\n\
+[`QuadraticElement2.norm`][radicalfield.quadraticelement2.QuadraticElement2.norm]\n");
 
 static PyObject*
 quadraticelement2_inv(PyObject* self, PyObject* Py_UNUSED(args))
@@ -1612,7 +1590,7 @@ static PyMethodDef quadraticelement2_methods[] = {
     {"norm",         quadraticelement2_norm,        METH_NOARGS,           quadraticelement2_norm_doc},
     {"conjugate",    quadraticelement2_conjugate,   METH_NOARGS,           quadraticelement2_conjugate_doc},
     {"conj",         quadraticelement2_conj,        METH_NOARGS,           quadraticelement2_conj_doc},
-    {"inv",          quadraticelement2_inv,         METH_NOARGS,           NULL},
+    {"inv",          quadraticelement2_inv,         METH_NOARGS,           quadraticelement2_inv_doc},
     {"_repr_latex_", quadraticelement2_repr_latex,  METH_NOARGS,           NULL},
     {NULL, NULL, 0, NULL}
 };
@@ -1741,7 +1719,7 @@ module_exec(PyObject* mod)
 static struct PyModuleDef_Slot module_slots[] = {
     {Py_mod_exec, module_exec},
     {Py_mod_multiple_interpreters, Py_MOD_MULTIPLE_INTERPRETERS_NOT_SUPPORTED},
-    {Py_mod_gil, Py_MOD_GIL_NOT_USED},
+    {Py_mod_gil, Py_MOD_GIL_USED},
     {0, NULL}
 };
 
