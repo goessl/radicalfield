@@ -82,8 +82,7 @@ References\n\
 ----------\n\
 - [Wikipedia - Quadratic integers](https://en.wikipedia.org/wiki/Quadratic_integer)\n\
 \n\
-C implementation.\n\
-");
+C implementation.\n");
 
 static PyObject*
 quadraticelement2_new(PyTypeObject* subtype, PyObject* args, PyObject* kwds)
@@ -492,8 +491,7 @@ Not a property to be consistent with `fractions.Fraction`.\n\
 Returns\n\
 -------\n\
 bool\n\
-    Whether this element has no $\\sqrt{2}$ component.\n\
-");
+    Whether this element has no $\\sqrt{2}$ component.\n");
 
 static PyObject*
 quadraticelement2_is_rational(PyObject* self, PyObject* Py_UNUSED(args))
@@ -520,8 +518,7 @@ Fraction\n\
 Raises\n\
 ------\n\
 ValueError\n\
-    If this element is not a fraction.\n\
-");
+    If this element is not a fraction.\n");
 
 static PyObject*
 quadraticelement2_as_fraction(PyObject* self, PyObject* Py_UNUSED(args))
@@ -550,8 +547,7 @@ Not a property to be consistent with `fractions.Fraction`.\n\
 Returns\n\
 -------\n\
 bool\n\
-    Whether this element is an integer.\n\
-");
+    Whether this element is an integer.\n");
 
 static PyObject*
 quadraticelement2_is_integer(PyObject* self, PyObject* Py_UNUSED(args))
@@ -860,8 +856,8 @@ PyDoc_STRVAR(quadraticelement2_norm_doc,
 "Return the algebraic norm.\n\
 \n\
 $$\n\
-    N\left(a+b\sqrt{2}\right)\n\
-    = \left(\overline{a+b\sqrt{2}}\right)\left(a+b\sqrt{2}\right)\n\
+    N\\left(a+b\\sqrt{2}\\right)\n\
+    = \\left(\\overline{a+b\\sqrt{2}}\\right)\\left(a+b\\sqrt{2}\\right)\n\
     = a^2-2b^2\n\
 $$\n\
 \n\
@@ -872,8 +868,7 @@ int or Fraction\n\
 \n\
 References\n\
 ----------\n\
-[Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)\n\
-");
+[Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)\n");
 
 static PyObject*
 quadraticelement2_norm(PyObject* self, PyObject* Py_UNUSED(args))
@@ -913,7 +908,7 @@ PyDoc_STRVAR(quadraticelement2_conjugate_doc,
 "Return the algebraic conjugation.\n\
 \n\
 $$\n\
-    \overline{a+b\sqrt{2}} = a-b\sqrt{2}\n\
+    \\overline{a+b\\sqrt{2}} = a-b\\sqrt{2}\n\
 $$\n\
 \n\
 Returns\n\
@@ -923,8 +918,7 @@ QuadraticElement2\n\
 \n\
 References\n\
 ----------\n\
-[Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)\n\
-");
+[Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)\n");
 
 static PyObject*
 quadraticelement2_conjugate(PyObject* self, PyObject* Py_UNUSED(args))
@@ -945,8 +939,7 @@ PyDoc_STRVAR(quadraticelement2_conj_doc,
 \n\
 See also\n\
 --------\n\
-Alias for [`conjugate`][radicalfield.quadraticelement2.QuadraticElement2.conjugate].\n\
-");
+Alias for [`conjugate`][radicalfield.quadraticelement2.QuadraticElement2.conjugate].\n");
 
 static PyObject*
 quadraticelement2_conj(PyObject* self, PyObject* Py_UNUSED(args))
@@ -1299,7 +1292,7 @@ $$\n\
     = \\frac{a-b\\sqrt{2}}{N\\left(a+b\\sqrt{2}\\right)}\n\
 $$\n\
 \n\
-`QuadraticElement2` with integer coefficients and norm \x00\xb11 stays integer,\n\
+`QuadraticElement2` with integer coefficients and norm \x00\xb1" "1 stays integer,\n\
 otherwise promoted to rational.\n\
 \n\
 Returns\n\
@@ -1513,27 +1506,20 @@ quadraticelement2_str(PyObject* self)
 {
     quadraticelement2object* qe = quadraticelement2object_CAST(self);
     
-    PyObject* a_str = PyObject_Str(qe->a);
-    if(!a_str) {
-        return NULL;
-    }
-    
     static PyObject* str_plus = NULL;
     if(!str_plus) {
         str_plus = PyUnicode_InternFromString("+");
         if(!str_plus) {
-            Py_DECREF(a_str);
             return NULL;
         }
     }
+    
     PyObject* b_fmt = PyObject_Format(qe->b, str_plus);
     if(!b_fmt) {
-        Py_DECREF(a_str);
         return NULL;
     }
     
-    PyObject* r = PyUnicode_FromFormat("%U%U\xe2\x88\x9a" "2", a_str, b_fmt);
-    Py_DECREF(a_str);
+    PyObject* r = PyUnicode_FromFormat("%S%U%s", qe->a, b_fmt, "\xe2\x88\x9a" "2");
     Py_DECREF(b_fmt);
     return r;
 }
@@ -1550,27 +1536,20 @@ quadraticelement2_repr_latex(PyObject* self, PyObject* Py_UNUSED(args))
 {
     quadraticelement2object* qe = quadraticelement2object_CAST(self);
     
-    PyObject* a_str = PyObject_Str(qe->a);
-    if(!a_str) {
-        return NULL;
-    }
-    
     static PyObject* str_plus = NULL;
     if(!str_plus) {
         str_plus = PyUnicode_InternFromString("+");
         if(!str_plus) {
-            Py_DECREF(a_str);
             return NULL;
         }
     }
+    
     PyObject* b_fmt = PyObject_Format(qe->b, str_plus);
     if(!b_fmt) {
-        Py_DECREF(a_str);
         return NULL;
     }
     
-    PyObject* r = PyUnicode_FromFormat("%U%U\\sqrt{2}", a_str, b_fmt);
-    Py_DECREF(a_str);
+    PyObject* r = PyUnicode_FromFormat("%S%U\\sqrt{2}", qe->a, b_fmt);
     Py_DECREF(b_fmt);
     return r;
 }
