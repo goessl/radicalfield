@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "radicalfield"
-version = "4.1"
+version = "4.2"
 description = "Python package for linear combinations of radicals."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -16,20 +16,6 @@ authors = [
 dependencies = [
   "sympy"
 ]
-classifiers = [
-  "Development Status :: 5 - Production/Stable",
-  "Intended Audience :: Science/Research",
-  "Operating System :: OS Independent",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3.13",
-  "Programming Language :: Python :: 3.14",
-  "Topic :: Scientific/Engineering",
-  "Topic :: Scientific/Engineering :: Mathematics",
-  "Topic :: Scientific/Engineering :: Physics"
-]
 
 [project.urls]
 Homepage = "https://github.com/goessl/radicalfield"
@@ -38,11 +24,3 @@ Repository = "https://github.com/goessl/radicalfield.git"
 
 [project.optional-dependencies]
 test = ["pytest"]
-
-[tool.hatch.build.targets.wheel]
-include = ["radicalfield", "LICENSE", "README.md"]
-
-[tool.hatch.build.targets.sdist]
-include = ["radicalfield", "tests",
-  "mkdocs.yml", "docs",
-  "pyproject.toml", "README.md", "LICENSE"]
