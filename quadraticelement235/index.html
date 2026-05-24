@@ -708,10 +708,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement235.QuadraticElement235.norm" class="md-nav__link">
+  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        norm
+        conjugate
       
     </span>
   </a>
@@ -730,10 +730,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate" class="md-nav__link">
+  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        conjugate
+        conjugate2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        conjugate3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        conjugate5
       
     </span>
   </a>
@@ -774,32 +796,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate2" class="md-nav__link">
+  <a href="#radicalfield.quadraticelement235.QuadraticElement235.norm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        conjugate2
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        conjugate3
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        conjugate5
+        norm
       
     </span>
   </a>
@@ -1325,10 +1325,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement235.QuadraticElement235.norm" class="md-nav__link">
+  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        norm
+        conjugate
       
     </span>
   </a>
@@ -1347,10 +1347,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate" class="md-nav__link">
+  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        conjugate
+        conjugate2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        conjugate3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        conjugate5
       
     </span>
   </a>
@@ -1391,32 +1413,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate2" class="md-nav__link">
+  <a href="#radicalfield.quadraticelement235.QuadraticElement235.norm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        conjugate2
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        conjugate3
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement235.QuadraticElement235.conjugate5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        conjugate5
+        norm
       
     </span>
   </a>
@@ -2547,16 +2547,7 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 
     <span class="c1">#arithmetic</span>
     <span class="c1">#make all following methods non-recursive/leaves,</span>
-    <span class="c1">#except inversion as it is otherwise too complicated</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">norm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="o">|</span><span class="n">Fraction</span><span class="p">:</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate5</span><span class="p">()</span>
-        <span class="n">n</span> <span class="o">*=</span> <span class="n">n</span><span class="o">.</span><span class="n">conjugate3</span><span class="p">()</span>
-        <span class="n">n</span> <span class="o">*=</span> <span class="n">n</span><span class="o">.</span><span class="n">conjugate2</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">n</span><span class="o">.</span><span class="n">as_fraction</span><span class="p">()</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">conj</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
-
+    <span class="c1">#except conjugation &amp; norm and inversion as it is otherwise too complicated</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">conjugate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="n">c5</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate5</span><span class="p">()</span>
         <span class="n">y</span>   <span class="o">=</span> <span class="bp">self</span> <span class="o">*</span> <span class="n">c5</span>
@@ -2564,6 +2555,18 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
         <span class="n">z</span>   <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="n">c3y</span>
         <span class="n">c2z</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">conjugate2</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">c5</span> <span class="o">*</span> <span class="n">c3y</span> <span class="o">*</span> <span class="n">c2z</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">conj</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">conjugate2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">QuadraticElement235</span><span class="p">(</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b2</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b3</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b5</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b6</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b10</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b15</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b30</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">conjugate3</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">QuadraticElement235</span><span class="p">(</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b2</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b3</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b5</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b6</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b10</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b15</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b30</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">conjugate5</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">QuadraticElement235</span><span class="p">(</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b2</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b3</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b5</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b6</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b10</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b15</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b30</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">conj2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate2</span><span class="p">()</span>
@@ -2574,14 +2577,11 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
     <span class="k">def</span><span class="w"> </span><span class="nf">conj5</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate5</span><span class="p">()</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">conjugate2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">QuadraticElement235</span><span class="p">(</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b2</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b3</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b5</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b6</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b10</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b15</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b30</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">conjugate3</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">QuadraticElement235</span><span class="p">(</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b2</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b3</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b5</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b6</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b10</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b15</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b30</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">conjugate5</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">QuadraticElement235</span><span class="p">(</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b2</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b3</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b5</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b6</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b10</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b15</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b30</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">norm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="o">|</span><span class="n">Fraction</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate5</span><span class="p">()</span>
+        <span class="n">n</span> <span class="o">*=</span> <span class="n">n</span><span class="o">.</span><span class="n">conjugate3</span><span class="p">()</span>
+        <span class="n">n</span> <span class="o">*=</span> <span class="n">n</span><span class="o">.</span><span class="n">conjugate2</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">n</span><span class="o">.</span><span class="n">as_fraction</span><span class="p">()</span>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__pos__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
@@ -3701,8 +3701,8 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 <div class="doc doc-object doc-function">
 
 
-<h3 id="radicalfield.quadraticelement235.QuadraticElement235.norm" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">norm</span><span class="p">()</span></code>
+<h3 id="radicalfield.quadraticelement235.QuadraticElement235.conjugate" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">conjugate</span><span class="p">()</span></code>
 
 </h3>
 
@@ -3716,11 +3716,15 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 <span class="normal">258</span>
 <span class="normal">259</span>
 <span class="normal">260</span>
-<span class="normal">261</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">norm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="o">|</span><span class="n">Fraction</span><span class="p">:</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate5</span><span class="p">()</span>
-    <span class="n">n</span> <span class="o">*=</span> <span class="n">n</span><span class="o">.</span><span class="n">conjugate3</span><span class="p">()</span>
-    <span class="n">n</span> <span class="o">*=</span> <span class="n">n</span><span class="o">.</span><span class="n">conjugate2</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">n</span><span class="o">.</span><span class="n">as_fraction</span><span class="p">()</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conjugate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="n">c5</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate5</span><span class="p">()</span>
+    <span class="n">y</span>   <span class="o">=</span> <span class="bp">self</span> <span class="o">*</span> <span class="n">c5</span>
+    <span class="n">c3y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">conjugate3</span><span class="p">()</span>
+    <span class="n">z</span>   <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="n">c3y</span>
+    <span class="n">c2z</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">conjugate2</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">c5</span> <span class="o">*</span> <span class="n">c3y</span> <span class="o">*</span> <span class="n">c2z</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3746,131 +3750,9 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">263</span>
-<span class="normal">264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conj</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">265</span>
+<span class="normal">266</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conj</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="radicalfield.quadraticelement235.QuadraticElement235.conjugate" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">conjugate</span><span class="p">()</span></code>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">266</span>
-<span class="normal">267</span>
-<span class="normal">268</span>
-<span class="normal">269</span>
-<span class="normal">270</span>
-<span class="normal">271</span>
-<span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conjugate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-    <span class="n">c5</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate5</span><span class="p">()</span>
-    <span class="n">y</span>   <span class="o">=</span> <span class="bp">self</span> <span class="o">*</span> <span class="n">c5</span>
-    <span class="n">c3y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">conjugate3</span><span class="p">()</span>
-    <span class="n">z</span>   <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="n">c3y</span>
-    <span class="n">c2z</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">conjugate2</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">c5</span> <span class="o">*</span> <span class="n">c3y</span> <span class="o">*</span> <span class="n">c2z</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="radicalfield.quadraticelement235.QuadraticElement235.conj2" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">conj2</span><span class="p">()</span></code>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">274</span>
-<span class="normal">275</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conj2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate2</span><span class="p">()</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="radicalfield.quadraticelement235.QuadraticElement235.conj3" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">conj3</span><span class="p">()</span></code>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">277</span>
-<span class="normal">278</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conj3</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate3</span><span class="p">()</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="radicalfield.quadraticelement235.QuadraticElement235.conj5" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">conj5</span><span class="p">()</span></code>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">280</span>
-<span class="normal">281</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conj5</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate5</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3896,8 +3778,8 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">283</span>
-<span class="normal">284</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conjugate2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">268</span>
+<span class="normal">269</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conjugate2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">QuadraticElement235</span><span class="p">(</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b2</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b3</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b5</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b6</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b10</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b15</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b30</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -3924,8 +3806,8 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">286</span>
-<span class="normal">287</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conjugate3</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">271</span>
+<span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conjugate3</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">QuadraticElement235</span><span class="p">(</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b2</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b3</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b5</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b6</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b10</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b15</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b30</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -3952,9 +3834,127 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">289</span>
-<span class="normal">290</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conjugate5</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">274</span>
+<span class="normal">275</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conjugate5</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">QuadraticElement235</span><span class="p">(</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b2</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b3</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b5</span><span class="p">,</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">b6</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b10</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b15</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b30</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="radicalfield.quadraticelement235.QuadraticElement235.conj2" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">conj2</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">277</span>
+<span class="normal">278</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conj2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate2</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="radicalfield.quadraticelement235.QuadraticElement235.conj3" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">conj3</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">280</span>
+<span class="normal">281</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conj3</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate3</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="radicalfield.quadraticelement235.QuadraticElement235.conj5" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">conj5</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">283</span>
+<span class="normal">284</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conj5</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate5</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="radicalfield.quadraticelement235.QuadraticElement235.norm" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">norm</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">norm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="o">|</span><span class="n">Fraction</span><span class="p">:</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate5</span><span class="p">()</span>
+    <span class="n">n</span> <span class="o">*=</span> <span class="n">n</span><span class="o">.</span><span class="n">conjugate3</span><span class="p">()</span>
+    <span class="n">n</span> <span class="o">*=</span> <span class="n">n</span><span class="o">.</span><span class="n">conjugate2</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">n</span><span class="o">.</span><span class="n">as_fraction</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

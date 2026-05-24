@@ -560,10 +560,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement2.QuadraticElement2.norm" class="md-nav__link">
+  <a href="#radicalfield.quadraticelement2.QuadraticElement2.conjugate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        norm
+        conjugate
       
     </span>
   </a>
@@ -582,10 +582,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement2.QuadraticElement2.conjugate" class="md-nav__link">
+  <a href="#radicalfield.quadraticelement2.QuadraticElement2.norm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        conjugate
+        norm
       
     </span>
   </a>
@@ -1017,10 +1017,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement2.QuadraticElement2.norm" class="md-nav__link">
+  <a href="#radicalfield.quadraticelement2.QuadraticElement2.conjugate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        norm
+        conjugate
       
     </span>
   </a>
@@ -1039,10 +1039,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#radicalfield.quadraticelement2.QuadraticElement2.conjugate" class="md-nav__link">
+  <a href="#radicalfield.quadraticelement2.QuadraticElement2.norm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        conjugate
+        norm
       
     </span>
   </a>
@@ -2067,7 +2067,7 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 <span class="sd">            If this element is not an integer.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_integer</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;not an integer (a∉ℤ or b_≠0)&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;not an integer (a∉ℤ or b≠0)&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__float__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -2144,6 +2144,34 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
     <span class="c1">#arithmetic</span>
     <span class="c1">#make all following methods non-recursive/leaves,</span>
     <span class="c1">#except inversion as it is otherwise too complicated</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">conjugate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the algebraic conjugate.</span>
+
+<span class="sd">        $$</span>
+<span class="sd">            \overline{a+b\sqrt{2}} = +a-b\sqrt{2}</span>
+<span class="sd">        $$</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        QuadraticElement2</span>
+<span class="sd">            The algebraic conjugate.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">QuadraticElement2</span><span class="p">(</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
+                                 <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">conj</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the algebraic conjugate.</span>
+
+<span class="sd">        See also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Alias for [`conjugate`][radicalfield.quadraticelement2.QuadraticElement2.conjugate].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">norm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="o">|</span><span class="n">Fraction</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the algebraic norm.</span>
 
@@ -2163,34 +2191,6 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 <span class="sd">        [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">conj</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the algebraic conjugate.</span>
-
-<span class="sd">        See also</span>
-<span class="sd">        --------</span>
-<span class="sd">        Alias for [`conjugate`][radicalfield.quadraticelement2.QuadraticElement2.conjugate].</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">conjugate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the algebraic conjugate.</span>
-
-<span class="sd">        $$</span>
-<span class="sd">            \overline{a+b\sqrt{2}} = +a-b\sqrt{2}</span>
-<span class="sd">        $$</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        QuadraticElement2</span>
-<span class="sd">            The algebraic conjugate.</span>
-
-<span class="sd">        References</span>
-<span class="sd">        ----------</span>
-<span class="sd">        [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">QuadraticElement2</span><span class="p">(</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
-                                 <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__pos__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
@@ -3087,7 +3087,7 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 <span class="sd">        If this element is not an integer.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_integer</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;not an integer (a∉ℤ or b_≠0)&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;not an integer (a∉ℤ or b≠0)&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -3359,139 +3359,6 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 <div class="doc doc-object doc-function">
 
 
-<h3 id="radicalfield.quadraticelement2.QuadraticElement2.norm" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">norm</span><span class="p">()</span></code>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Return the algebraic norm.</p>
-<div class="arithmatex">\[
-    N\left(a+b\sqrt{2}\right)
-    = \left(\overline{a+b\sqrt{2}}\right)\left(a+b\sqrt{2}\right)
-    = a^2-2b^2
-\]</div>
-
-
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="int">int</span> or <span title="fractions.Fraction">Fraction</span></code>
-          –
-          <div class="doc-md-description">
-            <p>The algebraic norm.</p>
-          </div>
-        </li>
-    </ul>
-
-
-<details class="references" open>
-  <summary>References</summary>
-  <p><a href="https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation">Wikipedia - Quadratic integers - Norm and conjugation</a></p>
-</details>
-
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>radicalfield\quadraticelement2.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
-<span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span>
-<span class="normal">258</span>
-<span class="normal">259</span>
-<span class="normal">260</span>
-<span class="normal">261</span>
-<span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
-<span class="normal">266</span>
-<span class="normal">267</span>
-<span class="normal">268</span>
-<span class="normal">269</span>
-<span class="normal">270</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">norm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="o">|</span><span class="n">Fraction</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the algebraic norm.</span>
-
-<span class="sd">    $$</span>
-<span class="sd">        N\left(a+b\sqrt{2}\right)</span>
-<span class="sd">        = \left(\overline{a+b\sqrt{2}}\right)\left(a+b\sqrt{2}\right)</span>
-<span class="sd">        = a^2-2b^2</span>
-<span class="sd">    $$</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int or Fraction</span>
-<span class="sd">        The algebraic norm.</span>
-
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="radicalfield.quadraticelement2.QuadraticElement2.conj" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">conj</span><span class="p">()</span></code>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Return the algebraic conjugate.</p>
-
-
-<details class="see-also" open>
-  <summary>See also</summary>
-  <p>Alias for <a class="autorefs autorefs-internal" title="            conjugate()" href="#radicalfield.quadraticelement2.QuadraticElement2.conjugate"><code>conjugate</code></a>.</p>
-</details>
-
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>radicalfield\quadraticelement2.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">272</span>
-<span class="normal">273</span>
-<span class="normal">274</span>
-<span class="normal">275</span>
-<span class="normal">276</span>
-<span class="normal">277</span>
-<span class="normal">278</span>
-<span class="normal">279</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conj</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the algebraic conjugate.</span>
-
-<span class="sd">    See also</span>
-<span class="sd">    --------</span>
-<span class="sd">    Alias for [`conjugate`][radicalfield.quadraticelement2.QuadraticElement2.conjugate].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
 <h3 id="radicalfield.quadraticelement2.QuadraticElement2.conjugate" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">conjugate</span><span class="p">()</span></code>
 
@@ -3530,24 +3397,24 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>radicalfield\quadraticelement2.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">281</span>
-<span class="normal">282</span>
-<span class="normal">283</span>
-<span class="normal">284</span>
-<span class="normal">285</span>
-<span class="normal">286</span>
-<span class="normal">287</span>
-<span class="normal">288</span>
-<span class="normal">289</span>
-<span class="normal">290</span>
-<span class="normal">291</span>
-<span class="normal">292</span>
-<span class="normal">293</span>
-<span class="normal">294</span>
-<span class="normal">295</span>
-<span class="normal">296</span>
-<span class="normal">297</span>
-<span class="normal">298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conjugate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conjugate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the algebraic conjugate.</span>
 
 <span class="sd">    $$</span>
@@ -3565,6 +3432,139 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">QuadraticElement2</span><span class="p">(</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
                              <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="radicalfield.quadraticelement2.QuadraticElement2.conj" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">conj</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the algebraic conjugate.</p>
+
+
+<details class="see-also" open>
+  <summary>See also</summary>
+  <p>Alias for <a class="autorefs autorefs-internal" title="            conjugate()" href="#radicalfield.quadraticelement2.QuadraticElement2.conjugate"><code>conjugate</code></a>.</p>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>radicalfield\quadraticelement2.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">conj</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the algebraic conjugate.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Alias for [`conjugate`][radicalfield.quadraticelement2.QuadraticElement2.conjugate].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="radicalfield.quadraticelement2.QuadraticElement2.norm" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">norm</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the algebraic norm.</p>
+<div class="arithmatex">\[
+    N\left(a+b\sqrt{2}\right)
+    = \left(\overline{a+b\sqrt{2}}\right)\left(a+b\sqrt{2}\right)
+    = a^2-2b^2
+\]</div>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="int">int</span> or <span title="fractions.Fraction">Fraction</span></code>
+          –
+          <div class="doc-md-description">
+            <p>The algebraic norm.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<details class="references" open>
+  <summary>References</summary>
+  <p><a href="https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation">Wikipedia - Quadratic integers - Norm and conjugation</a></p>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>radicalfield\quadraticelement2.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">norm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="o">|</span><span class="n">Fraction</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the algebraic norm.</span>
+
+<span class="sd">    $$</span>
+<span class="sd">        N\left(a+b\sqrt{2}\right)</span>
+<span class="sd">        = \left(\overline{a+b\sqrt{2}}\right)\left(a+b\sqrt{2}\right)</span>
+<span class="sd">        = a^2-2b^2</span>
+<span class="sd">    $$</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int or Fraction</span>
+<span class="sd">        The algebraic norm.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
