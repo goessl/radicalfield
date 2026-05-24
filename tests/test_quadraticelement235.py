@@ -1,4 +1,5 @@
 import pytest
+from math import sqrt
 from random import randint, seed
 import sympy as sp
 from fractions import Fraction
@@ -6,11 +7,18 @@ from fractions import Fraction
 from radicalfield import QuadraticElement235
 
 
-def _rand_frac(rng=5):
-    return Fraction(randint(-rng, rng), randint(1, rng))
 
-def _rand_elem():
-    return QuadraticElement235(*(_rand_frac() for _ in range(8)))
+def _rand_frac(n:int=1000):
+    return Fraction(randint(-n, +n), randint(1, n))
+
+def _rand_qe235(n:int=1000):
+    return QuadraticElement235(*(_rand_frac(n) for _ in range(8)))
+
+
+
+n:int = 100 #sparsity
+N:int = 100 #runs
+
 
 
 def test_init():
@@ -49,18 +57,99 @@ def test_fraction():
 
 
 def test_float():
-    from math import sqrt
     x = QuadraticElement235(1, 2, 3, 4, 5, 6, 7, 8)
     expected = (1 + 2*sqrt(2) + 3*sqrt(3) + 4*sqrt(5)
                 + 5*sqrt(6) + 6*sqrt(10) + 7*sqrt(15) + 8*sqrt(30))
     assert float(x) == pytest.approx(expected)
 
 
+
+def test_conjugate_and_norm():
+    for _ in range(N):
+        a     :QuadraticElement235 = _rand_qe235(n)
+        a_conj:QuadraticElement235 = a.conjugate()
+        A     :int|Fraction        = a.norm()
+        assert (a * a_conj).is_rational()     and bool(a_conj)==bool(a)
+        assert isinstance(A, (int, Fraction)) and bool(A)     ==bool(a)
+        assert a * a_conj == A
+
+
+def test_unary():
+    for _ in range(N):
+        a:QuadraticElement235 = _rand_qe235(n)
+        assert float(+a) == pytest.approx(+float(a))
+        assert float(-a) == pytest.approx(-float(a))
+
+def test_add():
+    for _ in range(N):
+        a:QuadraticElement235 = _rand_qe235(n)
+        b:QuadraticElement235 = _rand_qe235(n)
+        c:Fraction            = _rand_frac(n)
+        assert float(a+b) == pytest.approx(float(a)+float(b))
+        assert float(a+c) == pytest.approx(float(a)+float(c))
+        assert float(c+b) == pytest.approx(float(c)+float(b))
+
+def test_sub():
+    for _ in range(N):
+        a:QuadraticElement235 = _rand_qe235(n)
+        b:QuadraticElement235 = _rand_qe235(n)
+        c:Fraction            = _rand_frac(n)
+        assert float(a-b) == pytest.approx(float(a)-float(b))
+        assert float(a-c) == pytest.approx(float(a)-float(c))
+        assert float(c-b) == pytest.approx(float(c)-float(b))
+
+def test_mul():
+    for _ in range(N):
+        a:QuadraticElement235 = _rand_qe235(n)
+        b:QuadraticElement235 = _rand_qe235(n)
+        c:Fraction            = _rand_frac(n)
+        assert float(a*b) == pytest.approx(float(a)*float(b))
+        assert float(a*c) == pytest.approx(float(a)*float(c))
+        assert float(c*b) == pytest.approx(float(c)*float(b))
+
+def test_inv():
+    for _ in range(N):
+        a    :QuadraticElement235 = _rand_qe235(n)
+        a_inv:QuadraticElement235 = a.inv()
+        assert not bool(a_inv) or a*a_inv==1
+
+def test_div():
+    with pytest.raises(ZeroDivisionError):
+        QuadraticElement235().inv()
+    
+    for _ in range(N):
+        a:QuadraticElement235 = _rand_qe235(n)
+        b:QuadraticElement235 = _rand_qe235(n)
+        c:Fraction            = _rand_frac(n)
+        
+        if bool(b):
+            assert float(a/b) == pytest.approx(float(a)/float(b))
+        else:
+            with pytest.raises(ZeroDivisionError):
+                a / b
+        
+        if bool(c):
+            assert float(a/c) == pytest.approx(float(a)/float(c))
+        else:
+            with pytest.raises(ZeroDivisionError):
+                a / c
+        
+        if bool(b):
+            assert float(c/b) == pytest.approx(float(c)/float(b))
+        else:
+            with pytest.raises(ZeroDivisionError):
+                c / b
+
+
+
+
+
+
 #def test_lt():
 #    seed(42)
 #    for _ in range(2000):
-#        a = _rand_elem()
-#        b = _rand_elem()
+#        a = _rand_qe235()
+#        b = _rand_qe235()
 #        assert (a < b) == (float(a) < float(b))
 #        assert (a > b) == (float(a) > float(b))
 #        assert (a == b) == (float(a) == float(b))
@@ -69,7 +158,7 @@ def test_float():
 #def test_lt_vs_int_fraction():
 #    seed(42)
 #    for _ in range(2000):
-#        a = _rand_elem()
+#        a = _rand_qe235()
 #        c = _rand_frac()
 #        d = randint(-10, 10)
 #        assert (a < c) == (float(a) < float(c))
@@ -88,19 +177,3 @@ def test_float():
 #    # b6 = √6 = √2·√3 ≈ 2.449
 #    sqrt6 = QuadraticElement235(0, 0, 0, 0, 1)
 #    assert sqrt3 < sqrt5 < sqrt6
-
-
-
-def test_norm():
-    for _ in range(1000):
-        x = QuadraticElement235(
-            randint(-100, +100),
-            randint(-100, +100),
-            randint(-100, +100),
-            randint(-100, +100),
-            randint(-100, +100),
-            randint(-100, +100),
-            randint(-100, +100),
-            randint(-100, +100)
-        )
-        assert isinstance(x.norm(), Fraction)

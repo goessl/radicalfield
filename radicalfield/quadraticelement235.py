@@ -29,6 +29,10 @@ class QuadraticElement235:
     The immutable class supports exact conversion, ordering,
     algebraic conjugation, norm computation and arithmetic.
     
+    Addition, subtraction & multiplication is closed,
+    mixed coefficients are promoted.
+    Inversion and division is always promoted to `Fraction`.
+    
     Parameters
     ----------
     a : int or Fraction, default 0
@@ -105,14 +109,14 @@ class QuadraticElement235:
     
     
     def __post_init__(self) -> None:
-        if not (isinstance(self.a, (int, Fraction)) \
-                and isinstance(self.b2, (int, Fraction)) \
-                and isinstance(self.b3, (int, Fraction)) \
-                and isinstance(self.b5, (int, Fraction)) \
-                and isinstance(self.b6, (int, Fraction)) \
-                and isinstance(self.b10, (int, Fraction)) \
-                and isinstance(self.b15, (int, Fraction)) \
-                and isinstance(self.b30, (int, Fraction))):
+        if not (isinstance(self.a,   (int, Fraction)) \
+            and isinstance(self.b2,  (int, Fraction)) \
+            and isinstance(self.b3,  (int, Fraction)) \
+            and isinstance(self.b5,  (int, Fraction)) \
+            and isinstance(self.b6,  (int, Fraction)) \
+            and isinstance(self.b10, (int, Fraction)) \
+            and isinstance(self.b15, (int, Fraction)) \
+            and isinstance(self.b30, (int, Fraction))):
             raise TypeError('coefficients must be integers or fractions')
     
     
@@ -120,30 +124,31 @@ class QuadraticElement235:
     #conversion
     def __bool__(self) -> bool:
         return bool(self.a) \
-                or bool(self.b2) \
-                or bool(self.b3) \
-                or bool(self.b5) \
-                or bool(self.b6) \
-                or bool(self.b10) \
-                or bool(self.b15) \
-                or bool(self.b30)
+            or bool(self.b2) \
+            or bool(self.b3) \
+            or bool(self.b5) \
+            or bool(self.b6) \
+            or bool(self.b10) \
+            or bool(self.b15) \
+            or bool(self.b30)
     
     def is_rational(self) -> bool:
         return not (bool(self.b2) \
-                or bool(self.b3) \
-                or bool(self.b5) \
-                or bool(self.b6) \
-                or bool(self.b10) \
-                or bool(self.b15) \
-                or bool(self.b30))
+                 or bool(self.b3) \
+                 or bool(self.b5) \
+                 or bool(self.b6) \
+                 or bool(self.b10) \
+                 or bool(self.b15) \
+                 or bool(self.b30))
     
     def as_fraction(self) -> Fraction:
         if not self.is_rational():
-            raise ValueError('not a rational (some b_i≠0)')
+            raise ValueError('not a rational (any b_i≠0)')
         return Fraction(self.a)
     
     def is_integer(self) -> bool:
-        return self.is_rational() and (isinstance(self.a, int) or self.a.is_integer())
+        return self.is_rational() \
+                and (isinstance(self.a, int) or self.a.is_integer())
     
     def __int__(self) -> int:
         if not self.is_integer():
@@ -151,7 +156,7 @@ class QuadraticElement235:
         return int(self.a)
     
     def __float__(self) -> float:
-        return float(self.a) \
+        return                                 float(self.a) \
                 + QuadraticElement235.SQRT2  * float(self.b2) \
                 + QuadraticElement235.SQRT3  * float(self.b3) \
                 + QuadraticElement235.SQRT5  * float(self.b5) \
@@ -161,7 +166,7 @@ class QuadraticElement235:
                 + QuadraticElement235.SQRT30 * float(self.b30)
     
     def _sympy_(self) -> sp.Expr:
-        return self.a \
+        return              self.a \
             + sp.sqrt(2)  * self.b2 \
             + sp.sqrt(3)  * self.b3 \
             + sp.sqrt(5)  * self.b5 \
@@ -202,14 +207,8 @@ class QuadraticElement235:
         return NotImplemented
     '''
     @staticmethod
-    def _abssq(a, b, D):
-        n = a*abs(a) + D*b*abs(b)
-        s = (n > 0) - (n < 0)
-        return (s*(a*a + D*b*b), s*2*a*b)
-    
-    @staticmethod
-    def _sign_Q2(a, b):
-        return a*abs(a) + 2*b*abs(b)
+    def _sign_Q2(x:QuadraticElement235) -> int|Fraction:
+        return x.a*abs(x.a) + 2*x.b2*abs(x.b2)
     
     @staticmethod
     def _sign_Q2Q3(a, b, c, d):
@@ -231,7 +230,7 @@ class QuadraticElement235:
         A0, A1, A2, A3 = QuadraticElement235._abssq_Q2Q3(a,  b2,  b3,  b6)
         B0, B1, B2, B3 = QuadraticElement235._abssq_Q2Q3(b5, b10, b15, b30)
         return QuadraticElement235._sign_Q2Q3(A0 + 5*B0, A1 + 5*B1, A2 + 5*B2, A3 + 5*B3)
-
+    
     @overload
     def __lt__(self, other:Self) -> bool: ...
     @overload
@@ -254,45 +253,65 @@ class QuadraticElement235:
     
     #arithmetic
     #make all following methods non-recursive/leaves,
-    #except inversion as it is otherwise to complicated
+    #except inversion as it is otherwise too complicated
     def norm(self) -> int|Fraction:
-        self *= self.conjugate5()
-        self *= self.conjugate3()
-        self *= self.conjugate2()
-        return self.as_fraction()
+        n = self * self.conjugate5()
+        n *= n.conjugate3()
+        n *= n.conjugate2()
+        return n.as_fraction()
+    
+    def conj(self) -> Self:
+        return self.conjugate()
+    
+    def conjugate(self) -> Self:
+        c5  = self.conjugate5()
+        y   = self * c5
+        c3y = y.conjugate3()
+        z   = y * c3y
+        c2z = z.conjugate2()
+        return c5 * c3y * c2z
+    
+    def conj2(self) -> Self:
+        return self.conjugate2()
+    
+    def conj3(self) -> Self:
+        return self.conjugate3()
+    
+    def conj5(self) -> Self:
+        return self.conjugate5()
     
     def conjugate2(self) -> Self:
-        return QuadraticElement235(self.a, -self.b2, +self.b3, +self.b5, -self.b6, -self.b10, +self.b15, -self.b30)
+        return QuadraticElement235(+self.a, -self.b2, +self.b3, +self.b5, -self.b6, -self.b10, +self.b15, -self.b30)
     
     def conjugate3(self) -> Self:
-        return QuadraticElement235(self.a, +self.b2, -self.b3, +self.b5, -self.b6, +self.b10, -self.b15, -self.b30)
+        return QuadraticElement235(+self.a, +self.b2, -self.b3, +self.b5, -self.b6, +self.b10, -self.b15, -self.b30)
     
     def conjugate5(self) -> Self:
-        return QuadraticElement235(self.a, +self.b2, +self.b3, -self.b5, +self.b6, -self.b10, -self.b15, -self.b30)
+        return QuadraticElement235(+self.a, +self.b2, +self.b3, -self.b5, +self.b6, -self.b10, -self.b15, -self.b30)
     
     
     def __pos__(self) -> Self:
         return QuadraticElement235(
-                +self.a,
-                +self.b2,
-                +self.b3,
-                +self.b5,
-                +self.b6,
-                +self.b10,
-                +self.b15,
-                +self.b30
+            +self.a,
+            +self.b2,
+            +self.b3,
+            +self.b5,
+            +self.b6,
+            +self.b10,
+            +self.b15,
+            +self.b30
         )
     
     def __neg__(self) -> Self:
         return QuadraticElement235(
-                -self.a,
-                -self.b2,
-                -self.b3,
-                -self.b5,
-                -self.b6,
-                -self.b10,
-                -self.b15,
-                -self.b30
+            -self.a,
+            -self.b2,
+            -self.b3,
+            -self.b5,
+            -self.b6,
+            -self.b10,
+            -self.b15,
+            -self.b30
         )
     
     
@@ -305,25 +324,25 @@ class QuadraticElement235:
     def __add__(self, other:Any) -> Self|NotImplementedType:
         if isinstance(other, QuadraticElement235):
             return QuadraticElement235(
-                    self.a + other.a,
-                    self.b2 + other.b2,
-                    self.b3 + other.b3,
-                    self.b5 + other.b5,
-                    self.b6 + other.b6,
-                    self.b10 + other.b10,
-                    self.b15 + other.b15,
-                    self.b30 + other.b30
+                self.a   + other.a,
+                self.b2  + other.b2,
+                self.b3  + other.b3,
+                self.b5  + other.b5,
+                self.b6  + other.b6,
+                self.b10 + other.b10,
+                self.b15 + other.b15,
+                self.b30 + other.b30
             )
         elif isinstance(other, (int, Fraction)):
             return QuadraticElement235(
-                    self.a + other,
-                    self.b2,
-                    self.b3,
-                    self.b5,
-                    self.b6,
-                    self.b10,
-                    self.b15,
-                    self.b30
+                self.a   + other,
+                self.b2,
+                self.b3,
+                self.b5,
+                self.b6,
+                self.b10,
+                self.b15,
+                self.b30
             )
         return NotImplemented
     
@@ -334,14 +353,14 @@ class QuadraticElement235:
     def __radd__(self, other:Any) -> Self|NotImplementedType:
         if isinstance(other, (int, Fraction)):
             return QuadraticElement235(
-                    other + self.a,
-                    self.b2,
-                    self.b3,
-                    self.b5,
-                    self.b6,
-                    self.b10,
-                    self.b15,
-                    self.b30
+                other + self.a,
+                        self.b2,
+                        self.b3,
+                        self.b5,
+                        self.b6,
+                        self.b10,
+                        self.b15,
+                        self.b30
             )
         return NotImplemented
     
@@ -355,25 +374,25 @@ class QuadraticElement235:
     def __sub__(self, other:Any) -> Self|NotImplementedType:
         if isinstance(other, QuadraticElement235):
             return QuadraticElement235(
-                    self.a - other.a,
-                    self.b2 - other.b2,
-                    self.b3 - other.b3,
-                    self.b5 - other.b5,
-                    self.b6 - other.b6,
-                    self.b10 - other.b10,
-                    self.b15 - other.b15,
-                    self.b30 - other.b30
+                self.a   - other.a,
+                self.b2  - other.b2,
+                self.b3  - other.b3,
+                self.b5  - other.b5,
+                self.b6  - other.b6,
+                self.b10 - other.b10,
+                self.b15 - other.b15,
+                self.b30 - other.b30
             )
         elif isinstance(other, (int, Fraction)):
             return QuadraticElement235(
-                    self.a - other,
-                    self.b2,
-                    self.b3,
-                    self.b5,
-                    self.b6,
-                    self.b10,
-                    self.b15,
-                    self.b30
+                self.a   - other,
+                self.b2,
+                self.b3,
+                self.b5,
+                self.b6,
+                self.b10,
+                self.b15,
+                self.b30
             )
         return NotImplemented
     
@@ -384,14 +403,14 @@ class QuadraticElement235:
     def __rsub__(self, other:Any) -> Self|NotImplementedType:
         if isinstance(other, (int, Fraction)):
             return QuadraticElement235(
-                    other - self.a,
-                    -self.b2,
-                    -self.b3,
-                    -self.b5,
-                    -self.b6,
-                    -self.b10,
-                    -self.b15,
-                    -self.b30
+                other - self.a,
+                      - self.b2,
+                      - self.b3,
+                      - self.b5,
+                      - self.b6,
+                      - self.b10,
+                      - self.b15,
+                      - self.b30
             )
         return NotImplemented
     
@@ -420,14 +439,15 @@ class QuadraticElement235:
             )
         elif isinstance(other, (int, Fraction)):
             return QuadraticElement235(
-                self.a * other,
-                self.b2 * other,
-                self.b3 * other,
-                self.b5 * other,
-                self.b6 * other,
+                self.a   * other,
+                self.b2  * other,
+                self.b3  * other,
+                self.b5  * other,
+                self.b6  * other,
                 self.b10 * other,
                 self.b15 * other,
-                self.b30 * other)
+                self.b30 * other
+            )
         return NotImplemented
     
     @overload
@@ -444,18 +464,13 @@ class QuadraticElement235:
                 other * self.b6,
                 other * self.b10,
                 other * self.b15,
-                other * self.b30)
+                other * self.b30
+            )
         return NotImplemented
     
     
     def inv(self) -> Self:
-        c5  = self.conjugate5()
-        y   = self * c5
-        c3y = y.conjugate3()
-        z   = y * c3y
-        c2z = z.conjugate2()
-        n   = (z * c2z).as_fraction()
-        return c5 * c3y * c2z / n
+        return self.conjugate() / self.norm()
     
     @overload
     def __truediv__(self, other:Self) -> Self: ...
@@ -469,14 +484,14 @@ class QuadraticElement235:
         elif isinstance(other, (int, Fraction)):
             other:Fraction = Fraction(other)
             return QuadraticElement235(
-                    self.a / other,
-                    self.b2 / other,
-                    self.b3 / other,
-                    self.b5 / other,
-                    self.b6 / other,
-                    self.b10 / other,
-                    self.b15 / other,
-                    self.b30 / other
+                self.a   / other,
+                self.b2  / other,
+                self.b3  / other,
+                self.b5  / other,
+                self.b6  / other,
+                self.b10 / other,
+                self.b15 / other,
+                self.b30 / other
             )
         return NotImplemented
     

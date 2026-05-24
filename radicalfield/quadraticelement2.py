@@ -17,7 +17,7 @@ __all__ = ('QuadraticElement2', )
 class QuadraticElement2:
     r"""Element of the quadratic rationals $\mathbb{K}\left(\sqrt{2}\right)$.
     
-    An instance represents an exact rational of the form
+    An instance represents an exact rational extension element of the form
     
     $$
         a+b\sqrt{2} \qquad a, b\in\mathbb{K}
@@ -31,9 +31,7 @@ class QuadraticElement2:
     
     Addition, subtraction & multiplication is closed,
     mixed coefficients are promoted.
-    Inversion is closed for integers for a norm of $\pm1$,
-    otherwise it is promoted to rationals.
-    Division is more often than necessary promoted to rationals.
+    Inversion and division is always promoted to `Fraction`.
    
     Parameters
     ----------
@@ -139,10 +137,10 @@ class QuadraticElement2:
         Raises
         ------
         ValueError
-            If this element is not a fraction.
+            If this element is not a rational.
         """
         if not self.is_rational():
-            raise ValueError('not a fraction (b != 0)')
+            raise ValueError('not a rational (b≠0)')
         return Fraction(self.a)
     
     def is_integer(self) -> bool:
@@ -157,7 +155,8 @@ class QuadraticElement2:
         bool
             Whether this element is an integer.
         """
-        return (isinstance(self.a, int) or self.a.is_integer()) and self.b==0
+        return self.is_rational() \
+                and (isinstance(self.a, int) or self.a.is_integer())
     
     def __int__(self) -> int:
         """Return this element as an integer.
@@ -173,7 +172,7 @@ class QuadraticElement2:
             If this element is not an integer.
         """
         if not self.is_integer():
-            raise ValueError('not an integer')
+            raise ValueError('not an integer (a∉ℤ or b_≠0)')
         return int(self.a)
     
     def __float__(self) -> float:
@@ -202,7 +201,7 @@ class QuadraticElement2:
         if isinstance(other, QuadraticElement2):
             return self.a==other.a and self.b==other.b
         elif isinstance(other, (int, Fraction)):
-            return self.a==other and self.b==0
+            return self.is_rational() and self.a==other
         return NotImplemented
     
     @overload
@@ -217,7 +216,7 @@ class QuadraticElement2:
         $$
             \begin{aligned}
                 a+b\sqrt{2} &\overset{?}{<} c+d\sqrt{2} &&\mid -a-d\sqrt{2} \\
-                (b-d)\sqrt{2} &\overset{?}{<} (c-a)\sqrt{2} &&\mid \cdot^2 \\
+                (b-d)\sqrt{2} &\overset{?}{<} c-a &&\mid \cdot^2 \\
                 2(b-d)|b-d| &\overset{?}{<} (c-a)|c-a|
             \end{aligned}
         $$
@@ -249,7 +248,7 @@ class QuadraticElement2:
     
     #arithmetic
     #make all following methods non-recursive/leaves,
-    #except inversion as it is otherwise to complicated
+    #except inversion as it is otherwise too complicated
     def norm(self) -> int|Fraction:
         r"""Return the algebraic norm.
         
@@ -283,7 +282,7 @@ class QuadraticElement2:
         r"""Return the algebraic conjugate.
         
         $$
-            \overline{a+b\sqrt{2}} = a-b\sqrt{2}
+            \overline{a+b\sqrt{2}} = +a-b\sqrt{2}
         $$
         
         Returns
@@ -295,14 +294,15 @@ class QuadraticElement2:
         ----------
         [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)
         """
-        return QuadraticElement2(self.a, -self.b)
+        return QuadraticElement2(+self.a,
+                                 -self.b)
     
     
     def __pos__(self) -> Self:
         r"""Return itself.
         
         $$
-            +\left(a+b\sqrt{2}\right)
+            +\left(a+b\sqrt{2}\right) = (+a)+(+b)\sqrt{2}
         $$
         
         Returns
@@ -310,13 +310,14 @@ class QuadraticElement2:
         QuadraticElement2
             Itself.
         """
-        return QuadraticElement2(+self.a, +self.b)
+        return QuadraticElement2(+self.a,
+                                 +self.b)
     
     def __neg__(self) -> Self:
         r"""Return the negation.
         
         $$
-            -\left(a+b\sqrt{2}\right)
+            -\left(a+b\sqrt{2}\right) = (-a)+(-b)\sqrt{2}
         $$
         
         Returns
@@ -324,7 +325,8 @@ class QuadraticElement2:
         QuadraticElement2
             The negation.
         """
-        return QuadraticElement2(-self.a, -self.b)
+        return QuadraticElement2(-self.a,
+                                 -self.b)
     
     
     @overload
@@ -352,9 +354,11 @@ class QuadraticElement2:
             The sum.
         """
         if isinstance(other, QuadraticElement2):
-            return QuadraticElement2(self.a+other.a, self.b+other.b)
+            return QuadraticElement2(self.a + other.a,
+                                     self.b + other.b)
         elif isinstance(other, (int, Fraction)):
-            return QuadraticElement2(self.a+other, self.b)
+            return QuadraticElement2(self.a + other,
+                                     self.b)
         return NotImplemented
     
     @overload
@@ -363,7 +367,8 @@ class QuadraticElement2:
     def __radd__(self, other:Fraction) -> Self: ...
     def __radd__(self, other:Any) -> Self|NotImplementedType:
         if isinstance(other, (int, Fraction)):
-            return QuadraticElement2(other+self.a, self.b)
+            return QuadraticElement2(other + self.a,
+                                           + self.b)
         return NotImplemented
     
     
@@ -392,9 +397,11 @@ class QuadraticElement2:
             The difference.
         """
         if isinstance(other, QuadraticElement2):
-            return QuadraticElement2(self.a-other.a, self.b-other.b)
+            return QuadraticElement2(self.a - other.a,
+                                     self.b - other.b)
         elif isinstance(other, (int, Fraction)):
-            return QuadraticElement2(self.a-other, self.b)
+            return QuadraticElement2(self.a - other,
+                                     self.b)
         return NotImplemented
     
     @overload
@@ -403,7 +410,8 @@ class QuadraticElement2:
     def __rsub__(self, other:Fraction) -> Self: ...
     def __rsub__(self, other:Any) -> Self|NotImplementedType:
         if isinstance(other, (int, Fraction)):
-            return QuadraticElement2(other-self.a, -self.b)
+            return QuadraticElement2(other - self.a,
+                                           - self.b)
         return NotImplemented
     
     
@@ -434,10 +442,11 @@ class QuadraticElement2:
         if isinstance(other, QuadraticElement2):
             return QuadraticElement2(
                     self.a*other.a + 2*self.b*other.b,
-                    self.a*other.b + self.b*other.a
+                    self.a*other.b +   self.b*other.a
             )
         elif isinstance(other, (int, Fraction)):
-            return QuadraticElement2(self.a*other, self.b*other)
+            return QuadraticElement2(self.a * other,
+                                     self.b * other)
         return NotImplemented
     
     @overload
@@ -446,13 +455,13 @@ class QuadraticElement2:
     def __rmul__(self, other:Fraction) -> Self: ...
     def __rmul__(self, other:Any) -> Self|NotImplementedType:
         if isinstance(other, (int, Fraction)):
-            return QuadraticElement2(other*self.a, other*self.b)
+            return QuadraticElement2(other * self.a,
+                                     other * self.b)
         return NotImplemented
     
     
-    #NOT PERFECTLY TYPED ZONE BEGIN
     def inv(self) -> Self:
-        r"""Return the multiplicative inverse in $\mathbb{K}\left(\sqrt{2}\right)$.
+        r"""Return the multiplicative inverse in $\mathbb{Q}\left(\sqrt{2}\right)$.
         
         $$
             \frac{1}{a+b\sqrt{2}}
@@ -461,8 +470,7 @@ class QuadraticElement2:
             = \frac{a-b\sqrt{2}}{N\left(a+b\sqrt{2}\right)}
         $$
         
-        `QuadraticElement2` with integer coefficients and norm ±1 stays integer,
-        otherwise promoted to rational.
+        Coefficients are always promoted to `Fraction`.
         
         Returns
         -------
@@ -478,14 +486,7 @@ class QuadraticElement2:
         --------
         [`QuadraticElement2.norm`][radicalfield.quadraticelement2.QuadraticElement2.norm]
         """
-        n:Fraction = Fraction(self.norm())
-        if n == 0:
-            raise ZeroDivisionError('division by zero in 𝕂(√2)')
-        elif n == +1:
-            return QuadraticElement2(self.a, -self.b)
-        elif n == -1:
-            return QuadraticElement2(-self.a, self.b)
-        return QuadraticElement2(self.a/n, -self.b/n)
+        return self.conjugate() / self.norm()
     
     @overload
     def __truediv__(self, other:Self) -> Self: ...
@@ -502,7 +503,7 @@ class QuadraticElement2:
             = \frac{\left(ac-2bd\right)+\left(bc-ad\right)\sqrt{2}}{c^2-2d^2}
         $$
         
-        More often than necessary promoted to rationals.
+        Coefficients are always promoted to `Fraction`.
         
         Parameters
         ----------
@@ -523,7 +524,8 @@ class QuadraticElement2:
             return self * other.inv()
         elif isinstance(other, (int, Fraction)):
             other:Fraction = Fraction(other)
-            return QuadraticElement2(self.a/other, self.b/other)
+            return QuadraticElement2(self.a / other,
+                                     self.b / other)
         return NotImplemented
     
     @overload
@@ -534,7 +536,6 @@ class QuadraticElement2:
         if isinstance(other, (int, Fraction)):
             return other * self.inv()
         return NotImplemented
-    #NOT PERFECTLY TYPED ZONE END
     
     
     
