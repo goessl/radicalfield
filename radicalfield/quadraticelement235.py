@@ -253,16 +253,7 @@ class QuadraticElement235:
     
     #arithmetic
     #make all following methods non-recursive/leaves,
-    #except inversion as it is otherwise too complicated
-    def norm(self) -> int|Fraction:
-        n = self * self.conjugate5()
-        n *= n.conjugate3()
-        n *= n.conjugate2()
-        return n.as_fraction()
-    
-    def conj(self) -> Self:
-        return self.conjugate()
-    
+    #except conjugation & norm and inversion as it is otherwise too complicated
     def conjugate(self) -> Self:
         c5  = self.conjugate5()
         y   = self * c5
@@ -270,6 +261,18 @@ class QuadraticElement235:
         z   = y * c3y
         c2z = z.conjugate2()
         return c5 * c3y * c2z
+    
+    def conj(self) -> Self:
+        return self.conjugate()
+    
+    def conjugate2(self) -> Self:
+        return QuadraticElement235(+self.a, -self.b2, +self.b3, +self.b5, -self.b6, -self.b10, +self.b15, -self.b30)
+    
+    def conjugate3(self) -> Self:
+        return QuadraticElement235(+self.a, +self.b2, -self.b3, +self.b5, -self.b6, +self.b10, -self.b15, -self.b30)
+    
+    def conjugate5(self) -> Self:
+        return QuadraticElement235(+self.a, +self.b2, +self.b3, -self.b5, +self.b6, -self.b10, -self.b15, -self.b30)
     
     def conj2(self) -> Self:
         return self.conjugate2()
@@ -280,14 +283,11 @@ class QuadraticElement235:
     def conj5(self) -> Self:
         return self.conjugate5()
     
-    def conjugate2(self) -> Self:
-        return QuadraticElement235(+self.a, -self.b2, +self.b3, +self.b5, -self.b6, -self.b10, +self.b15, -self.b30)
-    
-    def conjugate3(self) -> Self:
-        return QuadraticElement235(+self.a, +self.b2, -self.b3, +self.b5, -self.b6, +self.b10, -self.b15, -self.b30)
-    
-    def conjugate5(self) -> Self:
-        return QuadraticElement235(+self.a, +self.b2, +self.b3, -self.b5, +self.b6, -self.b10, -self.b15, -self.b30)
+    def norm(self) -> int|Fraction:
+        n = self * self.conjugate5()
+        n *= n.conjugate3()
+        n *= n.conjugate2()
+        return n.as_fraction()
     
     
     def __pos__(self) -> Self:

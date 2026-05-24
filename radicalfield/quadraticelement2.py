@@ -172,7 +172,7 @@ class QuadraticElement2:
             If this element is not an integer.
         """
         if not self.is_integer():
-            raise ValueError('not an integer (a∉ℤ or b_≠0)')
+            raise ValueError('not an integer (a∉ℤ or b≠0)')
         return int(self.a)
     
     def __float__(self) -> float:
@@ -249,6 +249,34 @@ class QuadraticElement2:
     #arithmetic
     #make all following methods non-recursive/leaves,
     #except inversion as it is otherwise too complicated
+    def conjugate(self) -> Self:
+        r"""Return the algebraic conjugate.
+        
+        $$
+            \overline{a+b\sqrt{2}} = +a-b\sqrt{2}
+        $$
+        
+        Returns
+        -------
+        QuadraticElement2
+            The algebraic conjugate.
+        
+        References
+        ----------
+        [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)
+        """
+        return QuadraticElement2(+self.a,
+                                 -self.b)
+    
+    def conj(self) -> Self:
+        """Return the algebraic conjugate.
+        
+        See also
+        --------
+        Alias for [`conjugate`][radicalfield.quadraticelement2.QuadraticElement2.conjugate].
+        """
+        return self.conjugate()
+    
     def norm(self) -> int|Fraction:
         r"""Return the algebraic norm.
         
@@ -268,34 +296,6 @@ class QuadraticElement2:
         [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)
         """
         return self.a*self.a - 2*self.b*self.b
-    
-    def conj(self) -> Self:
-        """Return the algebraic conjugate.
-        
-        See also
-        --------
-        Alias for [`conjugate`][radicalfield.quadraticelement2.QuadraticElement2.conjugate].
-        """
-        return self.conjugate()
-    
-    def conjugate(self) -> Self:
-        r"""Return the algebraic conjugate.
-        
-        $$
-            \overline{a+b\sqrt{2}} = +a-b\sqrt{2}
-        $$
-        
-        Returns
-        -------
-        QuadraticElement2
-            The algebraic conjugate.
-        
-        References
-        ----------
-        [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)
-        """
-        return QuadraticElement2(+self.a,
-                                 -self.b)
     
     
     def __pos__(self) -> Self:
