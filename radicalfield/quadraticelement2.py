@@ -1,14 +1,24 @@
+from __future__ import annotations
 from math import sqrt
 from fractions import Fraction
 from functools import total_ordering
 from dataclasses import dataclass
-from typing import Any, ClassVar, Final, overload, Self
+from typing import Any, ClassVar, Final, overload
 from types import NotImplementedType
-import sympy as sp
+import sympy
 
 
 
 __all__ = ('QuadraticElement2', )
+
+
+
+def _rat_to_int_or_frac(r: sympy.Integer|sympy.Rational) -> int|Fraction:
+    """Pythonise sympy integers & rationals."""
+    if isinstance(r, sympy.Integer):
+        return int(r)
+    else:
+        return Fraction(int(r.p), int(r.q))
 
 
 
@@ -35,23 +45,27 @@ class QuadraticElement2:
    
     Parameters
     ----------
-    a : int or Fraction, default 0
+    a : int|Fraction, default 0
         Coefficient of $1$.
-    b : int or Fraction, default 0
+    b : int|Fraction, default 0
         Coefficient of $\sqrt{2}$.
     
     References
     ----------
     - [Wikipedia - Quadratic integers](https://en.wikipedia.org/wiki/Quadratic_integer)
     """
-    a:Final[int|Fraction] = 0
-    b:Final[int|Fraction] = 0
-    SQRT2:ClassVar[float] = sqrt(2)
+    a: Final[int|Fraction] = 0
+    b: Final[int|Fraction] = 0
+    SQRT2: ClassVar[float] = sqrt(2)
+    
+    SPZERO: ClassVar[sympy.Expr] = sympy.S.Zero
+    SPONE: ClassVar[sympy.Expr] = sympy.S.One
+    SPSQRT2: ClassVar[sympy.Expr] = sympy.sqrt(2)
     
     
     
     @staticmethod
-    def from_expr(e:sp.Expr) -> 'QuadraticElement2':
+    def from_expr(e: sympy.Expr) -> QuadraticElement2:
         r"""Construct a `QuadraticElement2` from a `sympy.Expr`.
         
         Parameters
@@ -69,29 +83,40 @@ class QuadraticElement2:
         ValueError
             If the expression is not an element of
             $\mathbb{K}\left(\sqrt{2}\right)$.
+        
+        Notes
+        -----
+        Sympy already keeps most representable expressions in the canonical
+        form $a+b\sqrt{2}$, so the coefficients are first read off directly.
+        Only if that fails is the expression put through `nsimplify`/`simplify`,
+        which is several hundred times slower.
         """
-        if not isinstance(e, sp.Expr):
+        if not isinstance(e, sympy.Expr):
             raise TypeError('e must be a sympy.Expr')
         
-        SPSQRT2 = sp.sqrt(2)
-        e:sp.Expr = sp.nsimplify(e, [SPSQRT2])
+        #fast path for expressions in usable form
+        d: dict[sympy.Expr,sympy.Expr] = e.as_coefficients_dict()
+        if set(d) <= {QuadraticElement2.SPONE, QuadraticElement2.SPSQRT2}:
+            a: Any = d.get(QuadraticElement2.SPONE,   sympy.S.Zero)
+            b: Any = d.get(QuadraticElement2.SPSQRT2, sympy.S.Zero)
+            if isinstance(a, sympy.Rational) and isinstance(b, sympy.Rational):
+                return QuadraticElement2(_rat_to_int_or_frac(a),
+                                         _rat_to_int_or_frac(b))
         
-        a:sp.Expr = sp.simplify(e.subs(SPSQRT2, 0))
-        b:sp.Expr = sp.simplify((e - a) / SPSQRT2)
+        #slow path
+        e: sympy.Expr = sympy.nsimplify(e, [QuadraticElement2.SPSQRT2])
+        a: sympy.Expr = sympy.simplify(e.subs(QuadraticElement2.SPSQRT2, 0))
+        b: sympy.Expr = sympy.simplify((e - a) / QuadraticElement2.SPSQRT2)
         
-        if sp.simplify(a + b*SPSQRT2 - e) != 0:
+        if sympy.simplify(a + b*QuadraticElement2.SPSQRT2 - e) != 0:
             raise ValueError('expression not exactly representable in 𝕂(√2)')
         
-        if not (isinstance(a, sp.Rational) and isinstance(b, sp.Rational)):
+        if not (isinstance(a, sympy.Rational) \
+                and isinstance(b, sympy.Rational)):
             raise ValueError(f'not in 𝕂(√2): {e} (a={a}, b={b})')
         
-        def rat_to_int_or_frac(r:sp.Integer|sp.Rational) -> int|Fraction:
-            if isinstance(r, sp.Integer):
-                return int(r)
-            else:
-                return Fraction(int(r.p), int(r.q))
-        
-        return QuadraticElement2(rat_to_int_or_frac(a), rat_to_int_or_frac(b))
+        return QuadraticElement2(_rat_to_int_or_frac(a),
+                                 _rat_to_int_or_frac(b))
     
     
     def __post_init__(self) -> None:
@@ -115,14 +140,14 @@ class QuadraticElement2:
     def is_rational(self) -> bool:
         r"""Return whether this element has no $\sqrt{2}$ component.
         
-        Notes
-        -----
-        Not a property to be consistent with `fractions.Fraction.is_integer()`.
-        
         Returns
         -------
         bool
             Whether this element has no $\sqrt{2}$ component.
+        
+        Notes
+        -----
+        Not a property to be consistent with `fractions.Fraction.is_integer()`.
         """
         return not bool(self.b)
     
@@ -146,14 +171,14 @@ class QuadraticElement2:
     def is_integer(self) -> bool:
         """Return whether this element is an integer.
         
-        Notes
-        -----
-        Not a property to be consistent with `fractions.Fraction.is_integer()`.
-        
         Returns
         -------
         bool
             Whether this element is an integer.
+        
+        Notes
+        -----
+        Not a property to be consistent with `fractions.Fraction.is_integer()`.
         """
         return self.is_rational() \
                 and (isinstance(self.a, int) or self.a.is_integer())
@@ -175,11 +200,29 @@ class QuadraticElement2:
             raise ValueError('not an integer (a∉ℤ or b≠0)')
         return int(self.a)
     
+    def integerise_coefficients(self) -> QuadraticElement2:
+        """Return the same value with the coefficients as integers.
+        
+        Returns
+        -------
+        QuadraticElement2
+            Same value with the coefficients as integers.
+        
+        Raises
+        ------
+        ValueError
+            If the coefficients are not integers.
+        """
+        if not (Fraction(self.a).is_integer() \
+                and Fraction(self.b).is_integer()):
+            raise ValueError('coefficients aren\'t integers (a,b∉ℤ)')
+        return QuadraticElement2(int(self.a), int(self.b))
+    
     def __float__(self) -> float:
         return float(self.a) + QuadraticElement2.SQRT2*float(self.b)
     
-    def _sympy_(self) -> sp.Expr:
-        return self.a + sp.sqrt(2)*self.b
+    def _sympy_(self) -> sympy.Expr:
+        return self.a + QuadraticElement2.SPSQRT2*self.b
     
     def __hash__(self) -> int:
         #https://docs.python.org/3/library/numbers.html#notes-for-type-implementers
@@ -192,25 +235,47 @@ class QuadraticElement2:
     
     #ordering
     @overload
-    def __eq__(self, other:Self) -> bool: ...
+    def __eq__(self, other: QuadraticElement2) -> bool: ...
     @overload
-    def __eq__(self, other:int) -> bool: ...
+    def __eq__(self, other: int) -> bool: ...
     @overload
-    def __eq__(self, other:Fraction) -> bool: ...
-    def __eq__(self, other:Any) -> bool|NotImplementedType:
+    def __eq__(self, other: Fraction) -> bool: ...
+    def __eq__(self, other: Any) -> bool|NotImplementedType:
         if isinstance(other, QuadraticElement2):
             return self.a==other.a and self.b==other.b
         elif isinstance(other, (int, Fraction)):
             return self.is_rational() and self.a==other
         return NotImplemented
     
+    def sgn(self) -> int|Fraction:
+        r"""Return the sign (`<0, 0, 0<`).
+        
+        $$
+            \begin{aligned}
+                a+b\sqrt{2} &\overset{?}{<=>} 0 &&\mid -b\sqrt{2} \\
+                a &\overset{?}{<=>} -b\sqrt{2} &&\mid \cdot^2 \\
+                a|a| &\overset{?}{<=>} -2b|b|  &&\mid +2b|b| \\
+                a|a|+2b|b| &\overset{?}{<=>} 0
+            \end{aligned}
+        $$
+        
+        Returns
+        -------
+        int
+            The sign.
+        """
+        return self.a*abs(self.a)+2*self.b*abs(self.b)
+    
+    def __abs__(self) -> QuadraticElement2:
+        return +self if self.sgn()>=0 else -self
+    
     @overload
-    def __lt__(self, other:Self) -> bool: ...
+    def __lt__(self, other: QuadraticElement2) -> bool: ...
     @overload
-    def __lt__(self, other:int) -> bool: ...
+    def __lt__(self, other: int) -> bool: ...
     @overload
-    def __lt__(self, other:Fraction) -> bool: ...
-    def __lt__(self, other:Any) -> bool|NotImplementedType:
+    def __lt__(self, other: Fraction) -> bool: ...
+    def __lt__(self, other: Any) -> bool|NotImplementedType:
         r"""Return whether this element is less than the other.
         
         $$
@@ -223,7 +288,7 @@ class QuadraticElement2:
         
         Parameters
         ----------
-        other: QuadraticElement2 or int or Fraction
+        other : QuadraticElement2|int|Fraction
             Operand to compare to.
         
         Returns
@@ -232,24 +297,21 @@ class QuadraticElement2:
             Whether this element is less than the other.
         """
         if isinstance(other, QuadraticElement2):
-            l:int|Fraction = self.b - other.b
-            r:int|Fraction = other.a - self.a
+            l: int|Fraction = self.b - other.b
+            r: int|Fraction = other.a - self.a
             #https://math.stackexchange.com/a/2347212
             return 2*l*abs(l) < r*abs(r)
         elif isinstance(other, (int, Fraction)):
-            r:int|Fraction = other - self.a
+            r: int|Fraction = other - self.a
             return 2*self.b*abs(self.b) < r*abs(r)
         return NotImplemented
-    
-    def __abs__(self) -> Self:
-        return +self if self>=0 else -self
     
     
     
     #arithmetic
     #make all following methods non-recursive/leaves,
     #except inversion as it is otherwise too complicated
-    def conjugate(self) -> Self:
+    def conjugate(self) -> QuadraticElement2:
         r"""Return the algebraic conjugate.
         
         $$
@@ -268,7 +330,7 @@ class QuadraticElement2:
         return QuadraticElement2(+self.a,
                                  -self.b)
     
-    def conj(self) -> Self:
+    def conj(self) -> QuadraticElement2:
         """Return the algebraic conjugate.
         
         See also
@@ -288,7 +350,7 @@ class QuadraticElement2:
         
         Returns
         -------
-        int or Fraction
+        int|Fraction
             The algebraic norm.
         
         References
@@ -298,7 +360,7 @@ class QuadraticElement2:
         return self.a*self.a - 2*self.b*self.b
     
     
-    def __pos__(self) -> Self:
+    def __pos__(self) -> QuadraticElement2:
         r"""Return itself.
         
         $$
@@ -313,7 +375,7 @@ class QuadraticElement2:
         return QuadraticElement2(+self.a,
                                  +self.b)
     
-    def __neg__(self) -> Self:
+    def __neg__(self) -> QuadraticElement2:
         r"""Return the negation.
         
         $$
@@ -330,12 +392,12 @@ class QuadraticElement2:
     
     
     @overload
-    def __add__(self, other:Self) -> Self: ...
+    def __add__(self, other: QuadraticElement2) -> QuadraticElement2: ...
     @overload
-    def __add__(self, other:int) -> Self: ...
+    def __add__(self, other: int) -> QuadraticElement2: ...
     @overload
-    def __add__(self, other:Fraction) -> Self: ...
-    def __add__(self, other:Any) -> Self|NotImplementedType:
+    def __add__(self, other: Fraction) -> QuadraticElement2: ...
+    def __add__(self, other: Any) -> QuadraticElement2|NotImplementedType:
         r"""Return the sum.
         
         $$
@@ -345,7 +407,7 @@ class QuadraticElement2:
         
         Parameters
         ----------
-        other: QuadraticElement2 or int or Fraction
+        other : QuadraticElement2|int|Fraction
             Other summand.
         
         Returns
@@ -362,10 +424,10 @@ class QuadraticElement2:
         return NotImplemented
     
     @overload
-    def __radd__(self, other:int) -> Self: ...
+    def __radd__(self, other: int) -> QuadraticElement2: ...
     @overload
-    def __radd__(self, other:Fraction) -> Self: ...
-    def __radd__(self, other:Any) -> Self|NotImplementedType:
+    def __radd__(self, other: Fraction) -> QuadraticElement2: ...
+    def __radd__(self, other: Any) -> QuadraticElement2|NotImplementedType:
         if isinstance(other, (int, Fraction)):
             return QuadraticElement2(other + self.a,
                                            + self.b)
@@ -373,12 +435,12 @@ class QuadraticElement2:
     
     
     @overload
-    def __sub__(self, other:Self) -> Self: ...
+    def __sub__(self, other: QuadraticElement2) -> QuadraticElement2: ...
     @overload
-    def __sub__(self, other:int) -> Self: ...
+    def __sub__(self, other: int) -> QuadraticElement2: ...
     @overload
-    def __sub__(self, other:Fraction) -> Self: ...
-    def __sub__(self, other:Any) -> Self|NotImplementedType:
+    def __sub__(self, other: Fraction) -> QuadraticElement2: ...
+    def __sub__(self, other: Any) -> QuadraticElement2|NotImplementedType:
         r"""Return the difference.
         
         $$
@@ -388,7 +450,7 @@ class QuadraticElement2:
         
         Parameters
         ----------
-        other: QuadraticElement2 or int or Fraction
+        other : QuadraticElement2|int|Fraction
             The subtrahend.
         
         Returns
@@ -405,10 +467,10 @@ class QuadraticElement2:
         return NotImplemented
     
     @overload
-    def __rsub__(self, other:int) -> Self: ...
+    def __rsub__(self, other: int) -> QuadraticElement2: ...
     @overload
-    def __rsub__(self, other:Fraction) -> Self: ...
-    def __rsub__(self, other:Any) -> Self|NotImplementedType:
+    def __rsub__(self, other: Fraction) -> QuadraticElement2: ...
+    def __rsub__(self, other: Any) -> QuadraticElement2|NotImplementedType:
         if isinstance(other, (int, Fraction)):
             return QuadraticElement2(other - self.a,
                                            - self.b)
@@ -416,12 +478,12 @@ class QuadraticElement2:
     
     
     @overload
-    def __mul__(self, other:Self) -> Self: ...
+    def __mul__(self, other: QuadraticElement2) -> QuadraticElement2: ...
     @overload
-    def __mul__(self, other:int) -> Self: ...
+    def __mul__(self, other: int) -> QuadraticElement2: ...
     @overload
-    def __mul__(self, other:Fraction) -> Self: ...
-    def __mul__(self, other:Any) -> Self|NotImplementedType:
+    def __mul__(self, other: Fraction) -> QuadraticElement2: ...
+    def __mul__(self, other: Any) -> QuadraticElement2|NotImplementedType:
         r"""Return the product.
         
         $$
@@ -431,7 +493,7 @@ class QuadraticElement2:
         
         Parameters
         ----------
-        other: QuadraticElement2 or int or Fraction
+        other : QuadraticElement2|int|Fraction
             The other factor.
         
         Returns
@@ -450,17 +512,17 @@ class QuadraticElement2:
         return NotImplemented
     
     @overload
-    def __rmul__(self, other:int) -> Self: ...
+    def __rmul__(self, other: int) -> QuadraticElement2: ...
     @overload
-    def __rmul__(self, other:Fraction) -> Self: ...
-    def __rmul__(self, other:Any) -> Self|NotImplementedType:
+    def __rmul__(self, other: Fraction) -> QuadraticElement2: ...
+    def __rmul__(self, other: Any) -> QuadraticElement2|NotImplementedType:
         if isinstance(other, (int, Fraction)):
             return QuadraticElement2(other * self.a,
                                      other * self.b)
         return NotImplemented
     
     
-    def inv(self) -> Self:
+    def inv(self) -> QuadraticElement2:
         r"""Return the multiplicative inverse in $\mathbb{Q}\left(\sqrt{2}\right)$.
         
         $$
@@ -489,12 +551,12 @@ class QuadraticElement2:
         return self.conjugate() / self.norm()
     
     @overload
-    def __truediv__(self, other:Self) -> Self: ...
+    def __truediv__(self, other: QuadraticElement2) -> QuadraticElement2: ...
     @overload
-    def __truediv__(self, other:int) -> Self: ...
+    def __truediv__(self, other: int) -> QuadraticElement2: ...
     @overload
-    def __truediv__(self, other:Fraction) -> Self: ...
-    def __truediv__(self, other:Any) -> Self|NotImplementedType:
+    def __truediv__(self, other: Fraction) -> QuadraticElement2: ...
+    def __truediv__(self, other: Any) -> QuadraticElement2|NotImplementedType:
         r"""Return the quotient.
         
         $$
@@ -507,7 +569,7 @@ class QuadraticElement2:
         
         Parameters
         ----------
-        other: QuadraticElement2 or int or Fraction
+        other : QuadraticElement2|int|Fraction
             The denominator.
         
         Returns
@@ -523,16 +585,17 @@ class QuadraticElement2:
         if isinstance(other, QuadraticElement2):
             return self * other.inv()
         elif isinstance(other, (int, Fraction)):
-            other:Fraction = Fraction(other)
+            other: Fraction = Fraction(other)
             return QuadraticElement2(self.a / other,
                                      self.b / other)
         return NotImplemented
     
     @overload
-    def __rtruediv__(self, other:int) -> Self: ...
+    def __rtruediv__(self, other: int) -> QuadraticElement2: ...
     @overload
-    def __rtruediv__(self, other:Fraction) -> Self: ...
-    def __rtruediv__(self, other:Any) -> Self|NotImplementedType:
+    def __rtruediv__(self, other: Fraction) -> QuadraticElement2: ...
+    def __rtruediv__(self, other: Any) \
+            -> QuadraticElement2|NotImplementedType:
         if isinstance(other, (int, Fraction)):
             return other * self.inv()
         return NotImplemented

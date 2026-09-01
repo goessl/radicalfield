@@ -40,8 +40,8 @@ plugins:
             show_symbol_type_heading: true
             group_by_category: false
             docstring_style: numpy
-            docstring_section_style: list
             show_if_no_docstring: true
+            annotations_path: source
 
 extra:
   social:

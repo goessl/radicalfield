@@ -39,6 +39,23 @@ def test_eq():
     assert QuadraticElement235(Fraction(1, 2)) == Fraction(1, 2)
     assert QuadraticElement235(5, 1) != 5
 
+def test_sign():
+    for _ in range(N):
+        a:QuadraticElement235 = _rand_qe235(n)
+        assert a.sgn()>0 and float(a)>0 \
+                or a.sgn()<0 and float(a)<0 \
+                or a.sgn()==0 and float(a)==0
+
+def test_lt():
+    for _ in range(N):
+        a:QuadraticElement235 = _rand_qe235(n)
+        b:QuadraticElement235 = _rand_qe235(n)
+        c:Fraction            = _rand_frac(n)
+        d:int                 = randint(-n, +n)
+        assert (a<b) == (float(a)<float(b))
+        assert (a<c) == (float(a)<float(c))
+        assert (a<d) == (float(a)<float(d))
+
 def test_hash():
     # hash must agree with equality
     assert hash(QuadraticElement235(5)) == hash(5)
@@ -141,6 +158,42 @@ def test_div():
                 c / b
 
 
+
+def test_sympy():
+    x = QuadraticElement235(1, -2, 3, -4, 5, -6, 7, -8)
+    e = sp.sympify(x)
+    assert isinstance(e, sp.Expr)
+    assert QuadraticElement235.from_expr(e) == x
+    
+    S2, S3, S5 = sp.sqrt(2), sp.sqrt(3), sp.sqrt(5)
+    assert QuadraticElement235.from_expr(3 + 4*S2) == QuadraticElement235(3, 4)
+    assert QuadraticElement235.from_expr(S5) == QuadraticElement235(0, 0, 0, 1)
+    assert QuadraticElement235.from_expr(sp.sqrt(30)) \
+            == QuadraticElement235(0, 0, 0, 0, 0, 0, 0, 1)
+    assert QuadraticElement235.from_expr(sp.Integer(10)) == QuadraticElement235(10)
+    assert QuadraticElement235.from_expr(sp.Rational(1, 2)) \
+            == QuadraticElement235(Fraction(1, 2))
+    #non-squarefree radicands must normalise
+    assert QuadraticElement235.from_expr(sp.sqrt(8)/2) == QuadraticElement235(0, 1)
+    assert QuadraticElement235.from_expr(sp.sqrt(20)) == QuadraticElement235(0, 0, 0, 2)
+    
+    with pytest.raises(ValueError):
+        QuadraticElement235.from_expr(sp.sqrt(7))
+
+
+def test_from_expr_slow_path():
+    S2, S3 = sp.sqrt(2), sp.sqrt(3)
+    #products sympy does not keep in the flat basis
+    assert QuadraticElement235.from_expr((1 + S2)*(1 + S3)) \
+            == QuadraticElement235(1, 1, 1, 0, 1)
+    assert QuadraticElement235.from_expr((S2 + S3)**2) == QuadraticElement235(5, 0, 0, 0, 2)
+    assert QuadraticElement235.from_expr(sp.Float(0.5) + S2) \
+            == QuadraticElement235(Fraction(1, 2), 1)
+    
+    with pytest.raises(ValueError):
+        QuadraticElement235.from_expr(sp.pi)
+    with pytest.raises(ValueError):
+        QuadraticElement235.from_expr(sp.Symbol('x'))
 
 
 

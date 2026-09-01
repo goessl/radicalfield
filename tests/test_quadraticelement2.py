@@ -39,6 +39,13 @@ def test_eq():
     assert QuadraticElement2(5, 0) == 5
     assert QuadraticElement2(5, 1) != 5
 
+def test_sign():
+    for _ in range(N):
+        a:QuadraticElement2 = _rand_qe2(n)
+        assert a.sgn()>0 and float(a)>0 \
+                or a.sgn()<0 and float(a)<0 \
+                or a.sgn()==0 and float(a)==0
+
 def test_lt():
     for _ in range(N):
         a:QuadraticElement2 = _rand_qe2(n)
@@ -185,12 +192,11 @@ def test_sympy():
     assert y == x
     
     SQRT2 = sp.sqrt(2)
-    assert QuadraticElement2.from_expr(3 + 4 * SQRT2) == QuadraticElement2(3, 4)
-    assert QuadraticElement2.from_expr(SQRT2) == QuadraticElement2(0, 1)
     assert QuadraticElement2.from_expr(sp.Integer(10)) == QuadraticElement2(10, 0)
+    assert QuadraticElement2.from_expr(SQRT2) == QuadraticElement2(0, 1)
+    assert QuadraticElement2.from_expr(3 + 4 * SQRT2) == QuadraticElement2(3, 4)
     
     assert QuadraticElement2.from_expr(sp.Rational(1, 2)) == QuadraticElement2(Fraction(1, 2))
-    
     assert QuadraticElement2.from_expr(sp.sqrt(8) / 2) == QuadraticElement2(0, 1)
     
     with pytest.raises(ValueError):
@@ -198,3 +204,33 @@ def test_sympy():
     
     with pytest.raises(ValueError):
         QuadraticElement2.from_expr(1 + sp.sqrt(2) + sp.sqrt(3))
+
+
+def test_from_expr_slow_path():
+    #expressions sympy does not keep in the canonical a+b√2 form,
+    #so from_expr has to fall back to nsimplify/simplify
+    SQRT2 = sp.sqrt(2)
+    
+    assert QuadraticElement2.from_expr((1 + SQRT2)**2) == QuadraticElement2(3, 2)
+    assert QuadraticElement2.from_expr(1 / (1 + SQRT2)) == QuadraticElement2(-1, 1)
+    assert QuadraticElement2.from_expr((2 + SQRT2) / (3 - SQRT2)) \
+            == QuadraticElement2(Fraction(8, 7), Fraction(5, 7))
+    
+    assert QuadraticElement2.from_expr(sp.Float(0.5) + SQRT2) \
+            == QuadraticElement2(Fraction(1, 2), 1)
+    
+    with pytest.raises(ValueError):
+        QuadraticElement2.from_expr(sp.pi)
+    
+    with pytest.raises(ValueError):
+        QuadraticElement2.from_expr(sp.Symbol('x'))
+
+
+def test_from_expr_coefficient_types():
+    #integers stay int, non-integer rationals become Fraction
+    x = QuadraticElement2.from_expr(3 + 4*sp.sqrt(2))
+    assert isinstance(x.a, int) and isinstance(x.b, int)
+    
+    y = QuadraticElement2.from_expr(sp.Rational(1, 3) + sp.Rational(2, 5)*sp.sqrt(2))
+    assert isinstance(y.a, Fraction) and isinstance(y.b, Fraction)
+    assert y == QuadraticElement2(Fraction(1, 3), Fraction(2, 5))
