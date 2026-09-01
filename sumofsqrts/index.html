@@ -1474,18 +1474,34 @@ Division is promoted to rationals.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-            <b><code>n</code></b>
-              (<code><span title="dict">dict</span>[<span title="int">int</span>, <span title="int">int</span> | <span title="fractions.Fraction">Fraction</span>] or <span title="int">int</span> or <span title="fractions.Fraction">Fraction</span></code>, default:
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>n</code>
+            </td>
+            <td>
+                  <code><span title="dict">dict</span>[<span title="int">int</span>, <span title="int">int</span> | <span title="fractions.Fraction">Fraction</span>] or <span title="int">int</span> or <span title="fractions.Fraction">Fraction</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Mapping of radicands <span class="arithmatex">\(k_i\)</span> to factors <span class="arithmatex">\(v_i\)</span>.</p>
+              </div>
+            </td>
+            <td>
                   <code>0</code>
-)
-          –
-          <div class="doc-md-description">
-            <p>Mapping of radicands <span class="arithmatex">\(k_i\)</span> to factors <span class="arithmatex">\(v_i\)</span>.</p>
-          </div>
-        </li>
-    </ul>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 <details class="references" open>
@@ -2900,45 +2916,85 @@ Division is promoted to rationals.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-            <b><code>e</code></b>
-              (<code><span title="sympy.Expr">Expr</span></code>)
-          –
-          <div class="doc-md-description">
-            <p>Expression to convert.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>e</code>
+            </td>
+            <td>
+                  <code><span title="sympy">sp</span>.<span title="sympy.Expr">Expr</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Expression to convert.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
 
 
   
       dataclass
    (radicalfield.sumofsqrts.SumOfSqrts)" href="#radicalfield.sumofsqrts.SumOfSqrts">SumOfSqrts</a></code>
-          –
-          <div class="doc-md-description">
-            <p>Expression as <code>SumOfSqrts</code>.</p>
-          </div>
-        </li>
-    </ul>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Expression as <code>SumOfSqrts</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 <p><span class="doc-section-title">Raises:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="ValueError">ValueError</span></code>
-            –
-          <div class="doc-md-description">
-            <p>If the expression could not be converted.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If the expression could not be converted.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -3101,48 +3157,91 @@ Division is promoted to rationals.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-            <b><code>d</code></b>
-              (<code><span title="dict">dict</span>[<span title="int">int</span>, <span title="int">int</span> | <span title="fractions.Fraction">Fraction</span>]</code>)
-          –
-          <div class="doc-md-description">
-            <p>Mapping of radicands <span class="arithmatex">\(k_i\)</span> to factors <span class="arithmatex">\(v_i\)</span>.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>d</code>
+            </td>
+            <td>
+                  <code><span title="dict">dict</span>[<span title="int">int</span>, <span title="int">int</span> | <span title="fractions.Fraction">Fraction</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Mapping of radicands <span class="arithmatex">\(k_i\)</span> to factors <span class="arithmatex">\(v_i\)</span>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="dict">dict</span>[<span title="int">int</span>, <span title="int">int</span> | <span title="fractions.Fraction">Fraction</span>]</code>
-          –
-          <div class="doc-md-description">
-            <p>Mathematically equivalent but cleaner copy.</p>
-          </div>
-        </li>
-    </ul>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="dict">dict</span>[<span title="int">int</span>, <span title="int">int</span> | <span title="fractions.Fraction">Fraction</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Mathematically equivalent but cleaner copy.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 <p><span class="doc-section-title">Raises:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="TypeError">TypeError</span></code>
-            –
-          <div class="doc-md-description">
-            <p>If a radicand is not an integer or a coefficient is not an
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="TypeError">TypeError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If a radicand is not an integer or a coefficient is not an
 integer or fraction.</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-              <code><span title="ValueError">ValueError</span></code>
-            –
-          <div class="doc-md-description">
-            <p>If a radicand is negative.</p>
-          </div>
-        </li>
-    </ul>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If a radicand is negative.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -3323,16 +3422,27 @@ integer or fraction.</p>
         <p>Return the number of terms.</p>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="int">int</span></code>
-          –
-          <div class="doc-md-description">
-            <p>Number of terms.</p>
-          </div>
-        </li>
-    </ul>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Number of terms.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -3384,28 +3494,57 @@ integer or fraction.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-            <b><code>key</code></b>
-              (<code><span title="int">int</span></code>)
-          –
-          <div class="doc-md-description">
-            <p>Radicand.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>key</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Radicand.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="int">int</span> or <span title="fractions.Fraction">Fraction</span></code>
-          –
-          <div class="doc-md-description">
-            <p>Factor of the given radicand.</p>
-          </div>
-        </li>
-    </ul>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="int">int</span> or <span title="fractions.Fraction">Fraction</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Factor of the given radicand.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -3578,16 +3717,27 @@ integer or fraction.</p>
         <p>Return whether this element is unequal zero.</p>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="bool">bool</span></code>
-          –
-          <div class="doc-md-description">
-            <p>Whether this element is unequal zero.</p>
-          </div>
-        </li>
-    </ul>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Whether this element is unequal zero.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -3639,16 +3789,27 @@ integer or fraction.</p>
   <p>Not a property to be consistent with <code>fractions.Fraction.is_integer()</code>.</p>
 </details>
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="bool">bool</span></code>
-          –
-          <div class="doc-md-description">
-            <p>Whether this element has no radical component.</p>
-          </div>
-        </li>
-    </ul>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Whether this element has no radical component.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -3703,28 +3864,50 @@ integer or fraction.</p>
         <p>Return this element as a fraction.</p>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="fractions.Fraction">Fraction</span></code>
-          –
-          <div class="doc-md-description">
-            <p>This element as a fraction.</p>
-          </div>
-        </li>
-    </ul>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="fractions.Fraction">Fraction</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>This element as a fraction.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 <p><span class="doc-section-title">Raises:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="ValueError">ValueError</span></code>
-            –
-          <div class="doc-md-description">
-            <p>If this element is not a fraction.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If this element is not a fraction.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -3790,16 +3973,27 @@ integer or fraction.</p>
   <p>Not a property to be consistent with <code>fractions.Fraction.is_integer()</code>.</p>
 </details>
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="bool">bool</span></code>
-          –
-          <div class="doc-md-description">
-            <p>Whether this element is an integer.</p>
-          </div>
-        </li>
-    </ul>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Whether this element is an integer.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -3854,28 +4048,50 @@ integer or fraction.</p>
         <p>Return this element as an integer.</p>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="int">int</span></code>
-          –
-          <div class="doc-md-description">
-            <p>This element as an integer.</p>
-          </div>
-        </li>
-    </ul>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>This element as an integer.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 <p><span class="doc-section-title">Raises:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="ValueError">ValueError</span></code>
-            –
-          <div class="doc-md-description">
-            <p>If this element is not an integer.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If this element is not an integer.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -3936,16 +4152,27 @@ integer or fraction.</p>
         <p>Return this element as a float.</p>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="float">float</span></code>
-          –
-          <div class="doc-md-description">
-            <p>This element as a float.</p>
-          </div>
-        </li>
-    </ul>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>This element as a float.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -4049,28 +4276,57 @@ Extremely slow and terrrible complexity.</p>
 </details>
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-            <b><code>other</code></b>
-              (<code><span title="typing.Any">Any</span></code>)
-          –
-          <div class="doc-md-description">
-            <p>Operand to compare to.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>other</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Operand to compare to.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="bool">bool</span></code>
-          –
-          <div class="doc-md-description">
-            <p>Whether this element is less than the other.</p>
-          </div>
-        </li>
-    </ul>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Whether this element is less than the other.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 <details class="references" open>
@@ -4226,16 +4482,27 @@ Extremely slow and terrrible complexity.</p>
 <p>Product of all conjugates.</p>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="int">int</span> or <span title="fractions.Fraction">Fraction</span></code>
-          –
-          <div class="doc-md-description">
-            <p>The algebraic norm.</p>
-          </div>
-        </li>
-    </ul>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="int">int</span> or <span title="fractions.Fraction">Fraction</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The algebraic norm.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 <details class="references" open>
@@ -4330,21 +4597,32 @@ Extremely slow and terrrible complexity.</p>
 <p>The algebraic conjugates are all sign flip permutations.</p>
 
 
-<p><span class="doc-section-title">Yields:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
+    <p><span class="doc-section-title">Yields:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
 
 
   
       dataclass
    (radicalfield.sumofsqrts.SumOfSqrts)" href="#radicalfield.sumofsqrts.SumOfSqrts">SumOfSqrts</a></code>
-          –
-          <div class="doc-md-description">
-            <p>The algebraic conjugations.</p>
-          </div>
-        </li>
-    </ul>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The algebraic conjugations.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 <details class="references" open>
@@ -4431,21 +4709,32 @@ Extremely slow and terrrible complexity.</p>
 \]</div>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
 
 
   
       dataclass
    (radicalfield.sumofsqrts.SumOfSqrts)" href="#radicalfield.sumofsqrts.SumOfSqrts">SumOfSqrts</a></code>
-          –
-          <div class="doc-md-description">
-            <p>Itself.</p>
-          </div>
-        </li>
-    </ul>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Itself.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -4503,21 +4792,32 @@ Extremely slow and terrrible complexity.</p>
 \]</div>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
 
 
   
       dataclass
    (radicalfield.sumofsqrts.SumOfSqrts)" href="#radicalfield.sumofsqrts.SumOfSqrts">SumOfSqrts</a></code>
-          –
-          <div class="doc-md-description">
-            <p>The negation.</p>
-          </div>
-        </li>
-    </ul>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The negation.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -4582,33 +4882,62 @@ Extremely slow and terrrible complexity.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-            <b><code>other</code></b>
-              (<code><span title="typing.Any">Any</span></code>)
-          –
-          <div class="doc-md-description">
-            <p>Other summand.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>other</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Other summand.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
 
 
   
       dataclass
    (radicalfield.sumofsqrts.SumOfSqrts)" href="#radicalfield.sumofsqrts.SumOfSqrts">SumOfSqrts</a></code>
-          –
-          <div class="doc-md-description">
-            <p>The sum.</p>
-          </div>
-        </li>
-    </ul>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The sum.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -4735,33 +5064,62 @@ Extremely slow and terrrible complexity.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-            <b><code>other</code></b>
-              (<code><span title="typing.Any">Any</span></code>)
-          –
-          <div class="doc-md-description">
-            <p>The subtrahend.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>other</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The subtrahend.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
 
 
   
       dataclass
    (radicalfield.sumofsqrts.SumOfSqrts)" href="#radicalfield.sumofsqrts.SumOfSqrts">SumOfSqrts</a></code>
-          –
-          <div class="doc-md-description">
-            <p>The difference.</p>
-          </div>
-        </li>
-    </ul>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The difference.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -4888,33 +5246,62 @@ Extremely slow and terrrible complexity.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-            <b><code>other</code></b>
-              (<code><span title="typing.Any">Any</span></code>)
-          –
-          <div class="doc-md-description">
-            <p>The other factor.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>other</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The other factor.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
 
 
   
       dataclass
    (radicalfield.sumofsqrts.SumOfSqrts)" href="#radicalfield.sumofsqrts.SumOfSqrts">SumOfSqrts</a></code>
-          –
-          <div class="doc-md-description">
-            <p>The product.</p>
-          </div>
-        </li>
-    </ul>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The product.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -5041,33 +5428,55 @@ where <span class="arithmatex">\(\overline{x}^i\)</span> denotes the <span class
 because then has the denominator become rational.</p>
 </details>
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
 
 
   
       dataclass
    (radicalfield.sumofsqrts.SumOfSqrts)" href="#radicalfield.sumofsqrts.SumOfSqrts">SumOfSqrts</a></code>
-          –
-          <div class="doc-md-description">
-            <p>The multiplicative inverse element.</p>
-          </div>
-        </li>
-    </ul>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The multiplicative inverse element.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 <p><span class="doc-section-title">Raises:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="ZeroDivisionError">ZeroDivisionError</span></code>
-            –
-          <div class="doc-md-description">
-            <p>If the norm is zero.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ZeroDivisionError">ZeroDivisionError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If the norm is zero.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 <details class="see-also" open>
@@ -5181,45 +5590,85 @@ because then has the denominator become rational.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-            <b><code>other</code></b>
-              (<code><span title="typing.Any">Any</span></code>)
-          –
-          <div class="doc-md-description">
-            <p>The denominator.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>other</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The denominator.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            SumOfSqrts
 
 
   
       dataclass
    (radicalfield.sumofsqrts.SumOfSqrts)" href="#radicalfield.sumofsqrts.SumOfSqrts">SumOfSqrts</a></code>
-          –
-          <div class="doc-md-description">
-            <p>The quotient.</p>
-          </div>
-        </li>
-    </ul>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The quotient.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 <p><span class="doc-section-title">Raises:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="ZeroDivisionError">ZeroDivisionError</span></code>
-            –
-          <div class="doc-md-description">
-            <p>If the norm of the denominator is zero.</p>
-          </div>
-        </li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ZeroDivisionError">ZeroDivisionError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If the norm of the denominator is zero.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
