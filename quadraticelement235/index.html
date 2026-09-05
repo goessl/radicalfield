@@ -1049,6 +1049,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#radicalfield.quadraticelement235.QuadraticElement235.__pow__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __pow__
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#radicalfield.quadraticelement235.QuadraticElement235.__str__" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1780,6 +1791,17 @@
     <span class="md-ellipsis">
       
         __rtruediv__
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radicalfield.quadraticelement235.QuadraticElement235.__pow__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __pow__
       
     </span>
   </a>
@@ -2674,7 +2696,50 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 <span class="normal">587</span>
 <span class="normal">588</span>
 <span class="normal">589</span>
-<span class="normal">590</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@total_ordering</span>
+<span class="normal">590</span>
+<span class="normal">591</span>
+<span class="normal">592</span>
+<span class="normal">593</span>
+<span class="normal">594</span>
+<span class="normal">595</span>
+<span class="normal">596</span>
+<span class="normal">597</span>
+<span class="normal">598</span>
+<span class="normal">599</span>
+<span class="normal">600</span>
+<span class="normal">601</span>
+<span class="normal">602</span>
+<span class="normal">603</span>
+<span class="normal">604</span>
+<span class="normal">605</span>
+<span class="normal">606</span>
+<span class="normal">607</span>
+<span class="normal">608</span>
+<span class="normal">609</span>
+<span class="normal">610</span>
+<span class="normal">611</span>
+<span class="normal">612</span>
+<span class="normal">613</span>
+<span class="normal">614</span>
+<span class="normal">615</span>
+<span class="normal">616</span>
+<span class="normal">617</span>
+<span class="normal">618</span>
+<span class="normal">619</span>
+<span class="normal">620</span>
+<span class="normal">621</span>
+<span class="normal">622</span>
+<span class="normal">623</span>
+<span class="normal">624</span>
+<span class="normal">625</span>
+<span class="normal">626</span>
+<span class="normal">627</span>
+<span class="normal">628</span>
+<span class="normal">629</span>
+<span class="normal">630</span>
+<span class="normal">631</span>
+<span class="normal">632</span>
+<span class="normal">633</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@total_ordering</span>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1">#make slots, immutability &amp; repr</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">QuadraticElement235</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Element of the quadratic rationals $\mathbb{K}\left(\sqrt{2},\sqrt{3},\sqrt{5}\right)$.</span>
@@ -3230,6 +3295,49 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
     <span class="k">def</span><span class="w"> </span><span class="fm">__rtruediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuadraticElement235</span><span class="o">|</span><span class="n">NotImplementedType</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Fraction</span><span class="p">)):</span>
             <span class="k">return</span> <span class="n">other</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__pow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuadraticElement235</span><span class="p">:</span> <span class="o">...</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__pow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">modulo</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuadraticElement235</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__pow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">modulo</span><span class="p">:</span> <span class="n">Any</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">QuadraticElement235</span><span class="o">|</span><span class="n">NotImplementedType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the power.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : int</span>
+<span class="sd">            The exponent.</span>
+<span class="sd">        modulo : None</span>
+<span class="sd">            Not supported divisor.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        QuadraticElement235</span>
+<span class="sd">            The power.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ZeroDivisionError</span>
+<span class="sd">            If the base is zero and the exponent negative.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        - [Wikipedia - Exponentiation by squaring](https://en.wikipedia.org/wiki/Exponentiation_by_squaring#With_constant_auxiliary_memory)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">modulo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">b</span><span class="p">:</span> <span class="n">QuadraticElement235</span> <span class="o">=</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">other</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv</span><span class="p">()</span>
+            <span class="n">other</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+            <span class="n">r</span><span class="p">:</span> <span class="n">QuadraticElement235</span> <span class="o">=</span> <span class="n">QuadraticElement235</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">while</span> <span class="n">other</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">other</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">r</span> <span class="o">*=</span> <span class="n">b</span>
+                <span class="n">other</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">other</span><span class="p">:</span>
+                    <span class="n">b</span> <span class="o">*=</span> <span class="n">b</span>
+            <span class="k">return</span> <span class="n">r</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span>
 
 
@@ -5503,6 +5611,215 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 <div class="doc doc-object doc-function">
 
 
+<h3 id="radicalfield.quadraticelement235.QuadraticElement235.__pow__" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="fm">__pow__</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">modulo</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+          <div class="doc-overloads">
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">__pow__</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuadraticElement235</span>
+</code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class="nf">__pow__</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">modulo</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuadraticElement235</span>
+</code></pre></div>          </div>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the power.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>other</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The exponent.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>modulo</code>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Not supported divisor.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            QuadraticElement235
+
+
+  
+      dataclass
+   (radicalfield.quadraticelement235.QuadraticElement235)" href="#radicalfield.quadraticelement235.QuadraticElement235">QuadraticElement235</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The power.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ZeroDivisionError">ZeroDivisionError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If the base is zero and the exponent negative.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="references" open>
+  <summary>References</summary>
+  <ul>
+<li><a href="https://en.wikipedia.org/wiki/Exponentiation_by_squaring#With_constant_auxiliary_memory">Wikipedia - Exponentiation by squaring</a></li>
+</ul>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">588</span>
+<span class="normal">589</span>
+<span class="normal">590</span>
+<span class="normal">591</span>
+<span class="normal">592</span>
+<span class="normal">593</span>
+<span class="normal">594</span>
+<span class="normal">595</span>
+<span class="normal">596</span>
+<span class="normal">597</span>
+<span class="normal">598</span>
+<span class="normal">599</span>
+<span class="normal">600</span>
+<span class="normal">601</span>
+<span class="normal">602</span>
+<span class="normal">603</span>
+<span class="normal">604</span>
+<span class="normal">605</span>
+<span class="normal">606</span>
+<span class="normal">607</span>
+<span class="normal">608</span>
+<span class="normal">609</span>
+<span class="normal">610</span>
+<span class="normal">611</span>
+<span class="normal">612</span>
+<span class="normal">613</span>
+<span class="normal">614</span>
+<span class="normal">615</span>
+<span class="normal">616</span>
+<span class="normal">617</span>
+<span class="normal">618</span>
+<span class="normal">619</span>
+<span class="normal">620</span>
+<span class="normal">621</span>
+<span class="normal">622</span>
+<span class="normal">623</span>
+<span class="normal">624</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__pow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">modulo</span><span class="p">:</span> <span class="n">Any</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> \
+        <span class="o">-&gt;</span> <span class="n">QuadraticElement235</span><span class="o">|</span><span class="n">NotImplementedType</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the power.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    other : int</span>
+<span class="sd">        The exponent.</span>
+<span class="sd">    modulo : None</span>
+<span class="sd">        Not supported divisor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    QuadraticElement235</span>
+<span class="sd">        The power.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ZeroDivisionError</span>
+<span class="sd">        If the base is zero and the exponent negative.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    - [Wikipedia - Exponentiation by squaring](https://en.wikipedia.org/wiki/Exponentiation_by_squaring#With_constant_auxiliary_memory)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">modulo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">b</span><span class="p">:</span> <span class="n">QuadraticElement235</span> <span class="o">=</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">other</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv</span><span class="p">()</span>
+        <span class="n">other</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">r</span><span class="p">:</span> <span class="n">QuadraticElement235</span> <span class="o">=</span> <span class="n">QuadraticElement235</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">other</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">other</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">r</span> <span class="o">*=</span> <span class="n">b</span>
+            <span class="n">other</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">other</span><span class="p">:</span>
+                <span class="n">b</span> <span class="o">*=</span> <span class="n">b</span>
+        <span class="k">return</span> <span class="n">r</span>
+    <span class="k">return</span> <span class="bp">NotImplemented</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="radicalfield.quadraticelement235.QuadraticElement235.__str__" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="fm">__str__</span><span class="p">()</span></code>
 
@@ -5514,8 +5831,8 @@ Inversion and division is always promoted to <code>Fraction</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>radicalfield\quadraticelement235.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">586</span>
-<span class="normal">587</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">629</span>
+<span class="normal">630</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">b2</span><span class="si">:</span><span class="s1">+</span><span class="si">}</span><span class="s1">√2</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">b3</span><span class="si">:</span><span class="s1">+</span><span class="si">}</span><span class="s1">√3</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">b5</span><span class="si">:</span><span class="s1">+</span><span class="si">}</span><span class="s1">√5</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">b6</span><span class="si">:</span><span class="s1">+</span><span class="si">}</span><span class="s1">√6</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">b10</span><span class="si">:</span><span class="s1">+</span><span class="si">}</span><span class="s1">√10</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">b15</span><span class="si">:</span><span class="s1">+</span><span class="si">}</span><span class="s1">√15</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">b30</span><span class="si">:</span><span class="s1">+</span><span class="si">}</span><span class="s1">√30&#39;</span>
 </code></pre></div></td></tr></table></div>
             </details>
