@@ -581,6 +581,49 @@ class QuadraticElement235:
         return NotImplemented
     
     
+    @overload
+    def __pow__(self, other: int) -> QuadraticElement235: ...
+    @overload
+    def __pow__(self, other: int, modulo: None) -> QuadraticElement235: ...
+    def __pow__(self, other: Any, modulo: Any=None) \
+            -> QuadraticElement235|NotImplementedType:
+        """Return the power.
+        
+        Parameters
+        ----------
+        other : int
+            The exponent.
+        modulo : None
+            Not supported divisor.
+        
+        Returns
+        -------
+        QuadraticElement235
+            The power.
+        
+        Raises
+        ------
+        ZeroDivisionError
+            If the base is zero and the exponent negative.
+        
+        References
+        ----------
+        - [Wikipedia - Exponentiation by squaring](https://en.wikipedia.org/wiki/Exponentiation_by_squaring#With_constant_auxiliary_memory)
+        """
+        if isinstance(other, int) and modulo is None:
+            b: QuadraticElement235 = self if other >= 0 else self.inv()
+            other: int = abs(other)
+            r: QuadraticElement235 = QuadraticElement235(1)
+            while other > 0:
+                if other & 1:
+                    r *= b
+                other >>= 1
+                if other:
+                    b *= b
+            return r
+        return NotImplemented
+    
+    
     
     #IO
     def __str__(self) -> str:

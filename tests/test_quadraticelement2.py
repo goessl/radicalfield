@@ -1,5 +1,8 @@
 import pytest
 from random import randint
+from functools import reduce
+from operator import mul
+from itertools import repeat
 import sympy as sp
 from fractions import Fraction
 
@@ -180,6 +183,21 @@ def test_div():
         else:
             with pytest.raises(ZeroDivisionError):
                 c / b
+
+def test_pow():
+    assert QuadraticElement2(0)**0 == 1
+    for _ in range(N):
+        a:QuadraticElement2 = _rand_qe2(n)
+        assert a**0 == 1
+    
+    for _ in range(N):
+        a:QuadraticElement2 = _rand_qe2(n)
+        e:int = randint(0, 10)
+        
+        r:QuadraticElement2 = reduce(mul, repeat(a, e), QuadraticElement2(1))
+        assert a**e == r
+        if a:
+            assert a**-e == r.inv()
 
 
 
