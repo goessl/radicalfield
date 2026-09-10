@@ -66,28 +66,29 @@ class QuadraticElement235:
     ----------
     - [Wikipedia - Quadratic integers](https://en.wikipedia.org/wiki/Quadratic_integer)
     """
-    a: Final[int|Fraction]   = 0
-    b2: Final[int|Fraction]  = 0
-    b3: Final[int|Fraction]  = 0
-    b5: Final[int|Fraction]  = 0
-    b6: Final[int|Fraction]  = 0
+    a:   Final[int|Fraction] = 0
+    b2:  Final[int|Fraction] = 0
+    b3:  Final[int|Fraction] = 0
+    b5:  Final[int|Fraction] = 0
+    b6:  Final[int|Fraction] = 0
     b10: Final[int|Fraction] = 0
     b15: Final[int|Fraction] = 0
     b30: Final[int|Fraction] = 0
     
-    SQRT2: ClassVar[float]  = sqrt(2)
-    SQRT3: ClassVar[float]  = sqrt(3)
-    SQRT5: ClassVar[float]  = sqrt(5)
-    SQRT6: ClassVar[float]  = sqrt(6)
+    SQRT2:  ClassVar[float] = sqrt(2)
+    SQRT3:  ClassVar[float] = sqrt(3)
+    SQRT5:  ClassVar[float] = sqrt(5)
+    SQRT6:  ClassVar[float] = sqrt(6)
     SQRT10: ClassVar[float] = sqrt(10)
     SQRT15: ClassVar[float] = sqrt(15)
     SQRT30: ClassVar[float] = sqrt(30)
     
-    SPONE: ClassVar[sympy.Expr]    = sympy.S.One
-    SPSQRT2: ClassVar[sympy.Expr]  = sympy.sqrt(2)
-    SPSQRT3: ClassVar[sympy.Expr]  = sympy.sqrt(3)
-    SPSQRT5: ClassVar[sympy.Expr]  = sympy.sqrt(5)
-    SPSQRT6: ClassVar[sympy.Expr]  = sympy.sqrt(6)
+    SPZERO:   ClassVar[sympy.Expr] = sympy.S.Zero
+    SPONE:    ClassVar[sympy.Expr] = sympy.S.One
+    SPSQRT2:  ClassVar[sympy.Expr] = sympy.sqrt(2)
+    SPSQRT3:  ClassVar[sympy.Expr] = sympy.sqrt(3)
+    SPSQRT5:  ClassVar[sympy.Expr] = sympy.sqrt(5)
+    SPSQRT6:  ClassVar[sympy.Expr] = sympy.sqrt(6)
     SPSQRT10: ClassVar[sympy.Expr] = sympy.sqrt(10)
     SPSQRT15: ClassVar[sympy.Expr] = sympy.sqrt(15)
     SPSQRT30: ClassVar[sympy.Expr] = sympy.sqrt(30)
@@ -108,14 +109,14 @@ class QuadraticElement235:
                                                  QuadraticElement235.SPSQRT10,
                                                  QuadraticElement235.SPSQRT15,
                                                  QuadraticElement235.SPSQRT30}:
-            a:   Any = d.get(QuadraticElement235.SPONE,    sympy.S.Zero)
-            b2:  Any = d.get(QuadraticElement235.SPSQRT2,  sympy.S.Zero)
-            b3:  Any = d.get(QuadraticElement235.SPSQRT3,  sympy.S.Zero)
-            b5:  Any = d.get(QuadraticElement235.SPSQRT5,  sympy.S.Zero)
-            b6:  Any = d.get(QuadraticElement235.SPSQRT6,  sympy.S.Zero)
-            b10: Any = d.get(QuadraticElement235.SPSQRT10, sympy.S.Zero)
-            b15: Any = d.get(QuadraticElement235.SPSQRT15, sympy.S.Zero)
-            b30: Any = d.get(QuadraticElement235.SPSQRT30, sympy.S.Zero)
+            a:   Any = d.get(QuadraticElement235.SPONE,    QuadraticElement235.SPZERO)
+            b2:  Any = d.get(QuadraticElement235.SPSQRT2,  QuadraticElement235.SPZERO)
+            b3:  Any = d.get(QuadraticElement235.SPSQRT3,  QuadraticElement235.SPZERO)
+            b5:  Any = d.get(QuadraticElement235.SPSQRT5,  QuadraticElement235.SPZERO)
+            b6:  Any = d.get(QuadraticElement235.SPSQRT6,  QuadraticElement235.SPZERO)
+            b10: Any = d.get(QuadraticElement235.SPSQRT10, QuadraticElement235.SPZERO)
+            b15: Any = d.get(QuadraticElement235.SPSQRT15, QuadraticElement235.SPZERO)
+            b30: Any = d.get(QuadraticElement235.SPSQRT30, QuadraticElement235.SPZERO)
             if isinstance(a, sympy.Rational) \
                     and isinstance(b2,  sympy.Rational) \
                     and isinstance(b3,  sympy.Rational) \
@@ -150,18 +151,35 @@ class QuadraticElement235:
                                            QuadraticElement235.SPSQRT10,
                                            QuadraticElement235.SPSQRT15,
                                            QuadraticElement235.SPSQRT30}
-        if extra:
-            raise ValueError(f'not in K(√2,√3,√5): unexpected terms {extra}')
+        
+        a:   sympy.Expr = d.get(QuadraticElement235.SPONE,    QuadraticElement235.SPZERO)
+        b2:  sympy.Expr = d.get(QuadraticElement235.SPSQRT2,  QuadraticElement235.SPZERO)
+        b3:  sympy.Expr = d.get(QuadraticElement235.SPSQRT3,  QuadraticElement235.SPZERO)
+        b5:  sympy.Expr = d.get(QuadraticElement235.SPSQRT5,  QuadraticElement235.SPZERO)
+        b6:  sympy.Expr = d.get(QuadraticElement235.SPSQRT6,  QuadraticElement235.SPZERO)
+        b10: sympy.Expr = d.get(QuadraticElement235.SPSQRT10, QuadraticElement235.SPZERO)
+        b15: sympy.Expr = d.get(QuadraticElement235.SPSQRT15, QuadraticElement235.SPZERO)
+        b30: sympy.Expr = d.get(QuadraticElement235.SPSQRT30, QuadraticElement235.SPZERO)
+        
+        if extra or not (isinstance(a, sympy.Rational) \
+                     and isinstance(b2, sympy.Rational) \
+                     and isinstance(b3, sympy.Rational) \
+                     and isinstance(b5, sympy.Rational) \
+                     and isinstance(b6, sympy.Rational) \
+                     and isinstance(b10, sympy.Rational) \
+                     and isinstance(b15, sympy.Rational) \
+                     and isinstance(b30, sympy.Rational)):
+            raise ValueError('not in K(√2,√3,√5)')
         
         return QuadraticElement235(
-            _rat_to_int_or_frac(d.get(QuadraticElement235.SPONE,    sympy.S.Zero)),
-            _rat_to_int_or_frac(d.get(QuadraticElement235.SPSQRT2,  sympy.S.Zero)),
-            _rat_to_int_or_frac(d.get(QuadraticElement235.SPSQRT3,  sympy.S.Zero)),
-            _rat_to_int_or_frac(d.get(QuadraticElement235.SPSQRT5,  sympy.S.Zero)),
-            _rat_to_int_or_frac(d.get(QuadraticElement235.SPSQRT6,  sympy.S.Zero)),
-            _rat_to_int_or_frac(d.get(QuadraticElement235.SPSQRT10, sympy.S.Zero)),
-            _rat_to_int_or_frac(d.get(QuadraticElement235.SPSQRT15, sympy.S.Zero)),
-            _rat_to_int_or_frac(d.get(QuadraticElement235.SPSQRT30, sympy.S.Zero))
+            _rat_to_int_or_frac(a),
+            _rat_to_int_or_frac(b2),
+            _rat_to_int_or_frac(b3),
+            _rat_to_int_or_frac(b5),
+            _rat_to_int_or_frac(b6),
+            _rat_to_int_or_frac(b10),
+            _rat_to_int_or_frac(b15),
+            _rat_to_int_or_frac(b30)
         )
     
     
@@ -211,19 +229,12 @@ class QuadraticElement235:
             raise ValueError('not an integer (a∉ℤ or any b_i≠0)')
         return int(self.a)
     
+    def as_int_or_fraction(self) -> int|Fraction:
+        if not self.is_rational():
+            raise ValueError('not a rational (any b_i≠0)')
+        return self.a
+    
     def integerise_coefficients(self) -> QuadraticElement235:
-        """Return the same value with the coefficients as integers.
-        
-        Returns
-        -------
-        QuadraticElement235
-            Same value with the coefficients as integers.
-        
-        Raises
-        ------
-        ValueError
-            If the coefficients are not integers.
-        """
         if not (Fraction(self.a).is_integer() \
                 and Fraction(self.b2).is_integer() \
                 and Fraction(self.b3).is_integer() \
@@ -328,14 +339,12 @@ class QuadraticElement235:
     
     
     #arithmetic
-    #make all following methods non-recursive/leaves,
-    #except conjugation & norm and inversion as it is otherwise too complicated
     def conjugate(self) -> QuadraticElement235:
-        c5  = self.conjugate5()
-        y   = self * c5
-        c3y = y.conjugate3()
-        z   = y * c3y
-        c2z = z.conjugate2()
+        c5:  QuadraticElement235 = self.conjugate5()
+        y:   QuadraticElement235 = self * c5
+        c3y: QuadraticElement235 = y.conjugate3()
+        z:   QuadraticElement235 = y * c3y
+        c2z: QuadraticElement235 = z.conjugate2()
         return c5 * c3y * c2z
     
     def conj(self) -> QuadraticElement235:
@@ -360,10 +369,18 @@ class QuadraticElement235:
         return self.conjugate5()
     
     def norm(self) -> int|Fraction:
-        n = self * self.conjugate5()
+        n: QuadraticElement235 = self * self.conjugate5()
         n *= n.conjugate3()
         n *= n.conjugate2()
-        return n.as_fraction()
+        return n.as_int_or_fraction()
+    
+    def conj_and_norm(self) -> tuple[QuadraticElement235, int|Fraction]:
+        c5:  QuadraticElement235 = self.conjugate5()
+        y:   QuadraticElement235 = self * c5
+        c3y: QuadraticElement235 = y.conjugate3()
+        z:   QuadraticElement235 = y * c3y
+        c2z: QuadraticElement235 = z.conjugate2()
+        return c5 * c3y * c2z, (z * c2z).as_int_or_fraction()
     
     
     def __pos__(self) -> QuadraticElement235:
@@ -546,7 +563,8 @@ class QuadraticElement235:
     
     
     def inv(self) -> QuadraticElement235:
-        return self.conjugate() / self.norm()
+        adj, nrm = self.conj_and_norm()
+        return adj / nrm
     
     @overload
     def __truediv__(self, other: QuadraticElement235) -> QuadraticElement235: ...
@@ -558,7 +576,7 @@ class QuadraticElement235:
         if isinstance(other, QuadraticElement235):
             return self * other.inv()
         elif isinstance(other, (int, Fraction)):
-            other:Fraction = Fraction(other)
+            other: Fraction = Fraction(other)
             return QuadraticElement235(
                 self.a   / other,
                 self.b2  / other,
@@ -587,29 +605,6 @@ class QuadraticElement235:
     def __pow__(self, other: int, modulo: None) -> QuadraticElement235: ...
     def __pow__(self, other: Any, modulo: Any=None) \
             -> QuadraticElement235|NotImplementedType:
-        """Return the power.
-        
-        Parameters
-        ----------
-        other : int
-            The exponent.
-        modulo : None
-            Not supported divisor.
-        
-        Returns
-        -------
-        QuadraticElement235
-            The power.
-        
-        Raises
-        ------
-        ZeroDivisionError
-            If the base is zero and the exponent negative.
-        
-        References
-        ----------
-        - [Wikipedia - Exponentiation by squaring](https://en.wikipedia.org/wiki/Exponentiation_by_squaring#With_constant_auxiliary_memory)
-        """
         if isinstance(other, int) and modulo is None:
             b: QuadraticElement235 = self if other >= 0 else self.inv()
             other: int = abs(other)

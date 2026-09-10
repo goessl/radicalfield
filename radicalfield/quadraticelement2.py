@@ -42,7 +42,7 @@ class QuadraticElement2:
     Addition, subtraction & multiplication is closed,
     mixed coefficients are promoted.
     Inversion and division is always promoted to `Fraction`.
-   
+    
     Parameters
     ----------
     a : int|Fraction, default 0
@@ -56,10 +56,11 @@ class QuadraticElement2:
     """
     a: Final[int|Fraction] = 0
     b: Final[int|Fraction] = 0
+    
     SQRT2: ClassVar[float] = sqrt(2)
     
-    SPZERO: ClassVar[sympy.Expr] = sympy.S.Zero
-    SPONE: ClassVar[sympy.Expr] = sympy.S.One
+    SPZERO:  ClassVar[sympy.Expr] = sympy.S.Zero
+    SPONE:   ClassVar[sympy.Expr] = sympy.S.One
     SPSQRT2: ClassVar[sympy.Expr] = sympy.sqrt(2)
     
     
@@ -97,8 +98,8 @@ class QuadraticElement2:
         #fast path for expressions in usable form
         d: dict[sympy.Expr,sympy.Expr] = e.as_coefficients_dict()
         if set(d) <= {QuadraticElement2.SPONE, QuadraticElement2.SPSQRT2}:
-            a: Any = d.get(QuadraticElement2.SPONE,   sympy.S.Zero)
-            b: Any = d.get(QuadraticElement2.SPSQRT2, sympy.S.Zero)
+            a: Any = d.get(QuadraticElement2.SPONE,   QuadraticElement2.SPZERO)
+            b: Any = d.get(QuadraticElement2.SPSQRT2, QuadraticElement2.SPZERO)
             if isinstance(a, sympy.Rational) and isinstance(b, sympy.Rational):
                 return QuadraticElement2(_rat_to_int_or_frac(a),
                                          _rat_to_int_or_frac(b))
@@ -200,6 +201,23 @@ class QuadraticElement2:
             raise ValueError('not an integer (a∉ℤ or b≠0)')
         return int(self.a)
     
+    def as_int_or_fraction(self) -> int|Fraction:
+        """Return this element as an integer or a fraction.
+        
+        Returns
+        -------
+        int|Fraction
+            This element as an integer or a fraction.
+        
+        Raises
+        ------
+        ValueError
+            If this element is not a rational.
+        """
+        if not self.is_rational():
+            raise ValueError('not a rational (b≠0)')
+        return self.a
+    
     def integerise_coefficients(self) -> QuadraticElement2:
         """Return the same value with the coefficients as integers.
         
@@ -261,7 +279,7 @@ class QuadraticElement2:
         
         Returns
         -------
-        int
+        int|Fraction
             The sign.
         """
         return self.a*abs(self.a)+2*self.b*abs(self.b)
@@ -325,7 +343,7 @@ class QuadraticElement2:
         
         References
         ----------
-        [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)
+        - [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)
         """
         return QuadraticElement2(+self.a,
                                  -self.b)
@@ -355,7 +373,7 @@ class QuadraticElement2:
         
         References
         ----------
-        [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)
+        - [Wikipedia - Quadratic integers - Norm and conjugation](https://en.wikipedia.org/wiki/Quadratic_integer#Norm_and_conjugation)
         """
         return self.a*self.a - 2*self.b*self.b
     
