@@ -1,24 +1,16 @@
 from __future__ import annotations
 from math import sqrt
-from fractions import Fraction
 from functools import total_ordering
 from dataclasses import dataclass
 from typing import Any, ClassVar, Final, overload
 from types import NotImplementedType
 import sympy
+from ._rational import Fraction, RATIONALS, \
+        sympy_to_rational, rational_to_sympy, signed_str
 
 
 
 __all__ = ('QuadraticElement235', )
-
-
-
-def _rat_to_int_or_frac(r: sympy.Integer|sympy.Rational) -> int|Fraction:
-    """Pythonise sympy integers & rationals."""
-    if isinstance(r, sympy.Integer):
-        return int(r)
-    else:
-        return Fraction(int(r.p), int(r.q))
 
 
 
@@ -33,8 +25,8 @@ class QuadraticElement235:
         a+b_2\sqrt{2}+b_3\sqrt{3}+b_5\sqrt{5}+b_6\sqrt{6}+b_{10}\sqrt{10}+b_{15}\sqrt{15}+b_{30}\sqrt{30} \qquad a, b_2, b_3, b_5, b_6, b_{10}, b_{15}, b_{30}\in\mathbb{K}
     $$
     
-    where currently $\mathbb{K}$ is $\mathbb{Z}$ (`int`)
-    or $\mathbb{Q}$ (`fractions.Fraction`).
+    where currently $\mathbb{K}$ is $\mathbb{Z}$ (`int`) or $\mathbb{Q}$
+    (`fractions.Fraction` or, if installed, `cfractions.Fraction`).
     
     The immutable class supports exact conversion, ordering,
     algebraic conjugation, norm computation and arithmetic.
@@ -125,14 +117,14 @@ class QuadraticElement235:
                     and isinstance(b10, sympy.Rational) \
                     and isinstance(b15, sympy.Rational) \
                     and isinstance(b30, sympy.Rational):
-                return QuadraticElement235(_rat_to_int_or_frac(a),
-                                           _rat_to_int_or_frac(b2),
-                                           _rat_to_int_or_frac(b3),
-                                           _rat_to_int_or_frac(b5),
-                                           _rat_to_int_or_frac(b6),
-                                           _rat_to_int_or_frac(b10),
-                                           _rat_to_int_or_frac(b15),
-                                           _rat_to_int_or_frac(b30))
+                return QuadraticElement235(sympy_to_rational(a),
+                                           sympy_to_rational(b2),
+                                           sympy_to_rational(b3),
+                                           sympy_to_rational(b5),
+                                           sympy_to_rational(b6),
+                                           sympy_to_rational(b10),
+                                           sympy_to_rational(b15),
+                                           sympy_to_rational(b30))
         
         e: sympy.Expr = sympy.nsimplify(sympy.expand(e), [QuadraticElement235.SPSQRT2,
                                                           QuadraticElement235.SPSQRT3,
@@ -172,26 +164,26 @@ class QuadraticElement235:
             raise ValueError('not in K(√2,√3,√5)')
         
         return QuadraticElement235(
-            _rat_to_int_or_frac(a),
-            _rat_to_int_or_frac(b2),
-            _rat_to_int_or_frac(b3),
-            _rat_to_int_or_frac(b5),
-            _rat_to_int_or_frac(b6),
-            _rat_to_int_or_frac(b10),
-            _rat_to_int_or_frac(b15),
-            _rat_to_int_or_frac(b30)
+            sympy_to_rational(a),
+            sympy_to_rational(b2),
+            sympy_to_rational(b3),
+            sympy_to_rational(b5),
+            sympy_to_rational(b6),
+            sympy_to_rational(b10),
+            sympy_to_rational(b15),
+            sympy_to_rational(b30)
         )
     
     
     def __post_init__(self) -> None:
-        if not (isinstance(self.a,   (int, Fraction)) \
-            and isinstance(self.b2,  (int, Fraction)) \
-            and isinstance(self.b3,  (int, Fraction)) \
-            and isinstance(self.b5,  (int, Fraction)) \
-            and isinstance(self.b6,  (int, Fraction)) \
-            and isinstance(self.b10, (int, Fraction)) \
-            and isinstance(self.b15, (int, Fraction)) \
-            and isinstance(self.b30, (int, Fraction))):
+        if not (isinstance(self.a,   RATIONALS) \
+            and isinstance(self.b2,  RATIONALS) \
+            and isinstance(self.b3,  RATIONALS) \
+            and isinstance(self.b5,  RATIONALS) \
+            and isinstance(self.b6,  RATIONALS) \
+            and isinstance(self.b10, RATIONALS) \
+            and isinstance(self.b15, RATIONALS) \
+            and isinstance(self.b30, RATIONALS)):
             raise TypeError('coefficients must be integers or fractions')
     
     
@@ -264,14 +256,14 @@ class QuadraticElement235:
                 + QuadraticElement235.SQRT30 * float(self.b30)
     
     def _sympy_(self) -> sympy.Expr:
-        return                               self.a \
-            + QuadraticElement235.SPSQRT2  * self.b2 \
-            + QuadraticElement235.SPSQRT3  * self.b3 \
-            + QuadraticElement235.SPSQRT5  * self.b5 \
-            + QuadraticElement235.SPSQRT6  * self.b6 \
-            + QuadraticElement235.SPSQRT10 * self.b10 \
-            + QuadraticElement235.SPSQRT15 * self.b15 \
-            + QuadraticElement235.SPSQRT30 * self.b30
+        return                               rational_to_sympy(self.a) \
+            + QuadraticElement235.SPSQRT2  * rational_to_sympy(self.b2) \
+            + QuadraticElement235.SPSQRT3  * rational_to_sympy(self.b3) \
+            + QuadraticElement235.SPSQRT5  * rational_to_sympy(self.b5) \
+            + QuadraticElement235.SPSQRT6  * rational_to_sympy(self.b6) \
+            + QuadraticElement235.SPSQRT10 * rational_to_sympy(self.b10) \
+            + QuadraticElement235.SPSQRT15 * rational_to_sympy(self.b15) \
+            + QuadraticElement235.SPSQRT30 * rational_to_sympy(self.b30)
     
     def __hash__(self) -> int:
         #https://docs.python.org/3/library/numbers.html#notes-for-type-implementers
@@ -300,7 +292,7 @@ class QuadraticElement235:
                and self.b10 == other.b10 \
                and self.b15 == other.b15 \
                and self.b30 == other.b30
-        elif isinstance(other, (int, Fraction)):
+        elif isinstance(other, RATIONALS):
             return self.is_rational() and self.a==other
         return NotImplemented
     
@@ -331,7 +323,7 @@ class QuadraticElement235:
     @overload
     def __lt__(self, other: Fraction) -> bool: ...
     def __lt__(self, other: Any) -> bool|NotImplementedType:
-        if isinstance(other, (QuadraticElement235, int, Fraction)):
+        if isinstance(other, (QuadraticElement235, *RATIONALS)):
             x: QuadraticElement235 = self - other
             return x.sgn() < 0
         return NotImplemented
@@ -426,7 +418,7 @@ class QuadraticElement235:
                 self.b15 + other.b15,
                 self.b30 + other.b30
             )
-        elif isinstance(other, (int, Fraction)):
+        elif isinstance(other, RATIONALS):
             return QuadraticElement235(
                 self.a   + other,
                 self.b2,
@@ -444,7 +436,7 @@ class QuadraticElement235:
     @overload
     def __radd__(self, other: Fraction) -> QuadraticElement235: ...
     def __radd__(self, other: Any) -> QuadraticElement235|NotImplementedType:
-        if isinstance(other, (int, Fraction)):
+        if isinstance(other, RATIONALS):
             return QuadraticElement235(
                 other + self.a,
                         self.b2,
@@ -476,7 +468,7 @@ class QuadraticElement235:
                 self.b15 - other.b15,
                 self.b30 - other.b30
             )
-        elif isinstance(other, (int, Fraction)):
+        elif isinstance(other, RATIONALS):
             return QuadraticElement235(
                 self.a   - other,
                 self.b2,
@@ -494,7 +486,7 @@ class QuadraticElement235:
     @overload
     def __rsub__(self, other: Fraction) -> QuadraticElement235: ...
     def __rsub__(self, other: Any) -> QuadraticElement235|NotImplementedType:
-        if isinstance(other, (int, Fraction)):
+        if isinstance(other, RATIONALS):
             return QuadraticElement235(
                 other - self.a,
                       - self.b2,
@@ -530,7 +522,7 @@ class QuadraticElement235:
                 a*d15 +   b15*c +    b3*d5  +   b5 *d3  + 2*(b2*d30 +    b30*d2  +     b6 *d10 +    b10*d6),
                 a*d30 +   b30*c +    b2*d15 +   b15*d2  +    b3*d10 +    b10*d3  +     b5 *d6  +    b6 *d5
             )
-        elif isinstance(other, (int, Fraction)):
+        elif isinstance(other, RATIONALS):
             return QuadraticElement235(
                 self.a   * other,
                 self.b2  * other,
@@ -548,7 +540,7 @@ class QuadraticElement235:
     @overload
     def __rmul__(self, other: Fraction) -> QuadraticElement235: ...
     def __rmul__(self, other: Any) -> QuadraticElement235|NotImplementedType:
-        if isinstance(other, (int, Fraction)):
+        if isinstance(other, RATIONALS):
             return QuadraticElement235(
                 other * self.a,
                 other * self.b2,
@@ -575,7 +567,7 @@ class QuadraticElement235:
     def __truediv__(self, other: Any) -> QuadraticElement235|NotImplementedType:
         if isinstance(other, QuadraticElement235):
             return self * other.inv()
-        elif isinstance(other, (int, Fraction)):
+        elif isinstance(other, RATIONALS):
             other: Fraction = Fraction(other)
             return QuadraticElement235(
                 self.a   / other,
@@ -594,7 +586,7 @@ class QuadraticElement235:
     @overload
     def __rtruediv__(self, other: Fraction) -> QuadraticElement235: ...
     def __rtruediv__(self, other: Any) -> QuadraticElement235|NotImplementedType:
-        if isinstance(other, (int, Fraction)):
+        if isinstance(other, RATIONALS):
             return other * self.inv()
         return NotImplemented
     
@@ -622,7 +614,7 @@ class QuadraticElement235:
     
     #IO
     def __str__(self) -> str:
-        return f'{self.a}{self.b2:+}√2{self.b3:+}√3{self.b5:+}√5{self.b6:+}√6{self.b10:+}√10{self.b15:+}√15{self.b30:+}√30'
+        return f'{self.a}{signed_str(self.b2)}√2{signed_str(self.b3)}√3{signed_str(self.b5)}√5{signed_str(self.b6)}√6{signed_str(self.b10)}√10{signed_str(self.b15)}√15{signed_str(self.b30)}√30'
     
     def _repr_latex_(self) -> str:
-        return f'{self.a}{self.b2:+}\\sqrt{{2}}{self.b3:+}\\sqrt{{3}}{self.b5:+}\\sqrt{{5}}{self.b6:+}\\sqrt{{6}}{self.b10:+}\\sqrt{{10}}{self.b15:+}\\sqrt{{15}}{self.b30:+}\\sqrt{{30}}'
+        return f'{self.a}{signed_str(self.b2)}\\sqrt{{2}}{signed_str(self.b3)}\\sqrt{{3}}{signed_str(self.b5)}\\sqrt{{5}}{signed_str(self.b6)}\\sqrt{{6}}{signed_str(self.b10)}\\sqrt{{10}}{signed_str(self.b15)}\\sqrt{{15}}{signed_str(self.b30)}\\sqrt{{30}}'

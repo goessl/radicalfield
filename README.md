@@ -17,6 +17,9 @@ QuadraticInt2(a=19, b=10)
 pip install git+https://github.com/goessl/radicalfield.git
 ```
 
+This package uses the `cfractions.Fraction` type if installed,
+otherwise falls back to the built-in `fractions.Fraction` type automatically.
+
 ## Usage
 
 **Enjoy the [documentation webpage](https://goessl.github.io/radicalfield).**
@@ -30,6 +33,7 @@ pip install git+https://github.com/goessl/radicalfield.git
     - [ ] docstrings
 - [ ] Algebraic numbers
     - [ ] characteristic monomial as 'radicand', primitive element powers as coefficients
+- [x] Automatic `cfractions` usage
 
 ## License (MIT)
 

@@ -4,9 +4,9 @@ from functools import reduce
 from operator import mul
 from itertools import repeat
 import sympy as sp
-from fractions import Fraction
 
 from radicalfield import QuadraticElement2
+from radicalfield._rational import Fraction, RATIONALS
 
 
 
@@ -95,8 +95,8 @@ def test_conjugate_and_norm():
         a     :QuadraticElement2 = _rand_qe2(n)
         a_conj:QuadraticElement2 = a.conjugate()
         A     :int|Fraction      = a.norm()
-        assert (a * a_conj).is_rational()     and bool(a_conj)==bool(a)
-        assert isinstance(A, (int, Fraction)) and bool(A)     ==bool(a)
+        assert (a * a_conj).is_rational() and bool(a_conj)==bool(a)
+        assert isinstance(A, RATIONALS)   and bool(A)     ==bool(a)
         assert a * a_conj == A
 
 def test_unary():
