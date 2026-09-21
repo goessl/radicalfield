@@ -567,6 +567,8 @@
 <h2 id="installation">Installation</h2>
 <div class="highlight"><pre><span></span><code><span class="go">pip install git+https://github.com/goessl/radicalfield.git</span>
 </code></pre></div>
+<p>This package uses the <code>cfractions.Fraction</code> type if installed,
+otherwise falls back to the built-in <code>fractions.Fraction</code> type automatically.</p>
 <h2 id="usage">Usage</h2>
 <ul>
 <li><a href="quadraticelement2/"><code>quadraticelement2</code></a> <span class="arithmatex">\(\mathbb{K}\left(\sqrt{2}\right)\)</span></li>
@@ -587,6 +589,7 @@
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> characteristic monomial as 'radicand', primitive element powers as coefficients</li>
 </ul>
 </li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Automatic <code>cfractions</code> usage</li>
 </ul>
 <h2 id="license-mit">License (MIT)</h2>
 <p>Copyright (c) 2025-2026 Sebastian Gössl</p>
