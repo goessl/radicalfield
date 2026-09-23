@@ -7,7 +7,7 @@ from itertools import repeat
 import sympy as sp
 
 from radicalfield import QuadraticElement235
-from radicalfield._rational import Fraction, RATIONALS
+from radicalfield.rational import Fraction, RATIONALS
 
 
 
@@ -16,6 +16,9 @@ def _rand_frac(n:int=1000):
 
 def _rand_qe235(n:int=1000):
     return QuadraticElement235(*(_rand_frac(n) for _ in range(8)))
+
+def _rand_qe235z(n:int=1000):
+    return QuadraticElement235(*(randint(-n, +n) for _ in range(8)))
 
 
 
@@ -70,7 +73,7 @@ def test_fraction():
     assert QuadraticElement235(7).is_rational() is True
     assert QuadraticElement235(7, 1).is_rational() is False
     assert QuadraticElement235(7, 0, 0, 0, 0, 0, 0, 1).is_rational() is False
-
+    
     assert QuadraticElement235(7).as_fraction() == 7
     with pytest.raises(ValueError):
         QuadraticElement235(7, 1).as_fraction()
@@ -159,6 +162,141 @@ def test_div():
         else:
             with pytest.raises(ZeroDivisionError):
                 c / b
+
+def test_floordiv():
+    assert QuadraticElement235(1, 2, 3, 4, 5, 6, 7, 8) // QuadraticElement235(1, 1, 0, 0, 0, 0, 0, 1) \
+            == QuadraticElement235(9, 4, 1, 0, 0, 0, -1, -1)
+    assert QuadraticElement235(1, 2, 3, 4, 5, 6, 7, 8) // 3 \
+            == QuadraticElement235(0, 0, 1, 1, 1, 2,  2,  2)
+    assert 7 // QuadraticElement235(1, 1, 1) \
+            == QuadraticElement235(3, 1, 0, 0, -2)
+    
+    with pytest.raises(ZeroDivisionError):
+        QuadraticElement235(1, 2) // QuadraticElement235()
+    with pytest.raises(ZeroDivisionError):
+        QuadraticElement235(1, 2) // 0
+    with pytest.raises(ZeroDivisionError):
+        3 // QuadraticElement235()
+    
+    with pytest.raises(TypeError):
+        QuadraticElement235(Fraction(1, 2), 2) // QuadraticElement235(3, 4)
+    with pytest.raises(TypeError):
+        QuadraticElement235(1, 2) // QuadraticElement235(3, 0, 0, 0, 0, 0, 0, Fraction(4))
+    with pytest.raises(TypeError):
+        QuadraticElement235(Fraction(1, 2), 2) // 3
+    with pytest.raises(TypeError):
+        3 // QuadraticElement235(Fraction(1, 2), 2)
+    with pytest.raises(TypeError, match='//'):
+        QuadraticElement235(1, 2) // Fraction(3)
+    
+    for _ in range(N):
+        a:QuadraticElement235 = _rand_qe235z(n)
+        b:QuadraticElement235 = _rand_qe235z(n)
+        c:int                 = randint(-n, +n)
+        
+        if bool(b):
+            assert a // b == (a - a % b) / b
+        if bool(c):
+            assert a // c == a // QuadraticElement235(c)
+        if bool(b):
+            assert c // b == QuadraticElement235(c) // b
+        #int convention
+        if bool(c):
+            assert QuadraticElement235(a.a) // c == a.a // c
+        if bool(a.a):
+            assert c // QuadraticElement235(a.a) == c // a.a
+
+def test_mod():
+    assert QuadraticElement235(1, 2, 3, 4, 5, 6, 7, 8) % QuadraticElement235(1, 1, 0, 0, 0, 0, 0, 1) \
+            == QuadraticElement235(14, 4, 2, 4, 4, 3, 2, 1)
+    assert QuadraticElement235(1, 2, 3, 4, 5, 6, 7, 8) % 3 \
+            == QuadraticElement235( 1, 2, 0, 1, 2, 0, 1, 2)
+    assert 7 % QuadraticElement235(1, 1, 1) == QuadraticElement235(2, 2, 1, 0, 1)
+    
+    with pytest.raises(TypeError, match='%'):
+        QuadraticElement235(1, 2) % Fraction(3)
+    
+    for _ in range(N):
+        a:QuadraticElement235 = _rand_qe235z(n)
+        b:QuadraticElement235 = _rand_qe235z(n)
+        k:QuadraticElement235 = _rand_qe235z(n)
+        c:int                 = randint(-n, +n)
+        
+        #canonical residue: congruent elements have the same remainder
+        #(not euclidean, the remainder norm isn't bounded by the divisor norm)
+        if bool(b):
+            assert (a + k*b) % b == a % b
+        if bool(c):
+            assert (a + k*c) % c == a % c
+        #int convention: coefficients have the sign of the divisor
+        if bool(c):
+            r:QuadraticElement235 = a % c
+            assert (a.a % c, a.b2 % c, a.b3 % c, a.b5 % c, a.b6 % c, a.b10 % c, a.b15 % c, a.b30 % c) \
+                    == (r.a, r.b2, r.b3, r.b5, r.b6, r.b10, r.b15, r.b30)
+            assert QuadraticElement235(a.a) % c == a.a % c
+        if bool(a.a):
+            assert c % QuadraticElement235(a.a) == c % a.a
+
+def test_divmod():
+    for _ in range(N):
+        a:QuadraticElement235 = _rand_qe235z(n)
+        b:QuadraticElement235 = _rand_qe235z(n)
+        c:int                 = randint(-n, +n)
+        
+        if bool(b):
+            q, r = divmod(a, b)
+            assert (q, r) == (a // b, a % b)
+            assert q*b + r == a
+        if bool(c):
+            q, r = divmod(a, c)
+            assert (q, r) == (a // c, a % c)
+            assert q*c + r == a
+        if bool(b):
+            q, r = divmod(c, b)
+            assert (q, r) == (c // b, c % b)
+            assert q*b + r == c
+
+def test_pow_mod():
+    assert pow(QuadraticElement235(1, 1, 1),  5, QuadraticElement235(3, 1)) == QuadraticElement235( 4,  3,  2, 0, 1)
+    assert pow(QuadraticElement235(1, 1, 1),  5,                        7 ) == QuadraticElement235( 2,  0,  2, 0, 1)
+    assert pow(QuadraticElement235(1, 1, 1),  0,                        1 ) == 0
+    assert pow(QuadraticElement235(1, 1, 1), -1,                        7 ) == QuadraticElement235( 4,  2,  0, 0, 5)
+    
+    with pytest.raises(ZeroDivisionError):
+        pow(QuadraticElement235(1, 2), 3, QuadraticElement235())
+    with pytest.raises(ValueError): #N(3+√2)=7^4
+        pow(QuadraticElement235(3, 1), -1, 7)
+    with pytest.raises(ValueError):
+        pow(QuadraticElement235(1, 2), -1, QuadraticElement235(3, 4))
+    with pytest.raises(TypeError):
+        pow(QuadraticElement235(Fraction(1, 2), 2), 3, 5)
+    with pytest.raises(TypeError):
+        pow(QuadraticElement235(Fraction(1, 2), 2), -1, 5)
+    with pytest.raises(TypeError):
+        pow(QuadraticElement235(1, 2), 3, Fraction(5))
+    
+    for _ in range(N):
+        a:QuadraticElement235 = _rand_qe235z(n)
+        m:QuadraticElement235 = _rand_qe235z(n)
+        c:int                 = randint(-n, +n)
+        p:int                 = 10007 #prime
+        e:int                 = randint(0, 10)
+        
+        if bool(m):
+            assert pow(a, e, m) == a**e % m
+        if bool(c):
+            assert pow(a, e, c) == a**e % c
+        
+        if a.norm() % p:
+            a_inv:QuadraticElement235 = pow(a, -1, p)
+            assert a * a_inv % p == 1
+            assert pow(a, -e, p) == pow(a_inv, e, p)
+        else:
+            with pytest.raises(ValueError):
+                pow(a, -1, p)
+        #int convention
+        if a.a % p:
+            assert pow(QuadraticElement235(a.a), -1, p) == pow(a.a, -1, p)
 
 def test_pow():
     assert QuadraticElement235(0)**0 == 1

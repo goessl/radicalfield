@@ -29,11 +29,16 @@ __all__ = (
 
 
 
-CFRACTIONS: Final[bool] = CFraction is not None
-Fraction: Final[type] = CFraction if CFRACTIONS else PyFraction
-FRACTIONS: Final[tuple[type, ...]] = (PyFraction, CFraction) if CFRACTIONS \
-        else (PyFraction, )
+Fraction: Final[type] = CFraction \
+                        if CFraction is not None else \
+                        PyFraction
+"""Used purely rational type."""
+FRACTIONS: Final[tuple[type, ...]] = (PyFraction, CFraction) \
+                                     if CFraction is not None else \
+                                     (PyFraction, )
+"""All available purely rational types."""
 RATIONALS: Final[tuple[type, ...]] = (int, ) + FRACTIONS
+"""All available rational types."""
 
 
 

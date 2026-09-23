@@ -1,0 +1,3 @@
+# rational
+
+::: radicalfield.rational

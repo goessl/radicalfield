@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Any, ClassVar, Final, overload
 from types import NotImplementedType
 import sympy
-from ._rational import Fraction, RATIONALS, \
+from .rational import Fraction, RATIONALS, \
         sympy_to_rational, rational_to_sympy, signed_str
 
 
@@ -34,6 +34,8 @@ class QuadraticElement235:
     Addition, subtraction & multiplication is closed,
     mixed coefficients are promoted.
     Inversion and division is always promoted to `Fraction`.
+    Floor division, modulo & modular powers require integer coefficients
+    and follow the `int` convention.
     
     Parameters
     ----------
@@ -592,23 +594,139 @@ class QuadraticElement235:
     
     
     @overload
+    def __divmod__(self, other: QuadraticElement235) \
+            -> tuple[QuadraticElement235, QuadraticElement235]: ...
+    @overload
+    def __divmod__(self, other: int) \
+            -> tuple[QuadraticElement235, QuadraticElement235]: ...
+    def __divmod__(self, other: Any) \
+            -> tuple[QuadraticElement235, QuadraticElement235]|NotImplementedType:
+        #each coefficient of the exact quotient floored like int,
+        #the remainder is a canonical residue (congruent -> equal remainders),
+        #but not euclidean: its norm isn't bounded by the divisor norm
+        if isinstance(other, QuadraticElement235):
+            adj, n = other.conj_and_norm()
+            if not isinstance(n, int):
+                raise TypeError('integer division requires integer coefficients')
+            q: QuadraticElement235 = (self * adj) // n
+            return q, self - q*other
+        elif isinstance(other, int):
+            if not (isinstance(self.a,   int) \
+                and isinstance(self.b2,  int) \
+                and isinstance(self.b3,  int) \
+                and isinstance(self.b5,  int) \
+                and isinstance(self.b6,  int) \
+                and isinstance(self.b10, int) \
+                and isinstance(self.b15, int) \
+                and isinstance(self.b30, int)):
+                raise TypeError('integer division requires integer coefficients')
+            return (QuadraticElement235(
+                        self.a   // other,
+                        self.b2  // other,
+                        self.b3  // other,
+                        self.b5  // other,
+                        self.b6  // other,
+                        self.b10 // other,
+                        self.b15 // other,
+                        self.b30 // other
+                    ),
+                    QuadraticElement235(
+                        self.a   % other,
+                        self.b2  % other,
+                        self.b3  % other,
+                        self.b5  % other,
+                        self.b6  % other,
+                        self.b10 % other,
+                        self.b15 % other,
+                        self.b30 % other
+                    ))
+        return NotImplemented
+    
+    @overload
+    def __rdivmod__(self, other: int) \
+            -> tuple[QuadraticElement235, QuadraticElement235]: ...
+    def __rdivmod__(self, other: Any) \
+            -> tuple[QuadraticElement235, QuadraticElement235]|NotImplementedType:
+        if isinstance(other, int):
+            adj, n = self.conj_and_norm()
+            if not isinstance(n, int):
+                raise TypeError('integer division requires integer coefficients')
+            q: QuadraticElement235 = (other * adj) // n
+            return q, other - q*self
+        return NotImplemented
+    
+    @overload
+    def __floordiv__(self, other: QuadraticElement235) -> QuadraticElement235: ...
+    @overload
+    def __floordiv__(self, other: int) -> QuadraticElement235: ...
+    def __floordiv__(self, other: Any) -> QuadraticElement235|NotImplementedType:
+        #divmod(self, other) would convert NotImplemented to TypeError
+        qr = self.__divmod__(other)
+        return qr if qr is NotImplemented else qr[0]
+    
+    @overload
+    def __rfloordiv__(self, other: int) -> QuadraticElement235: ...
+    def __rfloordiv__(self, other: Any) -> QuadraticElement235|NotImplementedType:
+        qr = self.__rdivmod__(other)
+        return qr if qr is NotImplemented else qr[0]
+    
+    @overload
+    def __mod__(self, other: QuadraticElement235) -> QuadraticElement235: ...
+    @overload
+    def __mod__(self, other: int) -> QuadraticElement235: ...
+    def __mod__(self, other: Any) -> QuadraticElement235|NotImplementedType:
+        qr = self.__divmod__(other)
+        return qr if qr is NotImplemented else qr[1]
+    
+    @overload
+    def __rmod__(self, other: int) -> QuadraticElement235: ...
+    def __rmod__(self, other: Any) -> QuadraticElement235|NotImplementedType:
+        qr = self.__rdivmod__(other)
+        return qr if qr is NotImplemented else qr[1]
+    
+    
+    @overload
     def __pow__(self, other: int) -> QuadraticElement235: ...
     @overload
     def __pow__(self, other: int, modulo: None) -> QuadraticElement235: ...
+    @overload
+    def __pow__(self, other: int, modulo: QuadraticElement235) -> QuadraticElement235: ...
+    @overload
+    def __pow__(self, other: int, modulo: int) -> QuadraticElement235: ...
     def __pow__(self, other: Any, modulo: Any=None) \
             -> QuadraticElement235|NotImplementedType:
-        if isinstance(other, int) and modulo is None:
+        if not isinstance(other, int):
+            return NotImplemented
+        if modulo is None:
             b: QuadraticElement235 = self if other >= 0 else self.inv()
-            other: int = abs(other)
-            r: QuadraticElement235 = QuadraticElement235(1)
-            while other > 0:
-                if other & 1:
-                    r *= b
-                other >>= 1
-                if other:
-                    b *= b
-            return r
-        return NotImplemented
+        elif isinstance(modulo, (QuadraticElement235, int)):
+            if other >= 0:
+                b: QuadraticElement235 = self % modulo
+            elif isinstance(modulo, int):
+                adj, n = self.conj_and_norm()
+                if not isinstance(n, int):
+                    raise TypeError('integer division requires integer coefficients')
+                #x^-1 = adj(x) N(x)^-1, raises ValueError if not invertible
+                b: QuadraticElement235 = adj * pow(n, -1, modulo) % modulo
+            else:
+                raise ValueError('negative exponent requires an integer modulus')
+        else:
+            return NotImplemented
+        
+        other: int = abs(other)
+        r: QuadraticElement235 = QuadraticElement235(1) if modulo is None \
+                else QuadraticElement235(1) % modulo
+        while other > 0:
+            if other & 1:
+                r *= b
+                if modulo is not None:
+                    r %= modulo
+            other >>= 1
+            if other:
+                b *= b
+                if modulo is not None:
+                    b %= modulo
+        return r
     
     
     

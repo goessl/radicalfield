@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Any, ClassVar, Final, overload
 from types import NotImplementedType
 import sympy
-from ._rational import Fraction, RATIONALS, \
+from .rational import Fraction, RATIONALS, \
         sympy_to_rational, rational_to_sympy, signed_str
 
 
@@ -34,6 +34,8 @@ class QuadraticElement2:
     Addition, subtraction & multiplication is closed,
     mixed coefficients are promoted.
     Inversion and division is always promoted to `Fraction`.
+    Floor division, modulo & modular powers require integer coefficients
+    and follow the `int` convention.
     
     Parameters
     ----------
@@ -320,7 +322,7 @@ class QuadraticElement2:
     
     #arithmetic
     #make all following methods non-recursive/leaves,
-    #except inversion as it is otherwise too complicated
+    #except inversion, floor division & powers as they are otherwise too complicated
     def conjugate(self) -> QuadraticElement2:
         r"""Return the algebraic conjugate.
         
@@ -612,46 +614,183 @@ class QuadraticElement2:
     
     
     @overload
+    def __divmod__(self, other: QuadraticElement2) \
+            -> tuple[QuadraticElement2, QuadraticElement2]: ...
+    @overload
+    def __divmod__(self, other: int) \
+            -> tuple[QuadraticElement2, QuadraticElement2]: ...
+    def __divmod__(self, other: Any) \
+            -> tuple[QuadraticElement2, QuadraticElement2]|NotImplementedType:
+        r"""Return the floor quotient and remainder in $\mathbb{Z}\left[\sqrt{2}\right]$.
+        
+        $$
+            q = \left\lfloor\frac{ac-2bd}{c^2-2d^2}\right\rfloor
+              + \left\lfloor\frac{bc-ad}{c^2-2d^2}\right\rfloor\sqrt{2}
+            \qquad
+            r = \left(a+b\sqrt{2}\right) - q\left(c+d\sqrt{2}\right)
+        $$
+        
+        Floored convention, same as for `int`s.
+        
+        Parameters
+        ----------
+        other : QuadraticElement2|int
+            The divisor.
+        
+        Returns
+        -------
+        tuple[QuadraticElement2, QuadraticElement2]
+            The quotient and remainder.
+        
+        Raises
+        ------
+        TypeError
+            If any coefficient is not an integer.
+        ZeroDivisionError
+            If the divisor is zero.
+        
+        References
+        ----------
+        - [Wikipedia - Modulo - Variants of the definition](https://en.wikipedia.org/wiki/Modulo#Variants_of_the_definition)
+        """
+        if isinstance(other, QuadraticElement2):
+            n: int|Fraction = other.norm()
+            if not isinstance(n, int):
+                raise TypeError('integer division requires integer coefficients')
+            q: QuadraticElement2 = (self * other.conjugate()) // n
+            return q, self - q*other
+        elif isinstance(other, int):
+            if not (isinstance(self.a, int) and isinstance(self.b, int)):
+                raise TypeError('integer division requires integer coefficients')
+            return (QuadraticElement2(self.a // other, self.b // other),
+                    QuadraticElement2(self.a %  other, self.b %  other))
+        return NotImplemented
+    
+    @overload
+    def __rdivmod__(self, other: int) \
+            -> tuple[QuadraticElement2, QuadraticElement2]: ...
+    def __rdivmod__(self, other: Any) \
+            -> tuple[QuadraticElement2, QuadraticElement2]|NotImplementedType:
+        if isinstance(other, int):
+            n: int|Fraction = self.norm()
+            if not isinstance(n, int):
+                raise TypeError('integer division requires integer coefficients')
+            q: QuadraticElement2 = (other * self.conjugate()) // n
+            return q, other - q*self
+        return NotImplemented
+    
+    @overload
+    def __floordiv__(self, other: QuadraticElement2) -> QuadraticElement2: ...
+    @overload
+    def __floordiv__(self, other: int) -> QuadraticElement2: ...
+    def __floordiv__(self, other: Any) -> QuadraticElement2|NotImplementedType:
+        """Return the floor quotient, see `__divmod__`."""
+        #divmod(self, other) would convert NotImplemented to TypeError
+        qr = self.__divmod__(other)
+        return qr if qr is NotImplemented else qr[0]
+    
+    @overload
+    def __rfloordiv__(self, other: int) -> QuadraticElement2: ...
+    def __rfloordiv__(self, other: Any) -> QuadraticElement2|NotImplementedType:
+        qr = self.__rdivmod__(other)
+        return qr if qr is NotImplemented else qr[0]
+    
+    @overload
+    def __mod__(self, other: QuadraticElement2) -> QuadraticElement2: ...
+    @overload
+    def __mod__(self, other: int) -> QuadraticElement2: ...
+    def __mod__(self, other: Any) -> QuadraticElement2|NotImplementedType:
+        """Return the remainder, see `__divmod__`."""
+        qr = self.__divmod__(other)
+        return qr if qr is NotImplemented else qr[1]
+    
+    @overload
+    def __rmod__(self, other: int) -> QuadraticElement2: ...
+    def __rmod__(self, other: Any) -> QuadraticElement2|NotImplementedType:
+        qr = self.__rdivmod__(other)
+        return qr if qr is NotImplemented else qr[1]
+    
+    
+    @overload
     def __pow__(self, other: int) -> QuadraticElement2: ...
     @overload
     def __pow__(self, other: int, modulo: None) -> QuadraticElement2: ...
+    @overload
+    def __pow__(self, other: int, modulo: QuadraticElement2) -> QuadraticElement2: ...
+    @overload
+    def __pow__(self, other: int, modulo: int) -> QuadraticElement2: ...
     def __pow__(self, other: Any, modulo: Any=None) \
             -> QuadraticElement2|NotImplementedType:
-        """Return the power.
+        r"""Return the power, optionally reduced modulo a divisor.
         
         Parameters
         ----------
         other : int
             The exponent.
-        modulo : None
-            Not supported divisor.
+        modulo : QuadraticElement2|int|None, default None
+            Divisor to reduce by after every multiplication,
+            see `__divmod__`. Requires integer coefficients.
+            A negative exponent requires an `int` modulus and
+            inverts the base modulo it, like `pow(int, -1, int)`.
         
         Returns
         -------
         QuadraticElement2
-            The power.
+            The power, reduced if `modulo` is given.
         
         Raises
         ------
         ZeroDivisionError
-            If the base is zero and the exponent negative.
+            If the base is zero and the exponent negative,
+            or the modulus is zero.
+        ValueError
+            If the exponent is negative and the modulus is not an `int`,
+            or the base is not invertible modulo it.
+        TypeError
+            If a modulus is given and any coefficient is not an integer.
+        
+        Notes
+        -----
+        The modular inverse is $x^{-1} \equiv \overline{x}N(x)^{-1} \pmod{m}$,
+        which exists iff $\gcd(N(x), m)=1$.
         
         References
         ----------
         - [Wikipedia - Exponentiation by squaring](https://en.wikipedia.org/wiki/Exponentiation_by_squaring#With_constant_auxiliary_memory)
+        - [Wikipedia - Modular exponentiation](https://en.wikipedia.org/wiki/Modular_exponentiation)
         """
-        if isinstance(other, int) and modulo is None:
+        if not isinstance(other, int):
+            return NotImplemented
+        if modulo is None:
             b: QuadraticElement2 = self if other >= 0 else self.inv()
-            other: int = abs(other)
-            r: QuadraticElement2 = QuadraticElement2(1)
-            while other > 0:
-                if other & 1:
-                    r *= b
-                other >>= 1
-                if other:
-                    b *= b
-            return r
-        return NotImplemented
+        elif isinstance(modulo, (QuadraticElement2, int)):
+            if other >= 0:
+                b: QuadraticElement2 = self % modulo
+            elif isinstance(modulo, int):
+                n: int|Fraction = self.norm()
+                if not isinstance(n, int):
+                    raise TypeError('integer division requires integer coefficients')
+                #raises ValueError if not invertible
+                b: QuadraticElement2 = self.conjugate() * pow(n, -1, modulo) % modulo
+            else:
+                raise ValueError('negative exponent requires an integer modulus')
+        else:
+            return NotImplemented
+        
+        other: int = abs(other)
+        r: QuadraticElement2 = QuadraticElement2(1) if modulo is None \
+                else QuadraticElement2(1) % modulo
+        while other > 0:
+            if other & 1:
+                r *= b
+                if modulo is not None:
+                    r %= modulo
+            other >>= 1
+            if other:
+                b *= b
+                if modulo is not None:
+                    b %= modulo
+        return r
     
     
     
